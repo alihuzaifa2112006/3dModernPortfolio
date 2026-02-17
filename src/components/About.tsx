@@ -59,9 +59,15 @@ I believe in consistent learning, clean coding practices, and building projects 
             </div>
 
             {/* Skills */}
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div className="mt-8 flex flex-wrap gap-2" style={{ perspective: '600px' }}>
               {['React', 'TypeScript', 'MongoDB', 'Tailwind CSS', 'Node.js', 'Git'].map((skill) => (
-                <span key={skill} className="rounded-full border border-[#e5e5e5] bg-[#f5f5f5] px-4 py-2 text-[13px] font-medium text-[#333]">
+                <span
+                  key={skill}
+                  className="inline-block cursor-default rounded-full border border-[#e5e5e5] bg-[#f5f5f5] px-4 py-2 text-[13px] font-medium text-[#333] transition-all duration-300 hover:scale-110 hover:border-[#c5f82a] hover:bg-[#c5f82a]/10 hover:text-black hover:shadow-lg hover:shadow-[#c5f82a]/20"
+                  style={{ transformStyle: 'preserve-3d', transition: 'transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'rotateY(15deg) rotateX(-8deg) scale(1.1)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)' }}
+                >
                   {skill}
                 </span>
               ))}

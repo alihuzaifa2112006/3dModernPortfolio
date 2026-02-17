@@ -1,35 +1,38 @@
 import React from 'react'
 
+const devicon = (name: string) =>
+  `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}`
+
 const skillCategories = [
   {
     title: 'Frontend',
     accent: '#c5f82a',
     skills: [
-      { name: 'HTML', icon: '🌐', color: '#E34F26', level: 95 },
-      { name: 'CSS', icon: '🎨', color: '#1572B6', level: 90 },
-      { name: 'JavaScript', icon: '⚡', color: '#F7DF1E', level: 88 },
-      { name: 'TypeScript', icon: '🔷', color: '#3178C6', level: 82 },
-      { name: 'React', icon: '⚛️', color: '#61DAFB', level: 90 },
-      { name: 'Tailwind CSS', icon: '💨', color: '#06B6D4', level: 92 },
-      { name: 'Material UI', icon: '🎯', color: '#007FFF', level: 78 },
-      { name: 'Next.js', icon: '▲', color: '#ffffff', level: 85 },
+      { name: 'HTML', icon: devicon('html5/html5-original.svg'), color: '#E34F26', level: 95 },
+      { name: 'CSS', icon: devicon('css3/css3-original.svg'), color: '#1572B6', level: 90 },
+      { name: 'JavaScript', icon: devicon('javascript/javascript-original.svg'), color: '#F7DF1E', level: 88 },
+      { name: 'TypeScript', icon: devicon('typescript/typescript-original.svg'), color: '#3178C6', level: 82 },
+      { name: 'React', icon: devicon('react/react-original.svg'), color: '#61DAFB', level: 90 },
+      { name: 'Tailwind CSS', icon: devicon('tailwindcss/tailwindcss-original.svg'), color: '#06B6D4', level: 92 },
+      { name: 'Material UI', icon: devicon('materialui/materialui-original.svg'), color: '#007FFF', level: 78 },
+      { name: 'Next.js', icon: devicon('nextjs/nextjs-original.svg'), color: '#ffffff', level: 85 },
     ],
   },
   {
     title: 'Backend',
     accent: '#00d4ff',
     skills: [
-      { name: 'Node.js', icon: '🟢', color: '#339933', level: 80 },
-      { name: 'Express', icon: '🚀', color: '#ffffff', level: 78 },
-      { name: 'Python', icon: '🐍', color: '#3776AB', level: 70 },
+      { name: 'Node.js', icon: devicon('nodejs/nodejs-original.svg'), color: '#339933', level: 80 },
+      { name: 'Express', icon: devicon('express/express-original.svg'), color: '#ffffff', level: 78 },
+      { name: 'Python', icon: devicon('python/python-original.svg'), color: '#3776AB', level: 70 },
     ],
   },
   {
     title: 'Database',
     accent: '#e53e6b',
     skills: [
-      { name: 'MongoDB', icon: '🍃', color: '#47A248', level: 75 },
-      { name: 'SQL', icon: '🗄️', color: '#4479A1', level: 72 },
+      { name: 'MongoDB', icon: devicon('mongodb/mongodb-original.svg'), color: '#47A248', level: 75 },
+      { name: 'mysql', icon: devicon('mysql/mysql-original.svg'), color: '#4479A1', level: 72 },
     ],
   },
 ]
@@ -68,7 +71,7 @@ const Skills: React.FC = () => {
                       className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-10"
                       style={{ background: `radial-gradient(circle at center, ${skill.color}, transparent 70%)` }}
                     />
-                    <span className="relative text-4xl">{skill.icon}</span>
+                    <img src={skill.icon} alt={skill.name} className="relative h-10 w-10" />
                     <span className="relative text-[13px] font-semibold text-white">{skill.name}</span>
                     <div className="relative mt-1 h-1 w-full overflow-hidden rounded-full bg-[#222]">
                       <div

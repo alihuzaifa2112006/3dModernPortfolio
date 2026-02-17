@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const Contact: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    e.currentTarget.reset();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setLoading(true);
+    setResult("");
+
+    const formData = new FormData(e.currentTarget);
+    formData.append("access_key", "a5864414-6cc2-4399-aa8a-9caf9196ede2");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("Message sent successfully!");
+        formRef.current?.reset();
+      } else {
+        setResult("Failed to send message. Please try again.");
+      }
+    } catch {
+      setResult("Something went wrong. Please try again.");
+    }
+
+    setLoading(false);
+    setTimeout(() => setResult(""), 4000);
   };
 
   return (
@@ -74,11 +98,11 @@ const Contact: React.FC = () => {
 
           {/* RIGHT SIDE FORM */}
           <div className="w-full lg:w-7/12">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
 
               <div className="flex flex-col gap-5 sm:flex-row">
                 <input
-                  name="user_name"
+                  name="name"
                   type="text"
                   required
                   placeholder="Your Name"
@@ -86,7 +110,7 @@ const Contact: React.FC = () => {
                 />
 
                 <input
-                  name="user_email"
+                  name="email"
                   type="email"
                   required
                   placeholder="Your Email"
@@ -111,14 +135,15 @@ const Contact: React.FC = () => {
 
               <button
                 type="submit"
-                className="rounded-full bg-[#c5f82a] px-8 py-4 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+                disabled={loading}
+                className="rounded-full bg-[#c5f82a] px-8 py-4 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a] disabled:opacity-60"
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </button>
 
-              {submitted && (
-                <p className="mt-3 text-sm font-semibold text-green-600">
-                  Message sent successfully!
+              {result && (
+                <p className={`mt-3 text-sm font-semibold ${result.includes("successfully") ? "text-green-600" : "text-red-500"}`}>
+                  {result}
                 </p>
               )}
 
