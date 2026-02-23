@@ -15,16 +15,16 @@ const Navbar: React.FC = () => {
 
       {/* Desktop Links */}
       <div className="hidden items-center gap-8 md:flex">
-        <a href="#home" className="text-[13px] font-medium text-white transition-colors hover:text-[#c5f82a]">Home</a>
-        <a href="#about" className="text-[13px] font-medium text-[#777] transition-colors hover:text-[#c5f82a]">About me</a>
-        <a href="#projects" className="text-[13px] font-medium text-[#777] transition-colors hover:text-[#c5f82a]">Projects</a>
-        <a href="#skills" className="text-[13px] font-medium text-[#777] transition-colors hover:text-[#c5f82a]">Skills</a>
+        <a href="#home" className="text-[13px] font-medium text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-110">Home</a>
+        <a href="#about" className="text-[13px] font-medium text-[#777] transition-all duration-300 hover:text-[#c5f82a] hover:scale-110">About me</a>
+        <a href="#projects" className="text-[13px] font-medium text-[#777] transition-all duration-300 hover:text-[#c5f82a] hover:scale-110">Projects</a>
+        <a href="#skills" className="text-[13px] font-medium text-[#777] transition-all duration-300 hover:text-[#c5f82a] hover:scale-110">Skills</a>
       </div>
 
       {/* Contact Button */}
       <a
         href="#contact"
-        className="hidden rounded-full border border-[#c5f82a] px-6 py-2 text-[13px] font-medium text-[#c5f82a] transition-all duration-300 hover:bg-[#c5f82a] hover:text-black md:inline-flex"
+        className="hidden rounded-full border border-[#c5f82a] px-6 py-2 text-[13px] font-medium text-[#c5f82a] transition-all duration-300 hover:bg-[#c5f82a] hover:text-black hover:scale-105 hover:shadow-lg hover:shadow-[#c5f82a]/25 active:scale-95 md:inline-flex"
       >
         Contact Me
       </a>

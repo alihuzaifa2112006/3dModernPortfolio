@@ -28,20 +28,22 @@ const Hero: React.FC = () => {
           ref={headingRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative z-[15] font-black italic leading-[0.95] tracking-[-0.02em] text-white uppercase will-change-transform"
+          className="relative z-[15] font-black italic leading-[0.92] tracking-[-0.03em] text-white uppercase will-change-transform"
           style={{
-            fontSize: 'clamp(2.2rem, 5.2vw, 5rem)',
+            fontSize: 'clamp(2.6rem, 6vw, 5.8rem)',
             WebkitTextStroke: '1.5px rgba(0,0,0,0.7)',
             paintOrder: 'stroke fill',
             transition: 'transform 0.15s ease-out',
             transformStyle: 'preserve-3d',
           }}
         >
-          <span className="block">BUILDING MODERN</span>
-          <span className="mt-2 block pl-6 md:pl-12">
-            <span className="not-italic">&#128293;</span>WEB APPS WITH
+          <span className="block">TURNING IDEAS INTO</span>
+          <span className="mt-2 block">
+            <span className="text-[#c5f82a]">HIGH-IMPACT</span> WEB
           </span>
-          <span className="mt-2 block">REACT & MERN STACK</span>
+          <span className="mt-2 block">
+            APPLICATIONS <span className="not-italic text-[#c5f82a]">&lt;/&gt;</span>
+          </span>
         </h1>
 
         {/* Content below heading */}
@@ -56,9 +58,9 @@ const Hero: React.FC = () => {
             <div className="mt-8 flex items-center gap-5">
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 rounded-full bg-[#c5f82a] py-2.5 pr-7 pl-2.5 text-[13px] font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#c5f82a] py-2.5 pr-7 pl-2.5 text-[13px] font-semibold text-black transition-all duration-300 hover:bg-[#d4ff4a] hover:scale-105 hover:shadow-lg hover:shadow-[#c5f82a]/25 active:scale-95"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10 transition-transform duration-300 group-hover:rotate-12">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                   </svg>
@@ -67,10 +69,10 @@ const Hero: React.FC = () => {
               </a>
               <a
                 href="#"
-                className="group inline-flex items-center gap-3 text-[13px] font-medium text-white transition-colors hover:text-[#c5f82a]"
+                className="group inline-flex items-center gap-3 text-[13px] font-medium text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-105 active:scale-95"
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#444] transition-colors group-hover:border-[#c5f82a]">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#444] transition-all duration-300 group-hover:border-[#c5f82a] group-hover:shadow-md group-hover:shadow-[#c5f82a]/20">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="transition-transform duration-300 group-hover:translate-x-1">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </span>
@@ -129,7 +131,7 @@ const Hero: React.FC = () => {
               href="https://www.linkedin.com/in/ali-huzaifa-92137a292"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-[#333] text-[11px] font-semibold text-white transition-all hover:border-[#c5f82a] hover:text-[#c5f82a]"
+              className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-[#333] text-[11px] font-semibold text-white transition-all duration-300 hover:border-[#c5f82a] hover:text-[#c5f82a] hover:scale-110 hover:shadow-md hover:shadow-[#c5f82a]/20 active:scale-95"
             >
               In.
             </a>

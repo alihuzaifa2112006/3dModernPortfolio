@@ -1,4 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+
+const useScrollReveal = () => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.unobserve(el) } },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, isVisible }
+}
 import cycloImg from '../assets/cyclo.png'
 import rentImg from '../assets/rent.png'
 import fitTrackImg from '../assets/fit.jpeg'
@@ -7,6 +25,10 @@ import hireImg from '../assets/hire.jpeg'
 import otcoImg from '../assets/otco.png'
 import resumeMainImg from '../assets/resume-craft.png'
 import resumeGal1 from '../assets/resume-craft-1.png'
+import codeMatricsImg from '../assets/codematrics.png'
+import codeMatricsGal1 from '../assets/codematrics-1.png'
+import codeMatricsGal2 from '../assets/codematrics-2.png'
+import codeMatricsGal3 from '../assets/codematrics-3.png'
 
 interface Project {
   title: string
@@ -40,6 +62,16 @@ const heroProject: Project = {
 }
 
 const projects: Project[] = [
+  {
+    title: 'CodeMatrics | Developer Productivity',
+    description:
+      'A Next.js-based platform where developers can track their coding hours, manage tasks, and get AI-driven insights to analyze and improve their coding performance. The platform combines productivity tools, code analytics, and AI features with a MongoDB backend to help developers optimize their workflow efficiently.',
+    tech: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'AI', 'MongoDB'],
+    link: 'https://codematrics-sable.vercel.app/',
+    image: codeMatricsImg,
+    featured: true,
+    gallery: [codeMatricsGal1, codeMatricsGal2, codeMatricsGal3],
+  },
   {
     title: 'Cyclo Cloud | ERP System',
     description:
@@ -127,6 +159,20 @@ const Projects: React.FC = () => {
     ? [selected.image, ...selected.gallery]
     : null
 
+  const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    card.style.transform = `perspective(800px) rotateY(${x * 8}deg) rotateX(${y * -8}deg) scale(1.02)`
+  }, [])
+
+  const handleCardMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)'
+  }, [])
+
+  const heroReveal = useScrollReveal()
+
   return (
     <section id="projects" className="bg-[#080a13] px-6 py-20 md:px-12 lg:px-16">
       <div className="mx-auto max-w-[1300px]">
@@ -143,8 +189,17 @@ const Projects: React.FC = () => {
 
         {/* Hero Project — Resume Craft */}
         <div
+          ref={heroReveal.ref}
           onClick={() => openModal(heroProject)}
-          className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] transition-all duration-300 hover:border-[#00d4ff]/40"
+          onMouseMove={handleCardMouseMove}
+          onMouseLeave={handleCardMouseLeave}
+          className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
+          style={{
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.8s ease-out, translate 0.8s ease-out',
+            opacity: heroReveal.isVisible ? 1 : 0,
+            translate: heroReveal.isVisible ? '0 0' : '0 60px',
+          }}
         >
           <div className="absolute top-4 left-4 z-20 rounded-full bg-[#c5f82a] px-3 py-1 text-[10px] font-bold text-black uppercase">
             Final Project
@@ -221,43 +276,15 @@ const Projects: React.FC = () => {
               featuredProjects.length % 2 !== 0 && index === featuredProjects.length - 1
 
             return (
-              <div
+              <FeaturedCard
                 key={index}
-                onClick={() => openModal(project)}
-                className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] transition-all duration-300 hover:border-[#1a3050] ${isLastOdd ? 'md:col-span-2' : ''}`}
-              >
-                <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
-                  Featured
-                </div>
-
-                <div className={`relative overflow-hidden ${isLastOdd ? 'h-52 md:h-64' : 'h-52 md:h-56'}`}>
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
-                  <h3 className="absolute bottom-4 left-6 text-xl font-bold text-white">
-                    {project.title}
-                  </h3>
-                </div>
-
-                <div className="px-6 pt-2 pb-6">
-                  <p className="text-[13px] leading-[1.7] text-[#8892a4]">
-                    {project.description}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {project.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                project={project}
+                index={index}
+                isLastOdd={isLastOdd}
+                onOpen={openModal}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+              />
             )
           })}
         </div>
@@ -265,38 +292,14 @@ const Projects: React.FC = () => {
         {/* Other Projects Row */}
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
           {otherProjects.map((project, index) => (
-            <div
+            <OtherCard
               key={index}
-              onClick={() => openModal(project)}
-              className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] transition-all duration-300 hover:border-[#1a3050]"
-            >
-              <div className="relative h-44 overflow-hidden md:h-48">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
-                <h3 className="absolute bottom-4 left-6 text-lg font-bold text-white">
-                  {project.title}
-                </h3>
-              </div>
-              <div className="px-6 pt-2 pb-6">
-                <p className="text-[13px] leading-[1.7] text-[#8892a4]">
-                  {project.description}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {project.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+              project={project}
+              index={index}
+              onOpen={openModal}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            />
           ))}
         </div>
       </div>
@@ -434,6 +437,121 @@ const Projects: React.FC = () => {
         </div>
       )}
     </section>
+  )
+}
+
+interface CardProps {
+  project: Project
+  index: number
+  onOpen: (p: Project) => void
+  onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void
+  onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => void
+}
+
+const FeaturedCard: React.FC<CardProps & { isLastOdd: boolean }> = ({
+  project, index, isLastOdd, onOpen, onMouseMove, onMouseLeave,
+}) => {
+  const { ref, isVisible } = useScrollReveal()
+
+  return (
+    <div
+      ref={ref}
+      onClick={() => onOpen(project)}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-lg hover:shadow-[#00d4ff]/5 ${isLastOdd ? 'md:col-span-2' : ''}`}
+      style={{
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.6s ease-out, translate 0.6s ease-out',
+        opacity: isVisible ? 1 : 0,
+        translate: isVisible ? '0 0' : '0 50px',
+        transitionDelay: `${index * 150}ms`,
+      }}
+    >
+      <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
+        Featured
+      </div>
+
+      <div className={`relative overflow-hidden ${isLastOdd ? 'h-52 md:h-64' : 'h-52 md:h-56'}`}>
+        <img
+          src={project.image}
+          alt={project.title}
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
+        <h3 className="absolute bottom-4 left-6 text-xl font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
+          {project.title}
+        </h3>
+      </div>
+
+      <div className="px-6 pt-2 pb-6">
+        <p className="text-[13px] leading-[1.7] text-[#8892a4]">
+          {project.description}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {project.tech.map((t, i) => (
+            <span
+              key={t}
+              className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
+              style={{ transitionDelay: `${i * 50}ms` }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const OtherCard: React.FC<CardProps> = ({
+  project, index, onOpen, onMouseMove, onMouseLeave,
+}) => {
+  const { ref, isVisible } = useScrollReveal()
+
+  return (
+    <div
+      ref={ref}
+      onClick={() => onOpen(project)}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-lg hover:shadow-[#00d4ff]/5"
+      style={{
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.6s ease-out, translate 0.6s ease-out',
+        opacity: isVisible ? 1 : 0,
+        translate: isVisible ? '0 0' : '0 50px',
+        transitionDelay: `${index * 150}ms`,
+      }}
+    >
+      <div className="relative h-44 overflow-hidden md:h-48">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
+        <h3 className="absolute bottom-4 left-6 text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
+          {project.title}
+        </h3>
+      </div>
+      <div className="px-6 pt-2 pb-6">
+        <p className="text-[13px] leading-[1.7] text-[#8892a4]">
+          {project.description}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {project.tech.map((t, i) => (
+            <span
+              key={t}
+              className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
+              style={{ transitionDelay: `${i * 50}ms` }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
