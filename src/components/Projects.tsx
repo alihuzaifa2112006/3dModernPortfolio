@@ -29,6 +29,8 @@ import codeMatricsImg from '../assets/codematrics.png'
 import codeMatricsGal1 from '../assets/codematrics-1.png'
 import codeMatricsGal2 from '../assets/codematrics-2.png'
 import codeMatricsGal3 from '../assets/codematrics-3.png'
+import webchatImg from '../assets/webchat.png'
+import webchatGal1 from '../assets/webchat-1.png'
 
 interface Project {
   title: string
@@ -42,24 +44,44 @@ interface Project {
   highlights?: string[]
 }
 
-const heroProject: Project = {
-  title: 'Resume Craft | AI Resume Builder',
-  description:
-    'An AI-powered resume builder designed to help users create professional, ATS-friendly resumes easily and intelligently. Resume Craft doesn\'t just create resumes — it helps users improve and structure their content using AI assistance powered by Google\'s Gemini API. Features include AI resume generation, intelligent content improvement & grammar correction, AI-based resume analysis & optimization, secure authentication, modern responsive UI, and a real-time resume editing experience.',
-  tech: ['Next.js', 'Gemini AI', 'PostgreSQL', 'Tailwind CSS', 'TypeScript'],
-  link: 'https://resumecraft-ai-two.vercel.app/',
-  image: resumeMainImg,
-  featured: true,
-  hero: true,
-  gallery: [resumeGal1],
-  highlights: [
-    'AI-powered resume generation with Gemini API',
-    'Smart content improvement & grammar correction',
-    'ATS-friendly templates & optimization',
-    'Secure user authentication system',
-    'Real-time editing with live preview',
-  ],
-}
+const heroProjects: Project[] = [
+  {
+    title: 'WebChat | Real-Time Chat App',
+    description:
+      'A full-stack real-time chat application built to enable seamless, instant communication. WebChat features real-time messaging powered by WebSockets, contact management with online/offline status indicators, and a clean responsive UI built with modern components. The platform includes a secure authentication flow and is deployed for production-grade performance.',
+    tech: ['Next.js', 'MongoDB', 'Socket.io', 'shadcn/ui', 'TypeScript'],
+    link: 'https://webchatapphuzaifa.vercel.app/',
+    image: webchatGal1,
+    featured: true,
+    hero: true,
+    gallery: [webchatImg],
+    highlights: [
+      'Real-time messaging with WebSocket/Socket.io',
+      'Online/offline status & contact list',
+      'Instant message delivery & updates',
+      'Modern authentication flow',
+      'Clean, responsive UI with shadcn/ui',
+    ],
+  },
+  {
+    title: 'Resume Craft | AI Resume Builder',
+    description:
+      'An AI-powered resume builder designed to help users create professional, ATS-friendly resumes easily and intelligently. Resume Craft doesn\'t just create resumes — it helps users improve and structure their content using AI assistance powered by Google\'s Gemini API. Features include AI resume generation, intelligent content improvement & grammar correction, AI-based resume analysis & optimization, secure authentication, modern responsive UI, and a real-time resume editing experience.',
+    tech: ['Next.js', 'Gemini AI', 'PostgreSQL', 'Tailwind CSS', 'TypeScript'],
+    link: 'https://resumecraft-ai-two.vercel.app/',
+    image: resumeMainImg,
+    featured: true,
+    hero: true,
+    gallery: [resumeGal1],
+    highlights: [
+      'AI-powered resume generation with Gemini API',
+      'Smart content improvement & grammar correction',
+      'ATS-friendly templates & optimization',
+      'Secure user authentication system',
+      'Real-time editing with live preview',
+    ],
+  },
+]
 
 const projects: Project[] = [
   {
@@ -171,8 +193,6 @@ const Projects: React.FC = () => {
     e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)'
   }, [])
 
-  const heroReveal = useScrollReveal()
-
   return (
     <section id="projects" className="bg-[#080a13] px-6 py-20 md:px-12 lg:px-16">
       <div className="mx-auto max-w-[1300px]">
@@ -187,87 +207,17 @@ const Projects: React.FC = () => {
           </p>
         </div>
 
-        {/* Hero Project — Resume Craft */}
-        <div
-          ref={heroReveal.ref}
-          onClick={() => openModal(heroProject)}
-          onMouseMove={handleCardMouseMove}
-          onMouseLeave={handleCardMouseLeave}
-          className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
-          style={{
-            transformStyle: 'preserve-3d',
-            transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.8s ease-out, translate 0.8s ease-out',
-            opacity: heroReveal.isVisible ? 1 : 0,
-            translate: heroReveal.isVisible ? '0 0' : '0 60px',
-          }}
-        >
-          <div className="absolute top-4 left-4 z-20 rounded-full bg-[#c5f82a] px-3 py-1 text-[10px] font-bold text-black uppercase">
-            Final Project
-          </div>
-          <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
-            AI Powered
-          </div>
-
-          <div className="flex flex-col md:flex-row">
-            {/* Image */}
-            <div className="relative h-64 overflow-hidden md:h-auto md:w-1/2">
-              <img
-                src={heroProject.image}
-                alt={heroProject.title}
-                className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d1117]/80 max-md:hidden" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent md:hidden" />
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-col justify-center p-8 md:w-1/2">
-              <h3 className="text-2xl font-bold text-white md:text-3xl">{heroProject.title}</h3>
-
-              <p className="mt-4 text-[13px] leading-[1.8] text-[#8892a4]">
-                {heroProject.description}
-              </p>
-
-              {heroProject.highlights && (
-                <ul className="mt-4 space-y-2">
-                  {heroProject.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2 text-[12px] text-[#7eb8da]">
-                      <span className="mt-0.5 text-[#c5f82a]">&#10003;</span>
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {heroProject.tech.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-5 flex items-center gap-4">
-                <a
-                  href="https://resumecraft-ai-two.vercel.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#e53e6b] px-5 py-2.5 text-[12px] font-semibold text-white transition-all hover:bg-[#ff4d7d]"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                  </svg>
-                  Live Demo
-                </a>
-                <span className="text-[12px] text-[#555]">Click card to view gallery &rarr;</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Hero Projects */}
+        {heroProjects.map((hp, hIdx) => (
+          <HeroCard
+            key={hIdx}
+            project={hp}
+            index={hIdx}
+            onOpen={openModal}
+            onMouseMove={handleCardMouseMove}
+            onMouseLeave={handleCardMouseLeave}
+          />
+        ))}
 
         {/* Featured Row */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -446,6 +396,111 @@ interface CardProps {
   onOpen: (p: Project) => void
   onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void
   onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => void
+}
+
+const heroBadges: Record<number, { left: string; right: string }> = {
+  0: { left: 'Top Project', right: 'Real-Time' },
+  1: { left: 'Final Project', right: 'AI Powered' },
+}
+
+const HeroCard: React.FC<CardProps> = ({
+  project, index, onOpen, onMouseMove, onMouseLeave,
+}) => {
+  const { ref, isVisible } = useScrollReveal()
+  const badges = heroBadges[index] || { left: 'Featured', right: 'Full Stack' }
+
+  return (
+    <div
+      ref={ref}
+      onClick={() => onOpen(project)}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
+      style={{
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.8s ease-out, translate 0.8s ease-out',
+        opacity: isVisible ? 1 : 0,
+        translate: isVisible ? '0 0' : '0 60px',
+        transitionDelay: `${index * 200}ms`,
+      }}
+    >
+      <div className="absolute top-4 left-4 z-20 rounded-full bg-[#c5f82a] px-3 py-1 text-[10px] font-bold text-black uppercase">
+        {badges.left}
+      </div>
+      <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
+        {badges.right}
+      </div>
+
+      <div className="flex flex-col md:flex-row">
+        <div className="relative h-64 overflow-hidden bg-[#0d1117] md:h-auto md:min-h-[320px] md:w-1/2">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+          {project.gallery && project.gallery.length > 0 && (
+            <img
+              src={project.gallery[0]}
+              alt={`${project.title} preview`}
+              className="absolute bottom-3 right-3 z-10 w-[45%] rounded-lg border-2 border-[#1a2035] shadow-2xl shadow-black/50 transition-transform duration-500 group-hover:scale-105"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d1117]/80 max-md:hidden" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent md:hidden" />
+        </div>
+
+        <div className="flex flex-col justify-center p-8 md:w-1/2">
+          <h3 className="text-2xl font-bold text-white md:text-3xl">{project.title}</h3>
+
+          <p className="mt-4 text-[13px] leading-[1.8] text-[#8892a4]">
+            {project.description}
+          </p>
+
+          {project.highlights && (
+            <ul className="mt-4 space-y-2">
+              {project.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2 text-[12px] text-[#7eb8da]">
+                  <span className="mt-0.5 text-[#c5f82a]">&#10003;</span>
+                  {h}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {project.tech.map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 flex items-center gap-4">
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-2 rounded-lg bg-[#e53e6b] px-5 py-2.5 text-[12px] font-semibold text-white transition-all hover:bg-[#ff4d7d]"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+                Live Demo
+              </a>
+            )}
+            {project.gallery && (
+              <span className="text-[12px] text-[#555]">Click card to view gallery &rarr;</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const FeaturedCard: React.FC<CardProps & { isLastOdd: boolean }> = ({

@@ -20,7 +20,38 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <section id="home" className="relative bg-[#0a0a0a]" style={{ minHeight: '100vh' }}>
+    <section id="home" className="relative overflow-hidden bg-[#0a0a0a]" style={{ minHeight: '100vh' }}>
+      {/* Background Effects */}
+      <div className="pointer-events-none absolute inset-0">
+        {/* Gradient orbs */}
+        <div className="absolute -top-[300px] -left-[200px] h-[600px] w-[600px] rounded-full bg-[#c5f82a]/[0.04] blur-[120px]" />
+        <div className="absolute -right-[150px] top-[100px] h-[500px] w-[500px] rounded-full bg-[#7c5cfc]/[0.06] blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[30%] h-[400px] w-[400px] rounded-full bg-[#00d4ff]/[0.03] blur-[100px]" />
+
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        {/* Radial vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0a0a0a_70%)]" />
+
+        {/* Floating dots */}
+        <div className="absolute top-[15%] left-[10%] h-1 w-1 animate-pulse rounded-full bg-[#c5f82a]/40" />
+        <div className="absolute top-[25%] left-[75%] h-1.5 w-1.5 animate-pulse rounded-full bg-[#7c5cfc]/40" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-[60%] left-[20%] h-1 w-1 animate-pulse rounded-full bg-[#00d4ff]/40" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[45%] left-[85%] h-1 w-1 animate-pulse rounded-full bg-[#c5f82a]/30" style={{ animationDelay: '0.5s' }} />
+        <div className="absolute top-[70%] left-[55%] h-1.5 w-1.5 animate-pulse rounded-full bg-[#7c5cfc]/30" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-[10%] left-[50%] h-1 w-1 animate-pulse rounded-full bg-[#00d4ff]/30" style={{ animationDelay: '3s' }} />
+
+        {/* Subtle noise texture */}
+        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
+      </div>
+
       <div className="relative mx-auto max-w-[1300px] px-6 pt-10 pb-0 md:px-12 lg:px-16 lg:pt-16">
 
         {/* Heading */}
@@ -68,7 +99,8 @@ const Hero: React.FC = () => {
                 Let's Talk
               </a>
               <a
-                href="#"
+                href="/Ali Huzaifa CV.pdf"
+                download="Ali Huzaifa CV.pdf"
                 className="group inline-flex items-center gap-3 text-[13px] font-medium text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-105 active:scale-95"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#444] transition-all duration-300 group-hover:border-[#c5f82a] group-hover:shadow-md group-hover:shadow-[#c5f82a]/20">
