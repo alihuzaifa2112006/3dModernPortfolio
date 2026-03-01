@@ -31,6 +31,10 @@ import codeMatricsGal2 from '../assets/codematrics-2.png'
 import codeMatricsGal3 from '../assets/codematrics-3.png'
 import webchatImg from '../assets/webchat.png'
 import webchatGal1 from '../assets/webchat-1.png'
+import projectioImg from '../assets/projectio.png'
+import projectioGal1 from '../assets/projectio-1.png'
+import projectioGal2 from '../assets/projectio-2.png'
+import projectioGal3 from '../assets/projectio-3.png'
 
 interface Project {
   title: string
@@ -84,6 +88,16 @@ const heroProjects: Project[] = [
 ]
 
 const projects: Project[] = [
+  {
+    title: 'Projectio | SaaS Project Management',
+    description:
+      'A full-stack SaaS project management platform where managers can create workspaces, add team members, assign projects, and track progress — replicating a real company workflow. Features role-based access control with Manager and Employee roles, JWT-secured authentication, dashboard analytics, team & employee management, and a clean scalable database design.',
+    tech: ['Next.js', 'MongoDB', 'JWT', 'Mongoose', 'Tailwind CSS'],
+    link: 'https://projectio-ten.vercel.app/',
+    image: projectioImg,
+    featured: true,
+    gallery: [projectioGal1, projectioGal2, projectioGal3],
+  },
   {
     title: 'CodeMatrics | Developer Productivity',
     description:
@@ -149,9 +163,9 @@ const projects: Project[] = [
   },
 ]
 
+const bentoSpans = [2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2]
+
 const Projects: React.FC = () => {
-  const featuredProjects = projects.filter((p) => p.featured)
-  const otherProjects = projects.filter((p) => !p.featured)
 
   const [selected, setSelected] = useState<Project | null>(null)
   const [visible, setVisible] = useState(false)
@@ -219,33 +233,14 @@ const Projects: React.FC = () => {
           />
         ))}
 
-        {/* Featured Row */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {featuredProjects.map((project, index) => {
-            const isLastOdd =
-              featuredProjects.length % 2 !== 0 && index === featuredProjects.length - 1
-
-            return (
-              <FeaturedCard
-                key={index}
-                project={project}
-                index={index}
-                isLastOdd={isLastOdd}
-                onOpen={openModal}
-                onMouseMove={handleCardMouseMove}
-                onMouseLeave={handleCardMouseLeave}
-              />
-            )
-          })}
-        </div>
-
-        {/* Other Projects Row */}
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {otherProjects.map((project, index) => (
-            <OtherCard
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {projects.map((project, index) => (
+            <BentoCard
               key={index}
               project={project}
               index={index}
+              span={bentoSpans[index % bentoSpans.length]}
               onOpen={openModal}
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
@@ -503,10 +498,12 @@ const HeroCard: React.FC<CardProps> = ({
   )
 }
 
-const FeaturedCard: React.FC<CardProps & { isLastOdd: boolean }> = ({
-  project, index, isLastOdd, onOpen, onMouseMove, onMouseLeave,
+const BentoCard: React.FC<CardProps & { span: number }> = ({
+  project, index, span, onOpen, onMouseMove, onMouseLeave,
 }) => {
   const { ref, isVisible } = useScrollReveal()
+  const isWide = span === 2
+  const num = String(index + 1).padStart(2, '0')
 
   return (
     <div
@@ -514,98 +511,125 @@ const FeaturedCard: React.FC<CardProps & { isLastOdd: boolean }> = ({
       onClick={() => onOpen(project)}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-lg hover:shadow-[#00d4ff]/5 ${isLastOdd ? 'md:col-span-2' : ''}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-[0_8px_32px_rgba(0,212,255,0.08)] ${isWide ? 'md:col-span-2' : ''}`}
       style={{
         transformStyle: 'preserve-3d',
-        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.6s ease-out, translate 0.6s ease-out',
+        transition: 'transform 0.2s ease-out, border-color 0.4s, box-shadow 0.4s, opacity 0.6s ease-out, translate 0.6s ease-out',
         opacity: isVisible ? 1 : 0,
         translate: isVisible ? '0 0' : '0 50px',
-        transitionDelay: `${index * 150}ms`,
+        transitionDelay: `${index * 120}ms`,
       }}
     >
-      <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
-        Featured
+      {/* Number badge */}
+      <div className="absolute top-4 left-4 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-[#1e2d3d] bg-[#0a1929]/80 text-[11px] font-bold text-[#00d4ff] backdrop-blur-sm">
+        {num}
       </div>
 
-      <div className={`relative overflow-hidden ${isLastOdd ? 'h-52 md:h-64' : 'h-52 md:h-56'}`}>
-        <img
-          src={project.image}
-          alt={project.title}
-          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
-        <h3 className="absolute bottom-4 left-6 text-xl font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
-          {project.title}
-        </h3>
-      </div>
-
-      <div className="px-6 pt-2 pb-6">
-        <p className="text-[13px] leading-[1.7] text-[#8892a4]">
-          {project.description}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {project.tech.map((t, i) => (
-            <span
-              key={t}
-              className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
-              style={{ transitionDelay: `${i * 50}ms` }}
-            >
-              {t}
-            </span>
-          ))}
+      {/* Live indicator */}
+      {project.link && (
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 rounded-full border border-[#1a3a2a] bg-[#0a1929]/80 px-2.5 py-1 backdrop-blur-sm">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22c55e] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22c55e]" />
+          </span>
+          <span className="text-[10px] font-semibold text-[#22c55e]">Live</span>
         </div>
-      </div>
-    </div>
-  )
-}
+      )}
 
-const OtherCard: React.FC<CardProps> = ({
-  project, index, onOpen, onMouseMove, onMouseLeave,
-}) => {
-  const { ref, isVisible } = useScrollReveal()
+      {isWide ? (
+        /* Wide card — horizontal layout */
+        <div className="flex flex-col md:flex-row">
+          <div className="relative h-52 overflow-hidden md:h-auto md:min-h-[260px] md:w-[45%]">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d1117]/90 max-md:hidden" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent md:hidden" />
+          </div>
 
-  return (
-    <div
-      ref={ref}
-      onClick={() => onOpen(project)}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-lg hover:shadow-[#00d4ff]/5"
-      style={{
-        transformStyle: 'preserve-3d',
-        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.6s ease-out, translate 0.6s ease-out',
-        opacity: isVisible ? 1 : 0,
-        translate: isVisible ? '0 0' : '0 50px',
-        transitionDelay: `${index * 150}ms`,
-      }}
-    >
-      <div className="relative h-44 overflow-hidden md:h-48">
-        <img
-          src={project.image}
-          alt={project.title}
-          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
-        <h3 className="absolute bottom-4 left-6 text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
-          {project.title}
-        </h3>
-      </div>
-      <div className="px-6 pt-2 pb-6">
-        <p className="text-[13px] leading-[1.7] text-[#8892a4]">
-          {project.description}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {project.tech.map((t, i) => (
-            <span
-              key={t}
-              className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
-              style={{ transitionDelay: `${i * 50}ms` }}
-            >
-              {t}
-            </span>
-          ))}
+          <div className="flex flex-1 flex-col justify-center p-6 md:p-8">
+            <h3 className="text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-1 md:text-xl">
+              {project.title}
+            </h3>
+            <p className="mt-3 text-[13px] leading-[1.7] text-[#8892a4]">
+              {project.description}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {project.tech.map((t, i) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="mt-4 inline-flex w-fit items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-4 py-2 text-[11px] font-semibold text-[#00d4ff] transition-all duration-300 hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+                View Project
+              </a>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Normal card — vertical layout */
+        <>
+          <div className="relative h-44 overflow-hidden md:h-48">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
+            <h3 className="absolute bottom-4 left-6 text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
+              {project.title}
+            </h3>
+          </div>
+
+          <div className="px-6 pt-2 pb-6">
+            <p className="mt-1 line-clamp-3 text-[13px] leading-[1.7] text-[#8892a4]">
+              {project.description}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {project.tech.map((t, i) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
+                  style={{ transitionDelay: `${i * 50}ms` }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="mt-4 inline-flex items-center gap-2 text-[11px] font-semibold text-[#00d4ff] transition-all duration-300 hover:text-[#4de5ff]"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+                View Project
+              </a>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
