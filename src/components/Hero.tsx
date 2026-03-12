@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import profileImg from '../assets/profile.jpg'
+import { BackgroundRippleEffect } from './ui/background-ripple-effect'
 
 const Hero: React.FC = () => {
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -20,25 +21,13 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <section id="home" className="relative overflow-hidden bg-[#0a0a0a]" style={{ minHeight: '100vh' }}>
-      {/* Background Effects */}
-      <div className="pointer-events-none absolute inset-0">
-        {/* Gradient orbs */}
-        <div className="absolute -top-[300px] -left-[200px] h-[600px] w-[600px] rounded-full bg-[#c5f82a]/[0.04] blur-[120px]" />
-        <div className="absolute -right-[150px] top-[100px] h-[500px] w-[500px] rounded-full bg-[#7c5cfc]/[0.06] blur-[100px]" />
-        <div className="absolute bottom-[20%] left-[30%] h-[400px] w-[400px] rounded-full bg-[#00d4ff]/[0.03] blur-[100px]" />
-
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-
-        {/* Radial vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0a0a0a_70%)]" />
+    <section id="home" className="relative overflow-hidden" style={{ minHeight: '100vh' }}>
+      {/* Background Effects - minimal, no black vignette */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {/* Subtle gradient orbs - very light */}
+        <div className="absolute -top-[300px] -left-[200px] h-[600px] w-[600px] rounded-full bg-[#c5f82a]/5 blur-[120px]" />
+        <div className="absolute -right-[150px] top-[100px] h-[500px] w-[500px] rounded-full bg-[#7c5cfc]/6 blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[30%] h-[400px] w-[400px] rounded-full bg-[#00d4ff]/4 blur-[100px]" />
 
         {/* Floating dots */}
         <div className="absolute top-[15%] left-[10%] h-1 w-1 animate-pulse rounded-full bg-[#c5f82a]/40" />
@@ -51,6 +40,9 @@ const Hero: React.FC = () => {
         {/* Subtle noise texture */}
         <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
       </div>
+
+      {/* Background Ripple Effect - full coverage, no black areas */}
+      <BackgroundRippleEffect rows={28} cols={45} cellSize={48} />
 
       <div className="relative mx-auto max-w-[1300px] px-6 pt-10 pb-0 md:px-12 lg:px-16 lg:pt-16">
 
@@ -166,6 +158,19 @@ const Hero: React.FC = () => {
               className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-[#333] text-[11px] font-semibold text-white transition-all duration-300 hover:border-[#c5f82a] hover:text-[#c5f82a] hover:scale-110 hover:shadow-md hover:shadow-[#c5f82a]/20 active:scale-95"
             >
               In.
+            </a>
+            <a
+              href="https://www.instagram.com/alihuzaifa2112006/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-[#333] text-white transition-all duration-300 hover:border-[#c5f82a] hover:text-[#c5f82a] hover:scale-110 hover:shadow-md hover:shadow-[#c5f82a]/20 active:scale-95"
+              aria-label="Instagram"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
             </a>
           </div>
           <div className="h-px w-36 bg-[#444]" />

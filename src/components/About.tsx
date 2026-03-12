@@ -12,7 +12,7 @@ const About: React.FC = () => {
           </h2>
           <div className="hidden h-px flex-1 bg-[#ddd] md:block" />
           <p className="text-lg font-medium text-[#555] md:text-xl">
-            a creative and driven web developer
+            specializing in React, Next.js & MERN stack
           </p>
         </div>
 
@@ -24,7 +24,7 @@ const About: React.FC = () => {
                 <img src={profileImg} alt="About" className="h-full w-full object-cover object-top" />
               </div>
               <div className="absolute -right-4 -bottom-4 rounded-2xl bg-[#c5f82a] px-5 py-3 shadow-lg">
-                <span className="text-2xl font-black">1.5+</span>
+                <span className="text-2xl font-black">2+</span>
                 <span className="block text-xs font-semibold">Years Exp.</span>
               </div>
             </div>
@@ -34,21 +34,17 @@ const About: React.FC = () => {
           <div className="w-full lg:w-3/5">
             <p className="mb-3 text-[12px] font-semibold tracking-[0.15em] text-[#999] uppercase">About Me</p>
             <h3 className="text-2xl font-black leading-tight sm:text-3xl">
-              Passionate about creating <span className="text-[#c5f82a]">beautiful</span> digital experiences
+              Full/MERN Stack Engineer | <span className="text-[#c5f82a]">Frontend Specialist</span>
             </h3>
             <p className="mt-5 max-w-xl text-[15px] leading-[1.8] text-[#666]">
-            I am a motivated and self-driven web developer with hands-on experience in frontend and full-stack development. My journey started with HTML, CSS, and JavaScript, and quickly evolved into building dynamic applications using React.js and modern frameworks.
-
-I enjoy solving real-world problems through code and continuously improving my skills in MERN Stack development. Currently, I am expanding my knowledge in backend development, APIs, databases, and scalable application architecture.
-
-I believe in consistent learning, clean coding practices, and building projects that reflect both creativity and technical strength.
+              Ali Huzaifa is a MERN-stack focused engineer specializing in modern frontend development using React and Next.js. With 2 years of experience in digital product engineering, he builds responsive, scalable web interfaces supported by Node.js and Express.js backends and MongoDB-driven data layers. His development approach emphasizes modular architecture, clean UI implementation and maintainable code structures.
             </p>
 
             {/* Stats */}
             <div className="mt-10 flex flex-wrap gap-10">
               {[
                 { num: '8+', label: 'Projects Done' },
-                { num: '1.5+', label: 'Years Experience' },
+                { num: '2+', label: 'Years Experience' },
                 // { num: '5+', label: 'Happy Clients' },
               ].map((stat) => (
                 <div key={stat.label}>
@@ -60,7 +56,7 @@ I believe in consistent learning, clean coding practices, and building projects 
 
             {/* Skills */}
             <div className="mt-8 flex flex-wrap gap-2" style={{ perspective: '600px' }}>
-              {['React', 'TypeScript', 'MongoDB', 'Tailwind CSS', 'Node.js', 'Git'].map((skill) => (
+              {['Next Js', 'React', 'Node.js', 'Express', 'MongoDB', 'SQL', 'Python'].map((skill) => (
                 <span
                   key={skill}
                   className="inline-block cursor-default rounded-full border border-[#e5e5e5] bg-[#f5f5f5] px-4 py-2 text-[13px] font-medium text-[#333] transition-all duration-300 hover:scale-110 hover:border-[#c5f82a] hover:bg-[#c5f82a]/10 hover:text-black hover:shadow-lg hover:shadow-[#c5f82a]/20"
