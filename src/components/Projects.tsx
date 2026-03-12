@@ -35,12 +35,15 @@ import projectioImg from '../assets/projectio.png'
 import projectioGal1 from '../assets/projectio-1.png'
 import projectioGal2 from '../assets/projectio-2.png'
 import projectioGal3 from '../assets/projectio-3.png'
+import genifyaiImg from '../assets/genifyai.png'
+import genifyaiDashboard from '../assets/genifyai-dashboard.png'
 
 interface Project {
   title: string
   description: string
   tech: string[]
   link?: string
+  github?: string
   image: string
   featured: boolean
   hero?: boolean
@@ -50,15 +53,35 @@ interface Project {
 
 const heroProjects: Project[] = [
   {
+    title: 'GenifyAI | AI SaaS Platform',
+    description:
+      'An AI-powered SaaS platform designed to help creators and professionals generate content faster. With GenifyAI, users can create different types of AI-generated content from a single dashboard — captions for social media, professional emails, images from text prompts, and documents for blogs and articles. Features a clean SaaS dashboard with authentication and API usage limits with call tracking.',
+    tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini API'],
+    link: 'https://genifyai-xi.vercel.app/',
+    github: 'https://github.com/alihuzaifa2112006/genifyai',
+    image: genifyaiImg,
+    featured: true,
+    hero: true,
+    gallery: [genifyaiDashboard],
+    highlights: [
+      'AI Caption Generator for social media',
+      'AI Email Writer for professional emails',
+      'AI Image Generator from text prompts',
+      'AI Document Writer for blogs and articles',
+      'Clean SaaS dashboard with authentication',
+      'API usage limits with call tracking',
+    ],
+  },
+  {
     title: 'WebChat | Real-Time Chat App',
     description:
       'A full-stack real-time chat application built to enable seamless, instant communication. WebChat features real-time messaging powered by WebSockets, contact management with online/offline status indicators, and a clean responsive UI built with modern components. The platform includes a secure authentication flow and is deployed for production-grade performance.',
     tech: ['Next.js', 'MongoDB', 'Socket.io', 'shadcn/ui', 'TypeScript'],
     link: 'https://webchatapphuzaifa.vercel.app/',
-    image: webchatGal1,
+    image: webchatImg,
     featured: true,
     hero: true,
-    gallery: [webchatImg],
+    gallery: [webchatGal1],
     highlights: [
       'Real-time messaging with WebSocket/Socket.io',
       'Online/offline status & contact list',
@@ -163,7 +186,7 @@ const projects: Project[] = [
   },
 ]
 
-const bentoSpans = [2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2]
+const allProjects: Project[] = [...heroProjects, ...projects]
 
 const Projects: React.FC = () => {
 
@@ -208,39 +231,26 @@ const Projects: React.FC = () => {
   }, [])
 
   return (
-    <section id="projects" className="bg-[#080a13] px-6 py-20 md:px-12 lg:px-16">
+    <section id="projects" className="bg-[#0a0a0a] px-6 py-20 md:px-12 lg:px-16">
       <div className="mx-auto max-w-[1300px]">
         {/* Header */}
         <div className="mb-14 text-center">
           <h2 className="text-4xl font-black italic text-white md:text-5xl">
-            Featured <span className="text-[#00d4ff]">Projects</span>
+            Featured <span className="text-[#c5f82a]">Projects</span>
           </h2>
-          <div className="mx-auto mt-2 h-[2px] w-48 bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent" />
+          <div className="mx-auto mt-2 h-[2px] w-48 bg-gradient-to-r from-transparent via-[#c5f82a] to-transparent" />
           <p className="mt-4 text-sm italic text-[#666]">
             A showcase of my creative solutions and technical implementations
           </p>
         </div>
 
-        {/* Hero Projects */}
-        {heroProjects.map((hp, hIdx) => (
-          <HeroCard
-            key={hIdx}
-            project={hp}
-            index={hIdx}
-            onOpen={openModal}
-            onMouseMove={handleCardMouseMove}
-            onMouseLeave={handleCardMouseLeave}
-          />
-        ))}
-
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {projects.map((project, index) => (
-            <BentoCard
+        {/* Uniform Project Grid - same size cards, clean alignment */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {allProjects.map((project, index) => (
+            <ProjectCard
               key={index}
               project={project}
               index={index}
-              span={bentoSpans[index % bentoSpans.length]}
               onOpen={openModal}
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
@@ -305,7 +315,7 @@ const Projects: React.FC = () => {
                     <button
                       key={i}
                       onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
-                      className={`h-2 w-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#00d4ff]' : 'bg-white/40 hover:bg-white/70'}`}
+                      className={`h-2 w-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'bg-white/40 hover:bg-white/70'}`}
                     />
                   ))}
                 </div>
@@ -316,7 +326,7 @@ const Projects: React.FC = () => {
                     <button
                       key={i}
                       onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
-                      className={`h-14 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex ? 'border-[#00d4ff]' : 'border-transparent opacity-50 hover:opacity-80'}`}
+                      className={`h-14 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex ? 'border-[#c5f82a]' : 'border-transparent opacity-50 hover:opacity-80'}`}
                     >
                       <img src={img} alt="" className="h-full w-full object-cover object-top" />
                     </button>
@@ -364,19 +374,34 @@ const Projects: React.FC = () => {
                 </ul>
               )}
 
-              {selected.link && (
-                <a
-                  href={selected.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#e53e6b] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#ff4d7d]"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                  </svg>
-                  Live Demo
-                </a>
-              )}
+              <div className="mt-6 flex flex-wrap gap-3">
+                {selected.link && (
+                  <a
+                    href={selected.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                    </svg>
+                    Live Demo
+                  </a>
+                )}
+                {selected.github && (
+                  <a
+                    href={selected.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-5 py-2.5 text-sm font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    GitHub
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -393,16 +418,10 @@ interface CardProps {
   onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
-const heroBadges: Record<number, { left: string; right: string }> = {
-  0: { left: 'Top Project', right: 'Real-Time' },
-  1: { left: 'Final Project', right: 'AI Powered' },
-}
-
-const HeroCard: React.FC<CardProps> = ({
+const ProjectCard: React.FC<CardProps> = ({
   project, index, onOpen, onMouseMove, onMouseLeave,
 }) => {
   const { ref, isVisible } = useScrollReveal()
-  const badges = heroBadges[index] || { left: 'Featured', right: 'Full Stack' }
 
   return (
     <div
@@ -410,226 +429,71 @@ const HeroCard: React.FC<CardProps> = ({
       onClick={() => onOpen(project)}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className="group relative mb-6 cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] transition-all duration-300 hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
       style={{
         transformStyle: 'preserve-3d',
-        transition: 'transform 0.2s ease-out, border-color 0.3s, box-shadow 0.3s, opacity 0.8s ease-out, translate 0.8s ease-out',
         opacity: isVisible ? 1 : 0,
-        translate: isVisible ? '0 0' : '0 60px',
-        transitionDelay: `${index * 200}ms`,
+        translate: isVisible ? '0 0' : '0 30px',
+        transition: 'opacity 0.5s ease-out, translate 0.5s ease-out, transform 0.2s, border-color 0.3s, box-shadow 0.3s',
+        transitionDelay: `${index * 80}ms`,
       }}
     >
-      <div className="absolute top-4 left-4 z-20 rounded-full bg-[#c5f82a] px-3 py-1 text-[10px] font-bold text-black uppercase">
-        {badges.left}
-      </div>
-      <div className="absolute top-4 right-4 z-20 rounded-full bg-[#00d4ff] px-3 py-1 text-[10px] font-bold text-black uppercase">
-        {badges.right}
+      {/* Image - fixed height for consistency */}
+      <div className="relative h-48 shrink-0 overflow-hidden">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
+        {project.link && (
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full border border-[#1a3a2a] bg-[#0a1929]/90 px-2.5 py-1 backdrop-blur-sm">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22c55e] opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#22c55e]" />
+            </span>
+            <span className="text-[10px] font-semibold text-[#22c55e]">Live</span>
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-col md:flex-row">
-        <div className="relative h-64 overflow-hidden bg-[#0d1117] md:h-auto md:min-h-[320px] md:w-1/2">
-          <img
-            src={project.image}
-            alt={project.title}
-            className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-          />
-          {project.gallery && project.gallery.length > 0 && (
-            <img
-              src={project.gallery[0]}
-              alt={`${project.title} preview`}
-              className="absolute bottom-3 right-3 z-10 w-[45%] rounded-lg border-2 border-[#1a2035] shadow-2xl shadow-black/50 transition-transform duration-500 group-hover:scale-105"
-            />
+      {/* Content - uniform padding */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-base font-bold leading-tight text-white md:text-lg">
+          {project.title}
+        </h3>
+        <p className="mt-2 line-clamp-3 text-[13px] leading-[1.6] text-[#8892a4]">
+          {project.description}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {project.tech.slice(0, 4).map((t) => (
+            <span
+              key={t}
+              className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-2.5 py-0.5 text-[10px] font-medium text-[#7eb8da]"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+        <div className="mt-auto pt-4">
+          {project.link ? (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-4 py-2 text-[12px] font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+              </svg>
+              View Demo
+            </a>
+          ) : (
+            <span className="text-[12px] text-[#555]">Click for details</span>
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d1117]/80 max-md:hidden" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent md:hidden" />
-        </div>
-
-        <div className="flex flex-col justify-center p-8 md:w-1/2">
-          <h3 className="text-2xl font-bold text-white md:text-3xl">{project.title}</h3>
-
-          <p className="mt-4 text-[13px] leading-[1.8] text-[#8892a4]">
-            {project.description}
-          </p>
-
-          {project.highlights && (
-            <ul className="mt-4 space-y-2">
-              {project.highlights.map((h) => (
-                <li key={h} className="flex items-start gap-2 text-[12px] text-[#7eb8da]">
-                  <span className="mt-0.5 text-[#c5f82a]">&#10003;</span>
-                  {h}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-center gap-4">
-            {project.link && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#e53e6b] px-5 py-2.5 text-[12px] font-semibold text-white transition-all hover:bg-[#ff4d7d]"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                </svg>
-                Live Demo
-              </a>
-            )}
-            {project.gallery && (
-              <span className="text-[12px] text-[#555]">Click card to view gallery &rarr;</span>
-            )}
-          </div>
         </div>
       </div>
-    </div>
-  )
-}
-
-const BentoCard: React.FC<CardProps & { span: number }> = ({
-  project, index, span, onOpen, onMouseMove, onMouseLeave,
-}) => {
-  const { ref, isVisible } = useScrollReveal()
-  const isWide = span === 2
-  const num = String(index + 1).padStart(2, '0')
-
-  return (
-    <div
-      ref={ref}
-      onClick={() => onOpen(project)}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] will-change-transform hover:border-[#00d4ff]/30 hover:shadow-[0_8px_32px_rgba(0,212,255,0.08)] ${isWide ? 'md:col-span-2' : ''}`}
-      style={{
-        transformStyle: 'preserve-3d',
-        transition: 'transform 0.2s ease-out, border-color 0.4s, box-shadow 0.4s, opacity 0.6s ease-out, translate 0.6s ease-out',
-        opacity: isVisible ? 1 : 0,
-        translate: isVisible ? '0 0' : '0 50px',
-        transitionDelay: `${index * 120}ms`,
-      }}
-    >
-      {/* Number badge */}
-      <div className="absolute top-4 left-4 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-[#1e2d3d] bg-[#0a1929]/80 text-[11px] font-bold text-[#00d4ff] backdrop-blur-sm">
-        {num}
-      </div>
-
-      {/* Live indicator */}
-      {project.link && (
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 rounded-full border border-[#1a3a2a] bg-[#0a1929]/80 px-2.5 py-1 backdrop-blur-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#22c55e] opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#22c55e]" />
-          </span>
-          <span className="text-[10px] font-semibold text-[#22c55e]">Live</span>
-        </div>
-      )}
-
-      {isWide ? (
-        /* Wide card — horizontal layout */
-        <div className="flex flex-col md:flex-row">
-          <div className="relative h-52 overflow-hidden md:h-auto md:min-h-[260px] md:w-[45%]">
-            <img
-              src={project.image}
-              alt={project.title}
-              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d1117]/90 max-md:hidden" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent md:hidden" />
-          </div>
-
-          <div className="flex flex-1 flex-col justify-center p-6 md:p-8">
-            <h3 className="text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-1 md:text-xl">
-              {project.title}
-            </h3>
-            <p className="mt-3 text-[13px] leading-[1.7] text-[#8892a4]">
-              {project.description}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.tech.map((t, i) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            {project.link && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="mt-4 inline-flex w-fit items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-4 py-2 text-[11px] font-semibold text-[#00d4ff] transition-all duration-300 hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/10"
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                </svg>
-                View Project
-              </a>
-            )}
-          </div>
-        </div>
-      ) : (
-        /* Normal card — vertical layout */
-        <>
-          <div className="relative h-44 overflow-hidden md:h-48">
-            <img
-              src={project.image}
-              alt={project.title}
-              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-[#0d1117]/40 to-transparent" />
-            <h3 className="absolute bottom-4 left-6 text-lg font-bold text-white transition-transform duration-300 group-hover:translate-x-2">
-              {project.title}
-            </h3>
-          </div>
-
-          <div className="px-6 pt-2 pb-6">
-            <p className="mt-1 line-clamp-3 text-[13px] leading-[1.7] text-[#8892a4]">
-              {project.description}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {project.tech.map((t, i) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da] transition-all duration-300 hover:border-[#00d4ff]/40 hover:text-[#00d4ff]"
-                  style={{ transitionDelay: `${i * 50}ms` }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            {project.link && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="mt-4 inline-flex items-center gap-2 text-[11px] font-semibold text-[#00d4ff] transition-all duration-300 hover:text-[#4de5ff]"
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                </svg>
-                View Project
-              </a>
-            )}
-          </div>
-        </>
-      )}
     </div>
   )
 }
