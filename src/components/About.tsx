@@ -8,7 +8,7 @@ const About: React.FC = () => {
         {/* Top heading row like reference */}
         <div className="mb-16 flex flex-col items-start gap-4 md:flex-row md:items-center">
           <h2 className="text-3xl font-black leading-tight sm:text-4xl md:text-[2.8rem]">
-            <span className="not-italic">&#128075;</span> Hello! I'm <span className="text-[#7c5cfc]">Ali Huzaifa</span>
+             I'm <span className="text-[#7c5cfc]">Ali Huzaifa</span>
           </h2>
           <div className="hidden h-px flex-1 bg-[#ddd] md:block" />
           <p className="text-lg font-medium text-[#555] md:text-xl">
@@ -20,10 +20,49 @@ const About: React.FC = () => {
           {/* Left - Image */}
           <div className="flex w-full justify-center lg:w-2/5">
             <div className="relative">
-              <div className="h-80 w-72 overflow-hidden rounded-2xl border-4 border-[#c5f82a] sm:h-96 sm:w-80">
+              {/* Spinning conic-gradient border */}
+              <div
+                className="absolute rounded-[20px]"
+                style={{
+                  inset: '-3px',
+                  zIndex: 0,
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  padding: '3px',
+                }}
+              >
+                {/* Rotating gradient layer */}
+                <div
+                  className="animate-spin-border absolute"
+                  style={{
+                    inset: '-100%',
+                    background: 'conic-gradient(#c5f82a 0deg, #c5f82a 60deg, transparent 120deg, transparent 240deg, #c5f82a 300deg, #c5f82a 360deg)',
+                  }}
+                />
+                {/* White fill to create border gap */}
+                <div
+                  className="absolute inset-[3px] rounded-[18px] bg-white"
+                />
+              </div>
+
+              {/* Outer pulse glow */}
+              <div
+                className="animate-pulse-glow absolute rounded-[22px]"
+                style={{
+                  inset: '-8px',
+                  zIndex: -1,
+                  background: 'radial-gradient(ellipse at center, #c5f82a40, transparent 70%)',
+                  filter: 'blur(8px)',
+                }}
+              />
+
+              {/* Image */}
+              <div className="relative z-10 h-80 w-72 overflow-hidden rounded-[18px] sm:h-96 sm:w-80">
                 <img src={profileImg} alt="About" className="h-full w-full object-cover object-top" />
               </div>
-              <div className="absolute -right-4 -bottom-4 rounded-2xl bg-[#c5f82a] px-5 py-3 shadow-lg">
+
+              {/* Badge */}
+              <div className="absolute -right-4 -bottom-4 z-20 rounded-2xl bg-[#c5f82a] px-5 py-3 shadow-lg">
                 <span className="text-2xl font-black">2+</span>
                 <span className="block text-xs font-semibold">Years Exp.</span>
               </div>
