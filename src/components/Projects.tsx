@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { LampContainer } from './ui/lamp'
+import { useOutsideClick } from '../hooks/useOutsideClick'
 
 const useScrollReveal = () => {
   const ref = useRef<HTMLDivElement>(null)
@@ -192,28 +194,26 @@ const allProjects: Project[] = [...heroProjects, ...projects]
 const Projects: React.FC = () => {
 
   const [selected, setSelected] = useState<Project | null>(null)
-  const [visible, setVisible] = useState(false)
   const [galleryIndex, setGalleryIndex] = useState(0)
+  const expandedRef = useRef<HTMLDivElement>(null)
+
+  useOutsideClick(expandedRef, () => setSelected(null))
 
   const openModal = (project: Project) => {
     setSelected(project)
     setGalleryIndex(0)
-    requestAnimationFrame(() => setVisible(true))
-  }
-
-  const closeModal = () => {
-    setVisible(false)
-    setTimeout(() => setSelected(null), 300)
   }
 
   useEffect(() => {
-    if (selected) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = selected ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [selected])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelected(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const allGalleryImages = selected?.gallery
     ? [selected.image, ...selected.gallery]
@@ -260,153 +260,182 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* Detail Modal */}
-      {selected && (
-        <div
-          className={`fixed inset-0 z-50 flex items-center justify-center px-4 transition-all duration-300 ${visible ? 'bg-black/70 backdrop-blur-sm' : 'bg-black/0'}`}
-          onClick={closeModal}
-        >
-          <div
-            className={`relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-[#1a2035] bg-[#0d1117] shadow-2xl shadow-black/50 transition-all duration-300 ${allGalleryImages ? 'max-w-3xl' : 'max-w-2xl'} ${visible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-sm transition-colors hover:bg-black/80 hover:text-white"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
+      {/* Aceternity Expandable Card Overlay */}
+      <AnimatePresence>
+        {selected && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+            />
 
-            {/* Gallery or Single Image */}
-            {allGalleryImages ? (
-              <div className="relative">
-                <div className="relative h-64 overflow-hidden md:h-80">
-                  <img
-                    src={allGalleryImages[galleryIndex]}
-                    alt={`${selected.title} - ${galleryIndex + 1}`}
-                    className="h-full w-full object-cover object-top transition-all duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
-                </div>
+            {/* Expanded Card */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8">
+              <motion.div
+                ref={expandedRef}
+                layoutId={`card-${selected.title}`}
+                className="relative w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-[#1a2035] bg-[#0d1117] shadow-2xl shadow-black/60"
+                style={{ maxWidth: allGalleryImages ? '760px' : '600px' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              >
+                {/* Close Button */}
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ delay: 0.15 }}
+                  onClick={() => setSelected(null)}
+                  className="absolute top-4 right-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white/70 backdrop-blur-sm transition-colors hover:bg-black/90 hover:text-white"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </motion.button>
 
-                {/* Navigation Arrows */}
-                {allGalleryImages.length > 1 && (
-                  <>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setGalleryIndex((prev) => prev === 0 ? allGalleryImages.length - 1 : prev - 1) }}
-                      className="absolute top-1/2 left-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setGalleryIndex((prev) => prev === allGalleryImages.length - 1 ? 0 : prev + 1) }}
-                      className="absolute top-1/2 right-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
-                    </button>
-                  </>
+                {/* Gallery or Single Image */}
+                {allGalleryImages ? (
+                  <div className="relative">
+                    <motion.div layoutId={`image-${selected.title}`} className="relative h-64 overflow-hidden md:h-80">
+                      <img
+                        src={allGalleryImages[galleryIndex]}
+                        alt={`${selected.title} screenshot`}
+                        className="h-full w-full object-cover object-top transition-all duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
+                    </motion.div>
+
+                    {allGalleryImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setGalleryIndex((p) => p === 0 ? allGalleryImages.length - 1 : p - 1) }}
+                          className="absolute top-1/2 left-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setGalleryIndex((p) => p === allGalleryImages.length - 1 ? 0 : p + 1) }}
+                          className="absolute top-1/2 right-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+                        </button>
+                      </>
+                    )}
+
+                    <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
+                      {allGalleryImages.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
+                          className={`h-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'w-2 bg-white/40 hover:bg-white/70'}`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex gap-1.5 overflow-x-auto px-4 py-3">
+                      {allGalleryImages.map((img, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
+                          className={`h-14 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex ? 'border-[#c5f82a]' : 'border-transparent opacity-50 hover:opacity-80'}`}
+                        >
+                          <img src={img} alt="" className="h-full w-full object-cover object-top" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <motion.div layoutId={`image-${selected.title}`} className="relative h-56 overflow-hidden md:h-72">
+                    <img src={selected.image} alt={selected.title} className="h-full w-full object-cover object-top" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
+                  </motion.div>
                 )}
 
-                {/* Dots Indicator */}
-                <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-                  {allGalleryImages.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
-                      className={`h-2 w-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'bg-white/40 hover:bg-white/70'}`}
-                    />
-                  ))}
-                </div>
+                {/* Content */}
+                <div className="px-8 pt-2 pb-8">
+                  <motion.h3 layoutId={`title-${selected.title}`} className="text-2xl font-bold text-white">
+                    {selected.title}
+                  </motion.h3>
 
-                {/* Thumbnail strip */}
-                <div className="flex gap-1.5 overflow-x-auto px-4 py-3">
-                  {allGalleryImages.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
-                      className={`h-14 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex ? 'border-[#c5f82a]' : 'border-transparent opacity-50 hover:opacity-80'}`}
+                  <motion.div
+                    layoutId={`tech-${selected.title}`}
+                    className="mt-3 flex flex-wrap gap-2"
+                  >
+                    {selected.tech.map((t) => (
+                      <span key={t} className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]">
+                        {t}
+                      </span>
+                    ))}
+                  </motion.div>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="mt-4 text-sm leading-relaxed text-[#8892a4]"
+                  >
+                    {selected.description}
+                  </motion.p>
+
+                  {selected.highlights && (
+                    <motion.ul
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 }}
+                      className="mt-4 space-y-2"
                     >
-                      <img src={img} alt="" className="h-full w-full object-cover object-top" />
-                    </button>
-                  ))}
+                      {selected.highlights.map((h) => (
+                        <li key={h} className="flex items-start gap-2 text-[13px] text-[#7eb8da]">
+                          <span className="mt-0.5 text-[#c5f82a]">✓</span>
+                          {h}
+                        </li>
+                      ))}
+                    </motion.ul>
+                  )}
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="mt-6 flex flex-wrap gap-3"
+                  >
+                    {selected.link && (
+                      <a
+                        href={selected.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                        </svg>
+                        Live Demo
+                      </a>
+                    )}
+                    {selected.github && (
+                      <a
+                        href={selected.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-5 py-2.5 text-sm font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        GitHub
+                      </a>
+                    )}
+                  </motion.div>
                 </div>
-              </div>
-            ) : (
-              <div className="relative h-56 overflow-hidden md:h-72">
-                <img
-                  src={selected.image}
-                  alt={selected.title}
-                  className="h-full w-full object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="px-8 pt-2 pb-8">
-              <h3 className="text-2xl font-bold text-white">{selected.title}</h3>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {selected.tech.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <p className="mt-4 text-sm leading-relaxed text-[#8892a4]">
-                {selected.description}
-              </p>
-
-              {selected.highlights && (
-                <ul className="mt-4 space-y-2">
-                  {selected.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2 text-[13px] text-[#7eb8da]">
-                      <span className="mt-0.5 text-[#c5f82a]">&#10003;</span>
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                {selected.link && (
-                  <a
-                    href={selected.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a]"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                    </svg>
-                    Live Demo
-                  </a>
-                )}
-                {selected.github && (
-                  <a
-                    href={selected.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-5 py-2.5 text-sm font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-                    </svg>
-                    GitHub
-                  </a>
-                )}
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
@@ -425,22 +454,23 @@ const ProjectCard: React.FC<CardProps> = ({
   const { ref, isVisible } = useScrollReveal()
 
   return (
-    <div
+    <motion.div
       ref={ref}
+      layoutId={`card-${project.title}`}
       onClick={() => onOpen(project)}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] transition-all duration-300 hover:border-[#00d4ff]/40 hover:shadow-xl hover:shadow-[#00d4ff]/10"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] hover:border-[#c5f82a]/40 hover:shadow-xl hover:shadow-[#c5f82a]/10"
       style={{
         transformStyle: 'preserve-3d',
         opacity: isVisible ? 1 : 0,
         translate: isVisible ? '0 0' : '0 30px',
-        transition: 'opacity 0.5s ease-out, translate 0.5s ease-out, transform 0.2s, border-color 0.3s, box-shadow 0.3s',
+        transition: 'opacity 0.5s ease-out, translate 0.5s ease-out, border-color 0.3s, box-shadow 0.3s',
         transitionDelay: `${index * 80}ms`,
       }}
     >
       {/* Image - fixed height for consistency */}
-      <div className="relative h-48 shrink-0 overflow-hidden">
+      <motion.div layoutId={`image-${project.title}`} className="relative h-48 shrink-0 overflow-hidden">
         <img
           src={project.image}
           alt={project.title}
@@ -456,17 +486,17 @@ const ProjectCard: React.FC<CardProps> = ({
             <span className="text-[10px] font-semibold text-[#22c55e]">Live</span>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Content - uniform padding */}
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-base font-bold leading-tight text-white md:text-lg">
+        <motion.h3 layoutId={`title-${project.title}`} className="text-base font-bold leading-tight text-white md:text-lg">
           {project.title}
-        </h3>
+        </motion.h3>
         <p className="mt-2 line-clamp-3 text-[13px] leading-[1.6] text-[#8892a4]">
           {project.description}
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <motion.div layoutId={`tech-${project.title}`} className="mt-4 flex flex-wrap gap-2">
           {project.tech.slice(0, 4).map((t) => (
             <span
               key={t}
@@ -475,7 +505,7 @@ const ProjectCard: React.FC<CardProps> = ({
               {t}
             </span>
           ))}
-        </div>
+        </motion.div>
         <div className="mt-auto pt-4">
           {project.link ? (
             <a
@@ -495,7 +525,7 @@ const ProjectCard: React.FC<CardProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
