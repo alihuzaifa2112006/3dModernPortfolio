@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { LampContainer } from "./ui/lamp";
 
 const Contact: React.FC = () => {
   const [result, setResult] = useState("");
@@ -35,24 +36,21 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section
-      id="contact"
-      className="bg-white px-6 py-20 text-black md:px-12 lg:px-20"
-    >
-      <div className="mx-auto max-w-7xl">
+    <section id="contact" className="bg-[#0a0a0a] text-white">
+      <LampContainer className="pt-10 pb-0">
+        <div className="text-center">
+          <p className="mb-2 text-sm font-semibold tracking-widest text-[#c5f82a] uppercase">Get In Touch</p>
+          <h2 className="text-4xl font-black text-white md:text-5xl">
+            Let's Work <span className="text-[#c5f82a]">Together</span>
+          </h2>
+        </div>
+      </LampContainer>
+      <div className="mx-auto max-w-7xl px-6 pb-20 md:px-12 lg:px-20">
         <div className="flex flex-col gap-16 lg:flex-row">
 
           {/* LEFT SIDE */}
           <div className="w-full lg:w-5/12">
-            <p className="mb-3 text-sm font-semibold tracking-widest text-[#c5f82a] uppercase">
-              Get In Touch
-            </p>
-
-            <h2 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
-              Let's Work <span className="text-[#7c5cfc]">Together</span>
-            </h2>
-
-            <p className="mt-6 text-base leading-relaxed text-[#666]">
+            <p className="mt-6 text-base leading-relaxed text-[#888]">
               Have a project in mind? Let's discuss how we can bring your ideas to life.
             </p>
 
@@ -106,7 +104,7 @@ const Contact: React.FC = () => {
                   type="text"
                   required
                   placeholder="Your Name"
-                  className="flex-1 rounded-xl border border-[#e5e5e5] bg-[#f5f5f5] px-5 py-4 text-sm outline-none focus:border-[#c5f82a]"
+                  className="flex-1 rounded-xl border border-[#222] bg-[#111] px-5 py-4 text-sm text-white placeholder-[#555] outline-none focus:border-[#c5f82a]"
                 />
 
                 <input
@@ -114,7 +112,7 @@ const Contact: React.FC = () => {
                   type="email"
                   required
                   placeholder="Your Email"
-                  className="flex-1 rounded-xl border border-[#e5e5e5] bg-[#f5f5f5] px-5 py-4 text-sm outline-none focus:border-[#c5f82a]"
+                  className="flex-1 rounded-xl border border-[#222] bg-[#111] px-5 py-4 text-sm text-white placeholder-[#555] outline-none focus:border-[#c5f82a]"
                 />
               </div>
 
@@ -122,7 +120,7 @@ const Contact: React.FC = () => {
                 name="subject"
                 type="text"
                 placeholder="Subject"
-                className="w-full rounded-xl border border-[#e5e5e5] bg-[#f5f5f5] px-5 py-4 text-sm outline-none focus:border-[#c5f82a]"
+                className="w-full rounded-xl border border-[#222] bg-[#111] px-5 py-4 text-sm text-white placeholder-[#555] outline-none focus:border-[#c5f82a]"
               />
 
               <textarea
@@ -130,7 +128,7 @@ const Contact: React.FC = () => {
                 rows={6}
                 required
                 placeholder="Your Message"
-                className="w-full resize-none rounded-xl border border-[#e5e5e5] bg-[#f5f5f5] px-5 py-4 text-sm outline-none focus:border-[#c5f82a]"
+                className="w-full resize-none rounded-xl border border-[#222] bg-[#111] px-5 py-4 text-sm text-white placeholder-[#555] outline-none focus:border-[#c5f82a]"
               />
 
               <button

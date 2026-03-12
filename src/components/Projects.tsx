@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { LampContainer } from './ui/lamp'
 
 const useScrollReveal = () => {
   const ref = useRef<HTMLDivElement>(null)
@@ -231,19 +232,19 @@ const Projects: React.FC = () => {
   }, [])
 
   return (
-    <section id="projects" className="bg-[#0a0a0a] px-6 py-20 md:px-12 lg:px-16">
-      <div className="mx-auto max-w-[1300px]">
-        {/* Header */}
-        <div className="mb-14 text-center">
+    <section id="projects" className="bg-[#0a0a0a]">
+      <LampContainer className="pt-10 pb-0">
+        <div className="mb-6 text-center">
           <h2 className="text-4xl font-black italic text-white md:text-5xl">
-            Featured <span className="text-[#c5f82a]">Projects</span>
+            My  <span className="text-[#c5f82a]">Projects</span>
           </h2>
           <div className="mx-auto mt-2 h-[2px] w-48 bg-gradient-to-r from-transparent via-[#c5f82a] to-transparent" />
           <p className="mt-4 text-sm italic text-[#666]">
             A showcase of my creative solutions and technical implementations
           </p>
         </div>
-
+      </LampContainer>
+      <div className="mx-auto max-w-[1300px] px-6 pb-20 md:px-12 lg:px-16">
         {/* Uniform Project Grid - same size cards, clean alignment */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allProjects.map((project, index) => (

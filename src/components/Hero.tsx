@@ -111,7 +111,7 @@ const Hero: React.FC = () => {
           <div className="relative">
             {/* Purple shape */}
             <div
-              className="absolute rounded-[22px] bg-[#7c5cfc]"
+              className="absolute rounded-[22px] bg-[#c5f82a]"
               style={{
                 width: '350px',
                 height: '460px',
@@ -140,7 +140,7 @@ const Hero: React.FC = () => {
         {/* Mobile Image */}
         <div className="mt-10 flex justify-center lg:hidden">
           <div className="relative">
-            <div className="absolute rounded-[20px] bg-[#7c5cfc]" style={{ width: '260px', height: '360px', top: '18px', right: '-12px', transform: 'rotate(5deg)' }} />
+            <div className="absolute rounded-[20px] bg-[#c5f82a]" style={{ width: '260px', height: '360px', top: '18px', right: '-12px', transform: 'rotate(5deg)' }} />
             <div className="relative z-10 h-[350px] w-[250px] overflow-hidden rounded-[20px]">
               <img src={profileImg} alt="Profile" className="h-full w-full object-cover object-top" />
             </div>
