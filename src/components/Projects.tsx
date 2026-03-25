@@ -40,6 +40,10 @@ import projectioGal2 from '../assets/projectio-2.png'
 import projectioGal3 from '../assets/projectio-3.png'
 import genifyaiImg from '../assets/genifyai.png'
 import genifyaiDashboard from '../assets/genifyai-dashboard.png'
+import wealthpulseImg from '../assets/wealthpulse.png'
+import wealthpulseDashboard from '../assets/wealthpulse-dashboard.png'
+import wealthpulseGoals from '../assets/wealthpulse-goals.png'
+import wealthpulseAI from '../assets/wealthpulse-ai.png'
 
 interface Project {
   title: string
@@ -55,6 +59,26 @@ interface Project {
 }
 
 const heroProjects: Project[] = [
+  {
+    title: 'WealthPulse | AI Finance App',
+    description:
+      'WealthPulse is a modern, AI-powered expense tracking & financial management app designed for individuals and small businesses. Track income, expenses, and savings in real-time, set and achieve financial goals, and get AI-powered personalized financial plans. Features a built-in AI chat assistant, multi-currency support (PKR, USD, INR, AED & more), powerful analytics dashboards, and PDF export for financial plans.',
+    tech: ['Next.js 15', 'React 19', 'MongoDB', 'MUI', 'Tailwind CSS', 'Gemini AI', 'Framer Motion'],
+    link: 'https://wealth-pulse-ai-beta.vercel.app/',
+    image: wealthpulseImg,
+    featured: true,
+    hero: true,
+    gallery: [wealthpulseDashboard, wealthpulseGoals, wealthpulseAI],
+    highlights: [
+      'Real-time income, expense & savings tracking',
+      'AI-powered financial insights & personalized plans',
+      'Built-in AI chat for smart financial guidance',
+      'Set and achieve financial goals (Umrah, car, savings)',
+      'Multi-currency support (PKR, USD, INR, AED & more)',
+      'Clean dashboards with powerful analytics',
+      'Export financial plans as PDF',
+    ],
+  },
   {
     title: 'GenifyAI | AI SaaS Platform',
     description:
@@ -350,7 +374,13 @@ const Projects: React.FC = () => {
                   </div>
                 ) : (
                   <motion.div layoutId={`image-${selected.title}`} className="relative h-56 overflow-hidden md:h-72">
-                    <img src={selected.image} alt={selected.title} className="h-full w-full object-cover object-top" />
+                    {selected.image ? (
+                      <img src={selected.image} alt={selected.title} className="h-full w-full object-cover object-top" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0d1f0d] via-[#0a1929] to-[#0d1117]">
+                        <span className="text-7xl">💰</span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
                   </motion.div>
                 )}
@@ -471,11 +501,17 @@ const ProjectCard: React.FC<CardProps> = ({
     >
       {/* Image - fixed height for consistency */}
       <motion.div layoutId={`image-${project.title}`} className="relative h-48 shrink-0 overflow-hidden">
-        <img
-          src={project.image}
-          alt={project.title}
-          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-        />
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0d1f0d] via-[#0a1929] to-[#0d1117]">
+            <span className="text-5xl">💰</span>
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
         {project.link && (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full border border-[#1a3a2a] bg-[#0a1929]/90 px-2.5 py-1 backdrop-blur-sm">
