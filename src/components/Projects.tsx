@@ -158,14 +158,7 @@ const projects: Project[] = [
     featured: true,
     gallery: [codeMatricsGal1, codeMatricsGal2, codeMatricsGal3],
   },
-  // {
-  //   title: 'Cyclo Cloud | ERP System',
-  //   description:
-  //     'A company project where I work as a Frontend Developer. Cyclo Cloud is a comprehensive cloud-based ERP and CRM platform designed to streamline business operations — featuring modules for customer relationship management, inventory tracking, invoicing, and analytics with a clean, scalable interface.',
-  //   tech: ['Next.js', 'React', 'Tailwind CSS', 'Node.js'],
-  //   image: cycloImg,
-  //   featured: true,
-  // },
+ 
   {
     title: 'OTCO Pakistan | LMS Platform',
     description:
