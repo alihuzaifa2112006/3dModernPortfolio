@@ -44,6 +44,10 @@ import wealthpulseImg from '../assets/wealthpulse.png'
 import wealthpulseDashboard from '../assets/wealthpulse-dashboard.png'
 import wealthpulseGoals from '../assets/wealthpulse-goals.png'
 import wealthpulseAI from '../assets/wealthpulse-ai.png'
+import gatherlyImg from '../assets/gatherly.png'
+import gatherlyDashboard from '../assets/gatherly-dashboard.png'
+import gatherlyCreate from '../assets/gatherly-create.png'
+import gatherlyNotifications from '../assets/gatherly-notifications.png'
 
 interface Project {
   title: string
@@ -59,6 +63,25 @@ interface Project {
 }
 
 const heroProjects: Project[] = [
+  {
+    title: 'Gatherly | Event Management Platform',
+    description:
+      'Gatherly is a full-stack event management platform — the public stage for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, and everyone stays aligned with real-time notifications. Built with a NestJS backend, Prisma ORM, PostgreSQL database, and real-time WebSockets for live updates.',
+    tech: ['React', 'NestJS', 'PostgreSQL', 'Prisma', 'MUI', 'WebSockets'],
+    image: gatherlyImg,
+    featured: true,
+    hero: true,
+    gallery: [gatherlyDashboard, gatherlyCreate, gatherlyNotifications],
+    highlights: [
+      'Organizers publish & manage city events with multi-step form',
+      'Volunteers/attendees register and get QR-coded gate passes',
+      'Admin dashboard for event approval & management',
+      'Real-time notifications via WebSockets',
+      'Role-based access: Admin, Organizer, Volunteer, Attendee',
+      'NestJS backend with Prisma ORM & PostgreSQL',
+      'Discover events by city, category & date',
+    ],
+  },
   {
     title: 'WealthPulse | AI Finance App',
     description:

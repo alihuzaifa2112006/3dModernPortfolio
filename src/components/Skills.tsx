@@ -27,6 +27,8 @@ const skillCategories = [
     skills: [
       { name: 'Node.js', icon: devicon('nodejs/nodejs-original.svg'), color: '#339933', level: 80 },
       { name: 'Express', icon: devicon('express/express-original.svg'), color: '#ffffff', level: 78 },
+      { name: 'NestJS', icon: devicon('nestjs/nestjs-original.svg'), color: '#E0234E', level: 75 },
+      { name: 'Prisma', icon: devicon('prisma/prisma-original.svg'), color: '#ffffff', level: 74 },
       { name: 'Python', icon: devicon('python/python-original.svg'), color: '#3776AB', level: 70 },
     ],
   },
@@ -36,6 +38,7 @@ const skillCategories = [
     accent: '#e53e6b',
     skills: [
       { name: 'MongoDB', icon: devicon('mongodb/mongodb-original.svg'), color: '#47A248', level: 75 },
+      { name: 'PostgreSQL', icon: devicon('postgresql/postgresql-original.svg'), color: '#4169E1', level: 73 },
       { name: 'MySQL', icon: devicon('mysql/mysql-original.svg'), color: '#4479A1', level: 72 },
     ],
   },
