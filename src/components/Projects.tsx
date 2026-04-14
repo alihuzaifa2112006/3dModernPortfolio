@@ -48,6 +48,10 @@ import gatherlyImg from '../assets/gatherly.png'
 import gatherlyDashboard from '../assets/gatherly-dashboard.png'
 import gatherlyCreate from '../assets/gatherly-create.png'
 import gatherlyNotifications from '../assets/gatherly-notifications.png'
+import pathify2Img from '../assets/pathify-2.png'
+import pathify3Img from '../assets/pathify-3.png'
+import pathify4Img from '../assets/pathify-4.png'
+import pathify5Img from '../assets/pathify-5.png'
 
 interface Project {
   title: string
@@ -60,6 +64,27 @@ interface Project {
   hero?: boolean
   gallery?: string[]
   highlights?: string[]
+  imageMode?: 'cover' | 'contain'
+}
+
+const mobileShowcaseProject: Project = {
+  title: 'Pathify AI | CareerPath Mobile App',
+  description:
+    'Pathify AI (CareerPath AI) is a React Native app that helps users find the best career path from an 8-step assessment. It uses Google Gemini for top 3 role suggestions, Firebase Auth for login/signup, Firestore for history, and a clean mobile-first UI built with Expo.',
+  tech: ['React Native (Expo)', 'Firebase Auth', 'Firestore', 'Google Gemini API', 'AsyncStorage'],
+  link: 'https://expo.dev/accounts/alihuzaifa/projects/pathify-ai/builds/aa6fcb5b-9ac7-41c9-9481-3ebd21481f2a',
+  image: pathify2Img,
+  featured: true,
+  hero: true,
+  imageMode: 'contain',
+  gallery: [pathify3Img, pathify4Img, pathify5Img],
+  highlights: [
+    '8-step smart assessment for interests and skills',
+    'Top 3 AI career suggestions using Gemini',
+    'Secure login/signup with Firebase Authentication',
+    'Result and history saving with Firestore',
+    'Clean mobile UI and scalable Expo architecture',
+  ],
 }
 
 const heroProjects: Project[] = [
@@ -285,6 +310,50 @@ const Projects: React.FC = () => {
         </div>
       </LampContainer>
       <div className="mx-auto max-w-[1300px] px-6 pb-20 md:px-12 lg:px-16">
+        <div className="mb-8 overflow-hidden rounded-2xl border border-[#1a2035] bg-[#0d1117] p-4 md:p-6">
+          <div className="grid items-center gap-5 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
+            <button
+              onClick={() => openModal(mobileShowcaseProject)}
+              className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-2xl border border-[#1d2a3f] bg-[#090f1a] p-2 transition-all hover:border-[#31d0c6]/60"
+            >
+              <img
+                src={mobileShowcaseProject.image}
+                alt={mobileShowcaseProject.title}
+                className="h-[380px] w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+            </button>
+
+            <div>
+              <p className="text-[11px] font-semibold tracking-[0.16em] text-[#31d0c6] uppercase">Mobile App Showcase</p>
+              <h3 className="mt-2 text-2xl font-black text-white">{mobileShowcaseProject.title}</h3>
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#8892a4]">{mobileShowcaseProject.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {mobileShowcaseProject.tech.map((t) => (
+                  <span key={t} className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]">
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a
+                  href={mobileShowcaseProject.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#31d0c6] px-5 py-2.5 text-sm font-semibold text-[#041016] transition-all hover:bg-[#49ddd3]"
+                >
+                  Download App
+                </a>
+                <button
+                  onClick={() => openModal(mobileShowcaseProject)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-5 py-2.5 text-sm font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
+                >
+                  View Screenshots
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Uniform Project Grid - same size cards, clean alignment */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allProjects.map((project, index) => (
@@ -340,11 +409,14 @@ const Projects: React.FC = () => {
                 {/* Gallery or Single Image */}
                 {allGalleryImages ? (
                   <div className="relative">
-                    <motion.div layoutId={`image-${selected.title}`} className="relative h-64 overflow-hidden md:h-80">
+                    <motion.div
+                      layoutId={`image-${selected.title}`}
+                      className={`relative h-64 overflow-hidden md:h-80 ${selected.imageMode === 'contain' ? 'bg-[#090f1a]' : ''}`}
+                    >
                       <img
                         src={allGalleryImages[galleryIndex]}
                         alt={`${selected.title} screenshot`}
-                        className="h-full w-full object-cover object-top transition-all duration-300"
+                        className={`h-full w-full transition-all duration-300 ${selected.imageMode === 'contain' ? 'object-contain p-2 md:p-3' : 'object-cover object-top'}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
                     </motion.div>
@@ -383,7 +455,11 @@ const Projects: React.FC = () => {
                           onClick={(e) => { e.stopPropagation(); setGalleryIndex(i) }}
                           className={`h-14 w-20 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex ? 'border-[#c5f82a]' : 'border-transparent opacity-50 hover:opacity-80'}`}
                         >
-                          <img src={img} alt="" className="h-full w-full object-cover object-top" />
+                          <img
+                            src={img}
+                            alt=""
+                            className={`h-full w-full ${selected.imageMode === 'contain' ? 'object-contain bg-[#090f1a] p-0.5' : 'object-cover object-top'}`}
+                          />
                         </button>
                       ))}
                     </div>
@@ -516,12 +592,15 @@ const ProjectCard: React.FC<CardProps> = ({
       }}
     >
       {/* Image - fixed height for consistency */}
-      <motion.div layoutId={`image-${project.title}`} className="relative h-48 shrink-0 overflow-hidden">
+      <motion.div
+        layoutId={`image-${project.title}`}
+        className={`relative h-48 shrink-0 overflow-hidden ${project.imageMode === 'contain' ? 'bg-[#090f1a]' : ''}`}
+      >
         {project.image ? (
           <img
             src={project.image}
             alt={project.title}
-            className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            className={`h-full w-full transition-transform duration-500 ${project.imageMode === 'contain' ? 'object-contain p-2 group-hover:scale-[1.03]' : 'object-cover object-top group-hover:scale-105'}`}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#0d1f0d] via-[#0a1929] to-[#0d1117]">

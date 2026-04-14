@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import profileImg from '../assets/profile.jpg'
+import profileImg from '../assets/profile-new.png'
 import { BackgroundRippleEffect } from './ui/background-ripple-effect'
 
 const Hero: React.FC = () => {
