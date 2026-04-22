@@ -127,26 +127,26 @@ const heroProjects: Project[] = [
       'Export financial plans as PDF',
     ],
   },
-  {
-    title: 'GenifyAI | AI SaaS Platform',
-    description:
-      'An AI-powered SaaS platform designed to help creators and professionals generate content faster. With GenifyAI, users can create different types of AI-generated content from a single dashboard — captions for social media, professional emails, images from text prompts, and documents for blogs and articles. Features a clean SaaS dashboard with authentication and API usage limits with call tracking.',
-    tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini API'],
-    link: 'https://genifyai-xi.vercel.app/',
-    github: 'https://github.com/alihuzaifa2112006/genifyai',
-    image: genifyaiImg,
-    featured: true,
-    hero: true,
-    gallery: [genifyaiDashboard],
-    highlights: [
-      'AI Caption Generator for social media',
-      'AI Email Writer for professional emails',
-      'AI Image Generator from text prompts',
-      'AI Document Writer for blogs and articles',
-      'Clean SaaS dashboard with authentication',
-      'API usage limits with call tracking',
-    ],
-  },
+  // {
+  //   title: 'GenifyAI | AI SaaS Platform',
+  //   description:
+  //     'An AI-powered SaaS platform designed to help creators and professionals generate content faster. With GenifyAI, users can create different types of AI-generated content from a single dashboard — captions for social media, professional emails, images from text prompts, and documents for blogs and articles. Features a clean SaaS dashboard with authentication and API usage limits with call tracking.',
+  //   tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Gemini API'],
+  //   link: 'https://genifyai-xi.vercel.app/',
+  //   github: 'https://github.com/alihuzaifa2112006/genifyai',
+  //   image: genifyaiImg,
+  //   featured: true,
+  //   hero: true,
+  //   gallery: [genifyaiDashboard],
+  //   highlights: [
+  //     'AI Caption Generator for social media',
+  //     'AI Email Writer for professional emails',
+  //     'AI Image Generator from text prompts',
+  //     'AI Document Writer for blogs and articles',
+  //     'Clean SaaS dashboard with authentication',
+  //     'API usage limits with call tracking',
+  //   ],
+  // },
   {
     title: 'WebChat | Real-Time Chat App',
     description:
