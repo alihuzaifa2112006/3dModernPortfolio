@@ -165,37 +165,37 @@ const heroProjects: Project[] = [
       'Clean, responsive UI with shadcn/ui',
     ],
   },
-  {
-    title: 'Resume Craft | AI Resume Builder',
-    description:
-      'An AI-powered resume builder designed to help users create professional, ATS-friendly resumes easily and intelligently. Resume Craft doesn\'t just create resumes — it helps users improve and structure their content using AI assistance powered by Google\'s Gemini API. Features include AI resume generation, intelligent content improvement & grammar correction, AI-based resume analysis & optimization, secure authentication, modern responsive UI, and a real-time resume editing experience.',
-    tech: ['Next.js', 'Gemini AI', 'PostgreSQL', 'Tailwind CSS', 'TypeScript'],
-    link: 'https://resumecraft-ai-two.vercel.app/',
-    image: resumeMainImg,
-    featured: true,
-    hero: true,
-    gallery: [resumeGal1],
-    highlights: [
-      'AI-powered resume generation with Gemini API',
-      'Smart content improvement & grammar correction',
-      'ATS-friendly templates & optimization',
-      'Secure user authentication system',
-      'Real-time editing with live preview',
-    ],
-  },
+  // {
+  //   title: 'Resume Craft | AI Resume Builder',
+  //   description:
+  //     'An AI-powered resume builder designed to help users create professional, ATS-friendly resumes easily and intelligently. Resume Craft doesn\'t just create resumes — it helps users improve and structure their content using AI assistance powered by Google\'s Gemini API. Features include AI resume generation, intelligent content improvement & grammar correction, AI-based resume analysis & optimization, secure authentication, modern responsive UI, and a real-time resume editing experience.',
+  //   tech: ['Next.js', 'Gemini AI', 'PostgreSQL', 'Tailwind CSS', 'TypeScript'],
+  //   link: 'https://resumecraft-ai-two.vercel.app/',
+  //   image: resumeMainImg,
+  //   featured: true,
+  //   hero: true,
+  //   gallery: [resumeGal1],
+  //   highlights: [
+  //     'AI-powered resume generation with Gemini API',
+  //     'Smart content improvement & grammar correction',
+  //     'ATS-friendly templates & optimization',
+  //     'Secure user authentication system',
+  //     'Real-time editing with live preview',
+  //   ],
+  // },
 ]
 
 const projects: Project[] = [
-  {
-    title: 'Projectio | SaaS Project Management',
-    description:
-      'A full-stack SaaS project management platform where managers can create workspaces, add team members, assign projects, and track progress — replicating a real company workflow. Features role-based access control with Manager and Employee roles, JWT-secured authentication, dashboard analytics, team & employee management, and a clean scalable database design.',
-    tech: ['Next.js', 'MongoDB', 'JWT', 'Mongoose', 'Tailwind CSS'],
-    link: 'https://projectio-ten.vercel.app/',
-    image: projectioImg,
-    featured: true,
-    gallery: [projectioGal1, projectioGal2, projectioGal3],
-  },
+  // {
+  //   title: 'Projectio | SaaS Project Management',
+  //   description:
+  //     'A full-stack SaaS project management platform where managers can create workspaces, add team members, assign projects, and track progress — replicating a real company workflow. Features role-based access control with Manager and Employee roles, JWT-secured authentication, dashboard analytics, team & employee management, and a clean scalable database design.',
+  //   tech: ['Next.js', 'MongoDB', 'JWT', 'Mongoose', 'Tailwind CSS'],
+  //   link: 'https://projectio-ten.vercel.app/',
+  //   image: projectioImg,
+  //   featured: true,
+  //   gallery: [projectioGal1, projectioGal2, projectioGal3],
+  // },
   {
     title: 'CodeMatrics | Developer Productivity',
     description:
