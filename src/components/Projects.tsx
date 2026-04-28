@@ -53,6 +53,7 @@ import pathify3Img from '../assets/pathify-3.png'
 import pathify4Img from '../assets/pathify-4.png'
 import pathify5Img from '../assets/pathify-5.png'
 
+
 interface Project {
   title: string
   description: string
@@ -89,25 +90,6 @@ const mobileShowcaseProject: Project = {
 
 const heroProjects: Project[] = [
   {
-    title: 'Gatherly | Event Management Platform',
-    description:
-      'Gatherly is a full-stack event management platform — the public stage for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, and everyone stays aligned with real-time notifications. Built with a NestJS backend, Prisma ORM, PostgreSQL database, and real-time WebSockets for live updates.',
-    tech: ['React', 'NestJS', 'PostgreSQL', 'Prisma', 'MUI', 'WebSockets'],
-    image: gatherlyImg,
-    featured: true,
-    hero: true,
-    gallery: [gatherlyDashboard, gatherlyCreate, gatherlyNotifications],
-    highlights: [
-      'Organizers publish & manage city events with multi-step form',
-      'Volunteers/attendees register and get QR-coded gate passes',
-      'Admin dashboard for event approval & management',
-      'Real-time notifications via WebSockets',
-      'Role-based access: Admin, Organizer, Volunteer, Attendee',
-      'NestJS backend with Prisma ORM & PostgreSQL',
-      'Discover events by city, category & date',
-    ],
-  },
-  {
     title: 'WealthPulse | AI Finance App',
     description:
       'WealthPulse is a modern, AI-powered expense tracking & financial management app designed for individuals and small businesses. Track income, expenses, and savings in real-time, set and achieve financial goals, and get AI-powered personalized financial plans. Features a built-in AI chat assistant, multi-currency support (PKR, USD, INR, AED & more), powerful analytics dashboards, and PDF export for financial plans.',
@@ -126,7 +108,28 @@ const heroProjects: Project[] = [
       'Clean dashboards with powerful analytics',
       'Export financial plans as PDF',
     ],
+  }
+  ,
+  {
+    title: 'Gatherly | Event Management Platform',
+    description:
+      'Gatherly is a full-stack event management platform — the public stage for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, and everyone stays aligned with real-time notifications. Built with a NestJS backend, Prisma ORM, PostgreSQL database, and real-time WebSockets for live updates.',
+    tech: ['React', 'NestJS', 'PostgreSQL', 'Prisma', 'MUI', 'WebSockets'],
+    image: gatherlyImg,
+    featured: true,
+    hero: true,
+    gallery: [gatherlyDashboard, gatherlyCreate, gatherlyNotifications],
+    highlights: [
+      'Organizers publish & manage city events with multi-step form',
+      'Volunteers/attendees register and get QR-coded gate passes',
+      'Admin dashboard for event approval & management',
+      'Real-time notifications via WebSockets',
+      'Role-based access: Admin, Organizer, Volunteer, Attendee',
+      'NestJS backend with Prisma ORM & PostgreSQL',
+      'Discover events by city, category & date',
+    ],
   },
+  
   // {
   //   title: 'GenifyAI | AI SaaS Platform',
   //   description:
@@ -207,24 +210,24 @@ const projects: Project[] = [
     gallery: [codeMatricsGal1, codeMatricsGal2, codeMatricsGal3],
   },
  
-  {
-    title: 'OTCO Pakistan | LMS Platform',
-    description:
-      'A SaaS-based Learning Management System built for Pakistan Army Initial Test and ISSB preparation. The platform provides comprehensive study material, practice tests, and structured courses covering Arrival Day, Bio Data Forms, Essay Writing, Psych Day assessments, and more — helping candidates prepare effectively for military selection.',
-    tech: ['Next.js', 'React', 'Node.js', 'MongoDB'],
-    link: 'https://otcopakarmy.vercel.app/',
-    image: otcoImg,
-    featured: true,
-  },
-  {
-    title: 'Car Rental Web Application',
-    description:
-      'A modern car rental web application that allows users to browse available cars, view detailed specifications, and rent vehicles easily. The platform focuses on a clean UI, smooth user experience, and responsive design for all devices.',
-    tech: ['Next.js', 'MongoDB', 'Node.js', 'Express.js'],
-    link: 'https://rent-car-webapp.vercel.app/',
-    image: rentImg,
-    featured: true,
-  },
+  // {
+  //   title: 'OTCO Pakistan | LMS Platform',
+  //   description:
+  //     'A SaaS-based Learning Management System built for Pakistan Army Initial Test and ISSB preparation. The platform provides comprehensive study material, practice tests, and structured courses covering Arrival Day, Bio Data Forms, Essay Writing, Psych Day assessments, and more — helping candidates prepare effectively for military selection.',
+  //   tech: ['Next.js', 'React', 'Node.js', 'MongoDB'],
+  //   link: 'https://otcopakarmy.vercel.app/',
+  //   image: otcoImg,
+  //   featured: true,
+  // },
+  // {
+  //   title: 'Car Rental Web Application',
+  //   description:
+  //     'A modern car rental web application that allows users to browse available cars, view detailed specifications, and rent vehicles easily. The platform focuses on a clean UI, smooth user experience, and responsive design for all devices.',
+  //   tech: ['Next.js', 'MongoDB', 'Node.js', 'Express.js'],
+  //   link: 'https://rent-car-webapp.vercel.app/',
+  //   image: rentImg,
+  //   featured: true,
+  // },
   {
     title: 'Full Stack Job Finder Application',
     description:
