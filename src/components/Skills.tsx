@@ -60,28 +60,41 @@ const skillCategories = [
 const useReveal = () => {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+
   useEffect(() => {
     const el = ref.current
     if (!el) return
+
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.unobserve(el) } },
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true)
+          obs.unobserve(el)
+        }
+      },
       { threshold: 0.1 }
     )
+
     obs.observe(el)
     return () => obs.disconnect()
   }, [])
+
   return { ref, visible }
 }
 
 const Skills: React.FC = () => {
   return (
-    <section id="skills" className="bg-[#0a0a0a]">
+    <section id="skills" className="bg-gradient-to-b from-black via-[#0a0a0a] to-black">
       <LampContainer>
         <div className="text-center">
-          <p className="mb-2 text-[11px] font-bold tracking-[0.25em] text-[#c5f82a] uppercase">What I Know</p>
+          <p className="mb-2 text-[11px] font-bold tracking-[0.25em] text-[#c5f82a] uppercase">
+            What I Know
+          </p>
+
           <h2 className="text-4xl font-black text-white md:text-5xl">
             My <span className="text-[#c5f82a]">Skills</span>
           </h2>
+
           <p className="mx-auto mt-3 max-w-md text-[13px] leading-relaxed text-[#666]">
             Technologies and tools I use to bring products to life
           </p>
@@ -89,7 +102,7 @@ const Skills: React.FC = () => {
       </LampContainer>
 
       <div className="mx-auto max-w-[1200px] px-6 pb-24 md:px-12 lg:px-16">
-        <div className="space-y-10">
+        <div className="space-y-12">
           {skillCategories.map((category) => (
             <CategoryBlock key={category.title} category={category} />
           ))}
@@ -107,23 +120,39 @@ const CategoryBlock: React.FC<CategoryBlockProps> = ({ category }) => {
   const { ref, visible } = useReveal()
 
   return (
-    <div ref={ref}>
-      {/* Category label */}
-      <div className="mb-5 flex items-center gap-3">
+    <div
+      ref={ref}
+      className="transition-transform duration-500 hover:-translate-y-1"
+    >
+      {/* Header */}
+      <div className="mb-6 flex items-center gap-3">
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-sm"
-          style={{ background: `${category.accent}18`, border: `1px solid ${category.accent}30` }}
+          className="flex h-9 w-9 items-center justify-center rounded-xl"
+          style={{
+            background: `${category.accent}20`,
+            border: `1px solid ${category.accent}40`,
+          }}
         >
           {category.icon}
         </div>
-        <h3 className="text-[13px] font-bold uppercase tracking-[0.15em]" style={{ color: category.accent }}>
+
+        <h3
+          className="text-sm font-extrabold uppercase tracking-widest"
+          style={{ color: category.accent }}
+        >
           {category.title}
         </h3>
-        <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${category.accent}30, transparent)` }} />
+
+        <div
+          className="h-px flex-1"
+          style={{
+            background: `linear-gradient(90deg, ${category.accent}40, transparent)`,
+          }}
+        />
       </div>
 
-      {/* Skills grid */}
-      <div className="flex flex-wrap gap-3">
+      {/* Skills */}
+      <div className="flex flex-wrap gap-4">
         {category.skills.map((skill, i) => (
           <SkillChip
             key={skill.name}
@@ -145,56 +174,74 @@ interface SkillChipProps {
   visible: boolean
 }
 
-const SkillChip: React.FC<SkillChipProps> = ({ skill, accent, index, visible }) => {
+const SkillChip: React.FC<SkillChipProps> = ({
+  skill,
+  accent,
+  index,
+  visible,
+}) => {
   const [hovered, setHovered] = useState(false)
 
   return (
     <div
-      className="group relative cursor-default overflow-hidden rounded-xl border border-[#1e1e1e] bg-[#111] transition-all duration-300"
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500"
       style={{
         opacity: visible ? 1 : 0,
-        translate: visible ? '0 0' : '0 20px',
-        transition: `opacity 0.5s ease-out ${index * 60}ms, translate 0.5s ease-out ${index * 60}ms, border-color 0.3s, box-shadow 0.3s`,
+        transform: visible ? 'translateY(0px)' : 'translateY(30px)',
+        transition: `all 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${index * 70}ms`,
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Glow bg on hover */}
+      {/* Glow */}
       <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: `radial-gradient(circle at 50% 50%, ${skill.color}18, transparent 70%)` }}
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500"
+        style={{
+          background: `linear-gradient(120deg, transparent, ${skill.color}40, transparent)`,
+        }}
       />
 
       <div
-        className="relative flex items-center gap-2.5 px-4 py-2.5 transition-all duration-300"
+        className="relative flex items-center gap-3 px-5 py-3 rounded-2xl"
         style={{
-          boxShadow: hovered ? `0 0 0 1px ${skill.color}40` : '0 0 0 0px transparent',
-          borderRadius: 'inherit',
+          transform: hovered ? 'scale(1.05)' : 'scale(1)',
+          boxShadow: hovered
+            ? `0 10px 30px -10px ${skill.color}55`
+            : 'none',
         }}
       >
-        <img src={skill.icon} alt={skill.name} className="h-5 w-5 shrink-0" />
-        <span className="text-[13px] font-semibold text-white whitespace-nowrap">{skill.name}</span>
-        {/* Level badge */}
+        <div className="relative">
+          <img src={skill.icon} alt={skill.name} className="h-6 w-6" />
+          <div
+            className="absolute inset-0 blur-md opacity-0 group-hover:opacity-100"
+            style={{ background: skill.color }}
+          />
+        </div>
+
+        <span className="text-[13px] font-semibold text-white tracking-wide">
+          {skill.name}
+        </span>
+
         <span
-          className="ml-1 rounded-full px-2 py-0.5 text-[10px] font-bold transition-all duration-300"
+          className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
           style={{
-            background: hovered ? `${accent}22` : 'transparent',
-            color: hovered ? accent : '#555',
-            border: `1px solid ${hovered ? accent + '50' : 'transparent'}`,
+            background: hovered ? `${accent}30` : 'transparent',
+            color: hovered ? accent : '#777',
+            border: `1px solid ${hovered ? accent + '60' : 'transparent'}`,
           }}
         >
           {skill.level}%
         </span>
       </div>
 
-      {/* Bottom progress bar */}
-      <div className="h-[2px] w-full bg-[#1a1a1a]">
+      <div className="h-[3px] w-full bg-white/5">
         <div
-          className="h-full transition-all duration-1000 ease-out"
+          className="h-full rounded-full transition-all duration-1000"
           style={{
             width: visible ? `${skill.level}%` : '0%',
-            background: `linear-gradient(90deg, ${skill.color}80, ${accent})`,
-            transitionDelay: `${index * 60 + 400}ms`,
+            background: `linear-gradient(90deg, ${skill.color}, ${accent})`,
+            boxShadow: `0 0 10px ${skill.color}`,
+            transitionDelay: `${index * 70 + 300}ms`,
           }}
         />
       </div>
