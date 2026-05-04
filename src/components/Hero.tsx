@@ -91,8 +91,8 @@ const Hero: React.FC = () => {
                 Let's Talk
               </a>
               <a
-                href="/Ali Huzaifa CV.pdf"
-                download="Ali Huzaifa CV.pdf"
+                href="/Final Cv Huzaifa.pdf"
+                download="Final Cv Huzaifa.pdf"
                 className="group inline-flex items-center gap-3 text-[13px] font-medium text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-105 active:scale-95"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#444] transition-all duration-300 group-hover:border-[#c5f82a] group-hover:shadow-md group-hover:shadow-[#c5f82a]/20">
