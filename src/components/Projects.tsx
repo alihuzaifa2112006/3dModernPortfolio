@@ -228,33 +228,33 @@ const projects: Project[] = [
   //   image: rentImg,
   //   featured: true,
   // },
-  {
-    title: 'Full Stack Job Finder Application',
-    description:
-      'A comprehensive job finder application to help users discover and apply for new opportunities. The app provides a user-friendly interface to browse job listings and manage applications.',
-    tech: ['React', 'Material UI', 'Tailwind CSS', 'Firebase'],
-    link: 'https://hire-hunar.vercel.app/auth',
-    image: hireImg,
-    featured: true,
-  },
-  {
-    title: 'FitTrack Gym Website',
-    description:
-      'A modern and responsive gym website built with Next.js, designed to showcase fitness programs, trainers, membership plans, and class schedules. The application focuses on clean UI, smooth navigation, and an engaging user experience across all devices.',
-    tech: ['Next.js', 'React', 'Tailwind CSS', 'JavaScript'],
-    link: 'https://fittrackgymwebsite.netlify.app/',
-    image: fitTrackImg,
-    featured: false,
-  },
-  {
-    title: '.noteLife | Note Taking App',
-    description:
-      'A note app that allows users to create, edit, and delete notes. The app is built with React.js and Tailwind CSS.',
-    tech: ['React.js', 'MUI'],
-    link: 'https://note-life-app.vercel.app/',
-    image: noteImg,
-    featured: false,
-  },
+  // {
+  //   title: 'Full Stack Job Finder Application',
+  //   description:
+  //     'A comprehensive job finder application to help users discover and apply for new opportunities. The app provides a user-friendly interface to browse job listings and manage applications.',
+  //   tech: ['React', 'Material UI', 'Tailwind CSS', 'Firebase'],
+  //   link: 'https://hire-hunar.vercel.app/auth',
+  //   image: hireImg,
+  //   featured: true,
+  // },
+  // {
+  //   title: 'FitTrack Gym Website',
+  //   description:
+  //     'A modern and responsive gym website built with Next.js, designed to showcase fitness programs, trainers, membership plans, and class schedules. The application focuses on clean UI, smooth navigation, and an engaging user experience across all devices.',
+  //   tech: ['Next.js', 'React', 'Tailwind CSS', 'JavaScript'],
+  //   link: 'https://fittrackgymwebsite.netlify.app/',
+  //   image: fitTrackImg,
+  //   featured: false,
+  // },
+  // {
+  //   title: '.noteLife | Note Taking App',
+  //   description:
+  //     'A note app that allows users to create, edit, and delete notes. The app is built with React.js and Tailwind CSS.',
+  //   tech: ['React.js', 'MUI'],
+  //   link: 'https://note-life-app.vercel.app/',
+  //   image: noteImg,
+  //   featured: false,
+  // },
 ]
 
 const allProjects: Project[] = [...heroProjects, ...projects]
