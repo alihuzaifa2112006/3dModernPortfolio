@@ -52,6 +52,10 @@ import pathify2Img from '../assets/pathify-2.png'
 import pathify3Img from '../assets/pathify-3.png'
 import pathify4Img from '../assets/pathify-4.png'
 import pathify5Img from '../assets/pathify-5.png'
+import eleveraImg from '../assets/elevera.png'
+import eleveraProduct from '../assets/elevera-product.png'
+import eleveraCart from '../assets/elevera-cart.png'
+import eleveraCheckout from '../assets/elevera-checkout.png'
 
 
 interface Project {
@@ -110,6 +114,27 @@ const heroProjects: Project[] = [
     ],
   }
   ,
+  {
+    title: 'Elevera | Luxury E-Commerce Platform',
+    description:
+      'Elevera is a production-grade full-stack luxury fashion e-commerce platform built with a modern microservices-inspired architecture. The frontend is powered by Next.js (App Router) with Redux Toolkit for global state management, while the backend is built on NestJS with MongoDB for scalable data persistence. Features a complete shopping experience — product browsing, cart, checkout, Stripe payments, and order tracking — all wrapped in an elegant minimalist UI. Fully automated CI/CD pipelines handle linting, builds, and deployments.',
+    tech: ['Next.js', 'NestJS', 'MongoDB', 'Redux Toolkit', 'Stripe', 'CI/CD', 'TypeScript', 'Tailwind CSS'],
+    link: 'https://elevera-store.vercel.app/',
+    image: eleveraImg,
+    featured: true,
+    hero: true,
+    gallery: [eleveraProduct, eleveraCart, eleveraCheckout],
+    highlights: [
+      'Full-stack e-commerce platform with Next.js + NestJS',
+      'Secure Stripe payment integration with full checkout flow',
+      'Redux Toolkit for predictable global state management',
+      'MongoDB backend with scalable schema design',
+      'Complete cart, shipping, and order management system',
+      'Automated CI/CD pipelines for linting, testing & deployment',
+      'Elegant minimalist UI inspired by luxury fashion houses',
+      'Product browsing with size selection & multi-image galleries',
+    ],
+  },
   {
     title: 'Gatherly | Event Management Platform',
     description:
