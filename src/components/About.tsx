@@ -16,6 +16,9 @@ const About: React.FC = () => {
           </p>
         </div>
 
+
+        
+
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:gap-20">
           {/* Left - Image */}
           <div className="flex w-full justify-center lg:w-2/5">
