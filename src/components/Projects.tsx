@@ -119,7 +119,6 @@ const heroProjects: Project[] = [
     description:
       'Elevera is a production-grade full-stack luxury fashion e-commerce platform built with a modern microservices-inspired architecture. The frontend is powered by Next.js (App Router) with Redux Toolkit for global state management, while the backend is built on NestJS with MongoDB for scalable data persistence. Features a complete shopping experience — product browsing, cart, checkout, Stripe payments, and order tracking — all wrapped in an elegant minimalist UI. Fully automated CI/CD pipelines handle linting, builds, and deployments.',
     tech: ['Next.js', 'NestJS', 'MongoDB', 'Redux Toolkit', 'Stripe', 'CI/CD', 'TypeScript', 'Tailwind CSS'],
-    link: 'https://elevera-store.vercel.app/',
     image: eleveraImg,
     featured: true,
     hero: true,
