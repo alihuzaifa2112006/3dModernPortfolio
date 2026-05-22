@@ -297,8 +297,11 @@ const Projects: React.FC = () => {
   }
 
   useEffect(() => {
-    document.body.style.overflow = selected ? 'hidden' : ''
+    const overflow = selected ? 'hidden' : ''
+    document.documentElement.style.overflow = overflow
+    document.body.style.overflow = overflow
     return () => {
+      document.documentElement.style.overflow = ''
       document.body.style.overflow = ''
     }
   }, [selected])
@@ -314,7 +317,7 @@ const Projects: React.FC = () => {
   const allGalleryImages = selected ? getGalleryImages(selected) : []
 
   return (
-    <section id="projects" className="bg-[#0a0a0a]">
+    <section id="projects" className="overflow-x-clip bg-[#0a0a0a]">
       <LampContainer className="pt-10 pb-0">
         <ScrollReveal variant="blur" className="mb-6 text-center">
           <h2 className="text-3xl font-black italic text-white sm:text-4xl md:text-5xl">

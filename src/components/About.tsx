@@ -4,7 +4,7 @@ import { ScrollReveal, StaggerReveal, StaggerItem } from './ui/scroll-reveal'
 
 const About: React.FC = () => {
   return (
-    <section id="about" className="relative bg-white px-4 pt-10 pb-16 text-black sm:px-6 md:px-12 md:pb-20 lg:px-16">
+    <section id="about" className="relative overflow-x-hidden bg-white px-4 pt-10 pb-16 text-black sm:px-6 md:px-12 md:pb-20 lg:px-16">
       <div className="mx-auto max-w-[1300px]">
         <ScrollReveal variant="up" className="mb-10 md:mb-16">
           <div className="flex flex-col items-start gap-3 sm:gap-4 md:flex-row md:items-center">

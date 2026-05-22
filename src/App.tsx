@@ -8,7 +8,7 @@ import Footer from './components/Footer'
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#0a0a0a] text-white">
       <Navbar />
       <Hero />
       <About />

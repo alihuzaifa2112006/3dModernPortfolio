@@ -18,7 +18,7 @@ export const LampContainer = ({
       style={{ minHeight: "260px" }}
     >
       {/* Lamp lights - positioned at top */}
-      <div className="absolute inset-x-0 top-0 flex h-full scale-y-100 items-start justify-center">
+      <div className="absolute inset-x-0 top-0 flex h-full scale-y-100 items-start justify-center overflow-hidden">
         {/* Left cone */}
         <motion.div
           initial={{ opacity: 0.5, width: "12rem" }}

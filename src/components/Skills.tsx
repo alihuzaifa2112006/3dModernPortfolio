@@ -69,7 +69,7 @@ const skillCategories = [
 
 const Skills: React.FC = () => {
   return (
-    <section id="skills" className="bg-gradient-to-b from-black via-[#0a0a0a] to-black">
+    <section id="skills" className="overflow-x-clip bg-gradient-to-b from-black via-[#0a0a0a] to-black">
       <LampContainer>
         <ScrollReveal variant="blur" className="text-center">
           <p className="mb-2 text-[11px] font-bold tracking-[0.25em] text-[#c5f82a] uppercase">

@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   const links = ['Home', 'About', 'Projects', 'Skills']
 
   return (
-    <footer id="contact" className="border-t border-[#222] bg-[#0a0a0a] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-20">
+    <footer id="contact" className="overflow-x-hidden border-t border-[#222] bg-[#0a0a0a] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-20">
       <div className="mx-auto max-w-7xl">
         <ScrollReveal variant="zoom" duration={0.9}>
           <div className="mb-10 flex justify-center py-8 sm:mb-12 sm:py-12">
