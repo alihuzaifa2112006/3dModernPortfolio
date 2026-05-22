@@ -32,6 +32,8 @@ const skillCategories = [
       { name: 'Firebase', icon: devicon('firebase/firebase-original.svg'), color: '#FFCA28', level: 78 },
       { name: 'Prisma', icon: devicon('prisma/prisma-original.svg'), color: '#ffffff', level: 74 },
       { name: 'Python', icon: devicon('python/python-original.svg'), color: '#3776AB', level: 70 },
+      { name: 'Pandas', icon: devicon('pandas/pandas-original.svg'), color: '#150458', level: 72 },
+      { name: 'Render', icon: 'https://cdn.simpleicons.org/render/46E3B7', color: '#46E3B7', level: 75 },
     ],
   },
   {
@@ -51,7 +53,7 @@ const skillCategories = [
     skills: [
       { name: 'GitHub Copilot', icon: 'https://cdn.simpleicons.org/githubcopilot/ffffff', color: '#ffffff', level: 88 },
       { name: 'Cursor', icon: 'https://cdn.simpleicons.org/cursor/ffffff', color: '#ffffff', level: 90 },
-      { name: 'Claude', icon: 'https://cdn.simpleicons.org/anthropic/D4A574', color: '#D4A574', level: 85 },
+      { name: 'Claude API', icon: 'https://cdn.simpleicons.org/anthropic/D4A574', color: '#D4A574', level: 85 },
       { name: 'Qoder', icon: 'https://www.qodo.ai/favicon.ico', color: '#a855f7', level: 75 },
     ],
   },
