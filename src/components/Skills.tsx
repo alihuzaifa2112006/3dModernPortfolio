@@ -32,8 +32,6 @@ const skillCategories = [
       { name: 'Firebase', icon: devicon('firebase/firebase-original.svg'), color: '#FFCA28', level: 78 },
       { name: 'Prisma', icon: devicon('prisma/prisma-original.svg'), color: '#ffffff', level: 74 },
       { name: 'Python', icon: devicon('python/python-original.svg'), color: '#3776AB', level: 70 },
-      { name: 'Pandas', icon: devicon('pandas/pandas-original.svg'), color: '#150458', level: 72 },
-      { name: 'Render', icon: 'https://cdn.simpleicons.org/render/46E3B7', color: '#46E3B7', level: 75 },
     ],
   },
   {
@@ -44,6 +42,14 @@ const skillCategories = [
       { name: 'MongoDB', icon: devicon('mongodb/mongodb-original.svg'), color: '#47A248', level: 75 },
       { name: 'PostgreSQL', icon: devicon('postgresql/postgresql-original.svg'), color: '#4169E1', level: 73 },
       { name: 'MySQL', icon: devicon('mysql/mysql-original.svg'), color: '#4479A1', level: 72 },
+    ],
+  },
+  {
+    title: 'Deployment',
+    icon: '🚀',
+    accent: '#46E3B7',
+    skills: [
+      { name: 'Render', icon: 'https://cdn.simpleicons.org/render/46E3B7', color: '#46E3B7', level: 75 },
     ],
   },
   {
