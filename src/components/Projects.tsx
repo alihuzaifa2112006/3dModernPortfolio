@@ -203,6 +203,8 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
   const { ref, isVisible } = useScrollReveal()
   const isMobile = variant === 'mobile'
   const isFeatured = variant === 'featured'
+  const isWeb = variant === 'web'
+  const fitsImageSize = isWeb || project.imageMode === 'contain'
   const hasLive = Boolean(project.link)
 
   return (
@@ -235,25 +237,27 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
         </div>
       )}
 
-      {/* Image */}
+      {/* Image — web/small images: box height follows image, no forced aspect or fill bg */}
       <div
-        className={`relative w-full overflow-hidden bg-[#080c14] ${
-          isFeatured
-            ? 'min-h-[320px] sm:min-h-[400px] md:min-h-[480px] lg:min-h-[560px] xl:min-h-[620px]'
-            : isMobile
-              ? 'min-h-[520px] lg:min-h-full lg:h-full'
-              : 'aspect-[16/10]'
+        className={`relative w-full overflow-hidden ${
+          fitsImageSize
+            ? ''
+            : isFeatured
+              ? 'min-h-[320px] bg-[#080c14] sm:min-h-[400px] md:min-h-[480px] lg:min-h-[560px] xl:min-h-[620px]'
+              : isMobile
+                ? 'min-h-[520px] bg-[#080c14] lg:min-h-full lg:h-full'
+                : ''
         }`}
       >
         <img
           src={project.image}
           alt={project.title}
-          className={`h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.06] ${
-            project.imageMode === 'contain'
-              ? 'object-contain p-4 md:p-6'
-              : isFeatured
-                ? 'object-cover object-center'
-                : 'object-cover object-top'
+          className={`transition-transform duration-700 ease-out group-hover:scale-[1.03] ${
+            fitsImageSize
+              ? 'block h-auto w-full'
+              : `h-full w-full group-hover:scale-[1.06] ${
+                  isFeatured ? 'object-cover object-center' : 'object-cover object-top'
+                }`
           }`}
         />
 
@@ -370,7 +374,7 @@ const Projects: React.FC = () => {
         </div>
 
         {/* 40% Mobile | 60% Web */}
-        <div className="grid min-h-[560px] grid-cols-1 gap-5 lg:grid-cols-[2fr_3fr] lg:gap-6 lg:min-h-[640px]">
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[2fr_3fr] lg:gap-6">
           {/* Mobile — 40% */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
@@ -388,7 +392,6 @@ const Projects: React.FC = () => {
               project={mobileProject}
               onOpen={openModal}
               variant="mobile"
-              className="flex-1 lg:min-h-[580px]"
             />
           </div>
 
@@ -405,15 +408,16 @@ const Projects: React.FC = () => {
                 <p className="text-[10px] font-bold tracking-[0.2em] text-[#c5f82a] uppercase">Web Applications</p>
               </div>
             </div>
-            <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <div className="columns-1 gap-x-4 sm:columns-2 [column-gap:1rem]">
               {otherWebProjects.map((project, index) => (
-                <ProjectImageTile
-                  key={project.title}
-                  project={project}
-                  onOpen={openModal}
-                  variant="web"
-                  index={index}
-                />
+                <div key={project.title} className="mb-4 break-inside-avoid">
+                  <ProjectImageTile
+                    project={project}
+                    onOpen={openModal}
+                    variant="web"
+                    index={index}
+                  />
+                </div>
               ))}
             </div>
           </div>
