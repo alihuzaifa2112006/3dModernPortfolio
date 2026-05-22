@@ -8,6 +8,7 @@ import codeMatricsGal2 from '../assets/codematrics-2.png'
 import codeMatricsGal3 from '../assets/codematrics-3.png'
 import webchatImg from '../assets/webchat.png'
 import webchatGal1 from '../assets/webchat-1.png'
+import wealthpulseHero from '../assets/wealthpulse-hero.png'
 import wealthpulseImg from '../assets/wealthpulse.png'
 import wealthpulseDashboard from '../assets/wealthpulse-dashboard.png'
 import wealthpulseGoals from '../assets/wealthpulse-goals.png'
@@ -102,10 +103,10 @@ const mainProject: Project = {
   ],
   tagline: 'AI finance app with receipt scan & automated data capture',
   link: 'https://wealth-pulse-ai-beta.vercel.app/',
-  image: wealthpulseImg,
+  image: wealthpulseHero,
   featured: true,
   hero: true,
-  gallery: [wealthpulseDashboard, wealthpulseGoals, wealthpulseAI],
+  gallery: [wealthpulseImg, wealthpulseDashboard, wealthpulseGoals, wealthpulseAI],
   highlights: [
     'Automated Data Capture — enter or upload any receipt; AI scans & adds it to your ledger',
     'Real-time income, expense & savings tracking',
@@ -250,7 +251,9 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
           className={`h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.06] ${
             project.imageMode === 'contain'
               ? 'object-contain p-4 md:p-6'
-              : 'object-cover object-top'
+              : isFeatured
+                ? 'object-cover object-center'
+                : 'object-cover object-top'
           }`}
         />
 
