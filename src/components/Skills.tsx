@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
+import { motion, useInView } from 'motion/react'
 import { LampContainer } from './ui/lamp'
+import { ScrollReveal, StaggerReveal, StaggerItem } from './ui/scroll-reveal'
 
 const devicon = (name: string) =>
   `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}`
@@ -65,173 +67,108 @@ const skillCategories = [
   },
 ]
 
-const useReveal = () => {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true)
-          obs.unobserve(el)
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
-  return { ref, visible }
-}
-
 const Skills: React.FC = () => {
   return (
     <section id="skills" className="bg-gradient-to-b from-black via-[#0a0a0a] to-black">
       <LampContainer>
-        <div className="text-center">
+        <ScrollReveal variant="blur" className="text-center">
           <p className="mb-2 text-[11px] font-bold tracking-[0.25em] text-[#c5f82a] uppercase">
             What I Know
           </p>
-
-          <h2 className="text-4xl font-black text-white md:text-5xl">
+          <h2 className="text-3xl font-black text-white sm:text-4xl md:text-5xl">
             My <span className="text-[#c5f82a]">Skills</span>
           </h2>
-
-          <p className="mx-auto mt-3 max-w-md text-[13px] leading-relaxed text-[#666]">
+          <p className="mx-auto mt-3 max-w-md px-2 text-[12px] leading-relaxed text-[#666] sm:text-[13px]">
             Technologies and tools I use to bring products to life
           </p>
-        </div>
+        </ScrollReveal>
       </LampContainer>
 
-      <div className="mx-auto max-w-[1200px] px-6 pb-24 md:px-12 lg:px-16">
-        <div className="space-y-12">
-          {skillCategories.map((category) => (
-            <CategoryBlock key={category.title} category={category} />
+      <div className="mx-auto max-w-[1200px] px-4 pb-20 sm:px-6 md:px-12 md:pb-24 lg:px-16">
+        <StaggerReveal className="space-y-10 sm:space-y-12" stagger={0.18}>
+          {skillCategories.map((category, i) => (
+            <StaggerItem key={category.title} variant={i % 2 === 0 ? 'left' : 'right'}>
+              <CategoryBlock category={category} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerReveal>
       </div>
     </section>
   )
 }
 
 interface CategoryBlockProps {
-  category: typeof skillCategories[number]
+  category: (typeof skillCategories)[number]
 }
 
-const CategoryBlock: React.FC<CategoryBlockProps> = ({ category }) => {
-  const { ref, visible } = useReveal()
-
-  return (
-    <div
-      ref={ref}
-      className="transition-transform duration-500 hover:-translate-y-1"
-    >
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{
-            background: `${category.accent}20`,
-            border: `1px solid ${category.accent}40`,
-          }}
-        >
-          {category.icon}
-        </div>
-
-        <h3
-          className="text-sm font-extrabold uppercase tracking-widest"
-          style={{ color: category.accent }}
-        >
-          {category.title}
-        </h3>
-
-        <div
-          className="h-px flex-1"
-          style={{
-            background: `linear-gradient(90deg, ${category.accent}40, transparent)`,
-          }}
-        />
+const CategoryBlock: React.FC<CategoryBlockProps> = ({ category }) => (
+  <div className="transition-transform duration-500 hover:-translate-y-1">
+    <div className="mb-4 flex items-center gap-3 sm:mb-6">
+      <div
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+        style={{
+          background: `${category.accent}20`,
+          border: `1px solid ${category.accent}40`,
+        }}
+      >
+        {category.icon}
       </div>
-
-      {/* Skills */}
-      <div className="flex flex-wrap gap-4">
-        {category.skills.map((skill, i) => (
-          <SkillChip
-            key={skill.name}
-            skill={skill}
-            accent={category.accent}
-            index={i}
-            visible={visible}
-          />
-        ))}
-      </div>
+      <h3
+        className="text-xs font-extrabold tracking-widest uppercase sm:text-sm"
+        style={{ color: category.accent }}
+      >
+        {category.title}
+      </h3>
+      <div
+        className="h-px flex-1"
+        style={{ background: `linear-gradient(90deg, ${category.accent}40, transparent)` }}
+      />
     </div>
-  )
-}
+
+    <StaggerReveal className="flex flex-wrap gap-3 sm:gap-4" stagger={0.08}>
+      {category.skills.map((skill) => (
+        <StaggerItem key={skill.name} variant="zoom">
+          <SkillChip skill={skill} accent={category.accent} />
+        </StaggerItem>
+      ))}
+    </StaggerReveal>
+  </div>
+)
 
 interface SkillChipProps {
   skill: { name: string; icon: string; color: string; level: number }
   accent: string
-  index: number
-  visible: boolean
 }
 
-const SkillChip: React.FC<SkillChipProps> = ({
-  skill,
-  accent,
-  index,
-  visible,
-}) => {
+const SkillChip: React.FC<SkillChipProps> = ({ skill, accent }) => {
   const [hovered, setHovered] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
 
   return (
     <div
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500"
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(30px)',
-        transition: `all 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${index * 70}ms`,
-      }}
+      ref={ref}
+      className="group relative min-w-[140px] flex-1 cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 sm:min-w-[160px] sm:flex-none"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Glow */}
       <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500"
+        className="absolute inset-0 rounded-2xl opacity-0 transition duration-500 group-hover:opacity-100"
         style={{
           background: `linear-gradient(120deg, transparent, ${skill.color}40, transparent)`,
         }}
       />
-
       <div
-        className="relative flex items-center gap-3 px-5 py-3 rounded-2xl"
+        className="relative flex items-center gap-2 rounded-2xl px-4 py-2.5 sm:gap-3 sm:px-5 sm:py-3"
         style={{
           transform: hovered ? 'scale(1.05)' : 'scale(1)',
-          boxShadow: hovered
-            ? `0 10px 30px -10px ${skill.color}55`
-            : 'none',
+          boxShadow: hovered ? `0 10px 30px -10px ${skill.color}55` : 'none',
         }}
       >
-        <div className="relative">
-          <img src={skill.icon} alt={skill.name} className="h-6 w-6" />
-          <div
-            className="absolute inset-0 blur-md opacity-0 group-hover:opacity-100"
-            style={{ background: skill.color }}
-          />
-        </div>
-
-        <span className="text-[13px] font-semibold text-white tracking-wide">
-          {skill.name}
-        </span>
-
+        <img src={skill.icon} alt={skill.name} className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
+        <span className="text-[12px] font-semibold tracking-wide text-white sm:text-[13px]">{skill.name}</span>
         <span
-          className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full"
+          className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
           style={{
             background: hovered ? `${accent}30` : 'transparent',
             color: hovered ? accent : '#777',
@@ -241,15 +178,15 @@ const SkillChip: React.FC<SkillChipProps> = ({
           {skill.level}%
         </span>
       </div>
-
       <div className="h-[3px] w-full bg-white/5">
-        <div
-          className="h-full rounded-full transition-all duration-1000"
+        <motion.div
+          className="h-full rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: inView ? `${skill.level}%` : 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           style={{
-            width: visible ? `${skill.level}%` : '0%',
             background: `linear-gradient(90deg, ${skill.color}, ${accent})`,
             boxShadow: `0 0 10px ${skill.color}`,
-            transitionDelay: `${index * 70 + 300}ms`,
           }}
         />
       </div>

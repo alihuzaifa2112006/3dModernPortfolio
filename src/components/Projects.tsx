@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { LampContainer } from './ui/lamp'
 import { useOutsideClick } from '../hooks/useOutsideClick'
+import { ScrollReveal } from './ui/scroll-reveal'
 import codeMatricsImg from '../assets/codematrics.png'
 import codeMatricsGal1 from '../assets/codematrics-1.png'
 import codeMatricsGal2 from '../assets/codematrics-2.png'
@@ -25,29 +26,6 @@ import eleveraImg from '../assets/elevera.png'
 import eleveraProduct from '../assets/elevera-product.png'
 import eleveraCart from '../assets/elevera-cart.png'
 import eleveraCheckout from '../assets/elevera-checkout.png'
-
-const useScrollReveal = () => {
-  const ref = useRef<HTMLButtonElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(el)
-        }
-      },
-      { threshold: 0.08 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
-  return { ref, isVisible }
-}
 
 interface Project {
   title: string
@@ -189,7 +167,6 @@ interface ProjectImageTileProps {
   project: Project
   onOpen: (p: Project) => void
   variant: 'featured' | 'mobile' | 'web'
-  index?: number
   className?: string
 }
 
@@ -197,10 +174,8 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
   project,
   onOpen,
   variant,
-  index = 0,
   className = '',
 }) => {
-  const { ref, isVisible } = useScrollReveal()
   const isMobile = variant === 'mobile'
   const isFeatured = variant === 'featured'
   const isWeb = variant === 'web'
@@ -209,7 +184,6 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
 
   return (
     <button
-      ref={ref}
       type="button"
       onClick={() => onOpen(project)}
       className={`group relative w-full overflow-hidden rounded-2xl border bg-[#0d1117] text-left outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[#c5f82a]/50 ${
@@ -217,11 +191,6 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
           ? 'border-[#c5f82a]/25 shadow-[0_0_60px_-12px_rgba(197,248,42,0.35)] hover:border-[#c5f82a]/50 hover:shadow-[0_0_80px_-8px_rgba(197,248,42,0.45)]'
           : 'border-white/[0.06] hover:border-[#c5f82a]/35 hover:shadow-[0_0_40px_-8px_rgba(197,248,42,0.25)]'
       } ${className}`}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
-        transition: `opacity 0.6s ease ${index * 60}ms, transform 0.6s ease ${index * 60}ms, border-color 0.3s, box-shadow 0.3s`,
-      }}
     >
       {isFeatured && (
         <div className="pointer-events-none absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
@@ -243,7 +212,7 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
           fitsImageSize
             ? ''
             : isFeatured
-              ? 'min-h-[320px] bg-[#080c14] sm:min-h-[400px] md:min-h-[480px] lg:min-h-[560px] xl:min-h-[620px]'
+              ? 'min-h-[220px] bg-[#080c14] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[520px] xl:min-h-[580px]'
               : isMobile
                 ? 'min-h-[520px] bg-[#080c14] lg:min-h-full lg:h-full'
                 : ''
@@ -347,35 +316,28 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="bg-[#0a0a0a]">
       <LampContainer className="pt-10 pb-0">
-        <div className="mb-6 text-center">
-          <h2 className="text-4xl font-black italic text-white md:text-5xl">
+        <ScrollReveal variant="blur" className="mb-6 text-center">
+          <h2 className="text-3xl font-black italic text-white sm:text-4xl md:text-5xl">
             My <span className="text-[#c5f82a]">Projects</span>
           </h2>
           <div className="mx-auto mt-2 h-[2px] w-48 bg-gradient-to-r from-transparent via-[#c5f82a] to-transparent" />
-          <p className="mt-4 text-sm italic text-[#666]">
+          <p className="mt-4 px-2 text-xs italic text-[#666] sm:text-sm">
             Hover to explore — click Learn More for full details
           </p>
-        </div>
+        </ScrollReveal>
       </LampContainer>
 
-      <div className="mx-auto max-w-[1400px] px-6 pb-24 md:px-12 lg:px-16">
-        {/* Main Project — WealthPulse hero */}
-        <div className="mb-8 md:mb-10">
+      <div className="mx-auto max-w-[1400px] px-4 pb-20 sm:px-6 md:px-12 md:pb-24 lg:px-16">
+        <ScrollReveal variant="zoom" className="mb-6 md:mb-10">
           <div className="mb-4 flex items-center gap-2">
             <span className="h-px flex-1 max-w-[60px] bg-gradient-to-r from-[#c5f82a] to-transparent" />
-            <p className="text-[11px] font-bold tracking-[0.22em] text-[#c5f82a] uppercase">Featured Project</p>
+            <p className="text-[10px] font-bold tracking-[0.22em] text-[#c5f82a] uppercase sm:text-[11px]">Featured Project</p>
             <span className="h-px flex-1 bg-gradient-to-l from-[#c5f82a]/40 to-transparent" />
           </div>
-          <ProjectImageTile
-            project={mainProject}
-            onOpen={openModal}
-            variant="featured"
-          />
-        </div>
+          <ProjectImageTile project={mainProject} onOpen={openModal} variant="featured" />
+        </ScrollReveal>
 
-        {/* 40% Mobile | 60% Web */}
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[2fr_3fr] lg:gap-6">
-          {/* Mobile — 40% */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#31d0c6]/30 bg-[#31d0c6]/10 text-[#31d0c6]">
@@ -388,14 +350,11 @@ const Projects: React.FC = () => {
                 <p className="text-[10px] font-bold tracking-[0.2em] text-[#31d0c6] uppercase">Mobile App</p>
               </div>
             </div>
-            <ProjectImageTile
-              project={mobileProject}
-              onOpen={openModal}
-              variant="mobile"
-            />
+            <ScrollReveal variant="right" delay={0.1}>
+              <ProjectImageTile project={mobileProject} onOpen={openModal} variant="mobile" />
+            </ScrollReveal>
           </div>
 
-          {/* Web — 60% */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#c5f82a]/30 bg-[#c5f82a]/10 text-[#c5f82a]">
@@ -411,12 +370,9 @@ const Projects: React.FC = () => {
             <div className="columns-1 gap-x-4 sm:columns-2 [column-gap:1rem]">
               {otherWebProjects.map((project, index) => (
                 <div key={project.title} className="mb-4 break-inside-avoid">
-                  <ProjectImageTile
-                    project={project}
-                    onOpen={openModal}
-                    variant="web"
-                    index={index}
-                  />
+                  <ScrollReveal variant={index % 2 === 0 ? 'up' : 'scale'} delay={index * 0.08}>
+                    <ProjectImageTile project={project} onOpen={openModal} variant="web" />
+                  </ScrollReveal>
                 </div>
               ))}
             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { BackgroundRippleEffect } from './ui/background-ripple-effect'
 
 const closeMenu = (setMenuOpen: (v: boolean) => void) => () => setMenuOpen(false)
@@ -26,42 +27,71 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Backdrop - click outside to close */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-          onClick={() => setMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Slide-down menu from top */}
-      <div
-        className={`fixed left-0 right-0 top-0 z-50 overflow-hidden transition-all duration-300 ease-out ${
-          menuOpen ? 'max-h-[100vh] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
-        }`}
-      >
-        <nav className="relative flex min-h-[40vh] w-full flex-col items-center justify-center overflow-hidden px-6 py-12 md:px-12">
-          <BackgroundRippleEffect rows={6} cols={50} cellSize={40} variant="bright" />
-          <div className="relative z-10 flex w-full flex-col items-center gap-8">
-            {/* Links - white text for better visibility */}
-            <div className="flex flex-col items-center gap-6 md:flex-row md:gap-8">
-              <a href="#home" className="text-[14px] font-semibold text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-110" onClick={closeMenu(setMenuOpen)}>Home</a>
-              <a href="#about" className="text-[14px] font-semibold text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-110" onClick={closeMenu(setMenuOpen)}>About me</a>
-              <a href="#projects" className="text-[14px] font-semibold text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-110" onClick={closeMenu(setMenuOpen)}>Projects</a>
-              <a href="#skills" className="text-[14px] font-semibold text-white transition-all duration-300 hover:text-[#c5f82a] hover:scale-110" onClick={closeMenu(setMenuOpen)}>Skills</a>
-            </div>
-
-            {/* Contact Button */}
-            <a
-              href="#contact"
-              className="rounded-full border border-[#c5f82a] px-6 py-2 text-[13px] font-medium text-[#c5f82a] transition-all duration-300 hover:bg-[#c5f82a] hover:text-black hover:scale-105 hover:shadow-lg hover:shadow-[#c5f82a]/25 active:scale-95"
-              onClick={closeMenu(setMenuOpen)}
-            >
-              Contact Me
-            </a>
-          </div>
-        </nav>
-      </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-0 right-0 left-0 z-50 overflow-hidden"
+          >
+            <nav className="relative flex min-h-[min(70vh,520px)] w-full flex-col items-center justify-center overflow-hidden px-4 py-12 sm:px-6 md:min-h-[40vh] md:px-12">
+              <BackgroundRippleEffect rows={6} cols={50} cellSize={40} variant="bright" />
+              <div className="relative z-10 flex w-full flex-col items-center gap-8">
+                <motion.div
+                  className="flex flex-col items-center gap-5 sm:gap-6 md:flex-row md:gap-8"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.08, delayChildren: 0.12 } },
+                  }}
+                >
+                  {['Home', 'About me', 'Projects', 'Skills'].map((label, i) => (
+                    <motion.a
+                      key={label}
+                      href={`#${['home', 'about', 'projects', 'skills'][i]}`}
+                      className="text-[14px] font-semibold text-white transition-colors hover:text-[#c5f82a]"
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 },
+                      }}
+                      transition={{ duration: 0.4 }}
+                      onClick={closeMenu(setMenuOpen)}
+                    >
+                      {label}
+                    </motion.a>
+                  ))}
+                </motion.div>
+                <motion.a
+                  href="#contact"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.45, duration: 0.4 }}
+                  className="rounded-full border border-[#c5f82a] px-6 py-2 text-[13px] font-medium text-[#c5f82a] transition-all duration-300 hover:bg-[#c5f82a] hover:text-black hover:scale-105"
+                  onClick={closeMenu(setMenuOpen)}
+                >
+                  Contact Me
+                </motion.a>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
