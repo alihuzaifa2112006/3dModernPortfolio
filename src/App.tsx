@@ -6,6 +6,9 @@ import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Footer from './components/Footer'
 import Testimonials from './components/Testimonials'
+import Services from './components/Services'
+import Experience from './components/Experience'
+
 
 const App: React.FC = () => {
   return (
@@ -13,8 +16,10 @@ const App: React.FC = () => {
       <Navbar />
       <Hero />
       <About />
+      <Services />
       <Projects />
       <Skills />
+      <Experience />
       <Testimonials />
       <Footer />
     </div>
