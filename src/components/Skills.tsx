@@ -54,17 +54,17 @@ const skillCategories = [
       { name: 'Render', icon: 'https://cdn.simpleicons.org/render/46E3B7', color: '#46E3B7', level: 75 },
     ],
   },
-  {
-    title: 'AI Tools',
-    icon: '🤖',
-    accent: '#a855f7',
-    skills: [
-      { name: 'GitHub Copilot', icon: 'https://cdn.simpleicons.org/githubcopilot/ffffff', color: '#ffffff', level: 88 },
-      { name: 'Cursor', icon: 'https://cdn.simpleicons.org/cursor/ffffff', color: '#ffffff', level: 90 },
-      { name: 'Claude API', icon: 'https://cdn.simpleicons.org/anthropic/D4A574', color: '#D4A574', level: 85 },
-      { name: 'Qoder', icon: 'https://www.qodo.ai/favicon.ico', color: '#a855f7', level: 75 },
-    ],
-  },
+  // {
+  //   title: 'AI Tools',
+  //   icon: '🤖',
+  //   accent: '#a855f7',
+  //   skills: [
+  //     // { name: 'GitHub Copilot', icon: 'https://cdn.simpleicons.org/githubcopilot/ffffff', color: '#ffffff', level: 88 },
+  //     { name: 'Cursor', icon: 'https://cdn.simpleicons.org/cursor/ffffff', color: '#ffffff', level: 90 },
+  //     { name: 'Claude API', icon: 'https://cdn.simpleicons.org/anthropic/D4A574', color: '#D4A574', level: 85 },
+  //     // { name: 'Qoder', icon: 'https://www.qodo.ai/favicon.ico', color: '#a855f7', level: 75 },
+  //   ],
+  // },
 ]
 
 const Skills: React.FC = () => {
