@@ -1,12 +1,32 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
-import profileImg from '../assets/profile-new.png'
+import { Volume2, VolumeX } from 'lucide-react'
+import avatarVideo from '../assets/avatar-video.mp4'
 import { BackgroundRippleEffect } from './ui/background-ripple-effect'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
 const Hero: React.FC = () => {
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  // Muted on load so browsers allow autoplay without a click
+  const [isMuted, setIsMuted] = useState(true)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = isMuted
+    void video.play().catch(() => {})
+  }, [isMuted])
+
+  const toggleMute = () => {
+    const video = videoRef.current
+    if (!video) return
+    const nextMuted = !isMuted
+    setIsMuted(nextMuted)
+    video.muted = nextMuted
+    if (!nextMuted) void video.play().catch(() => {})
+  }
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!headingRef.current || window.matchMedia('(max-width: 1023px)').matches) return
@@ -145,8 +165,27 @@ const Hero: React.FC = () => {
                   transform: 'rotate(5deg)',
                 }}
               />
-              <div className="relative z-10 aspect-[3/4] w-full overflow-hidden rounded-[22px]">
-                <img src={profileImg} alt="Profile" className="h-full w-full object-cover object-top" />
+              <div className="group relative z-10 aspect-[3/4] w-full overflow-hidden rounded-[22px]">
+                <video
+                  ref={videoRef}
+                  src={avatarVideo}
+                  autoPlay
+                  loop
+                  playsInline
+                  muted={isMuted}
+                  preload="auto"
+                  className="h-full w-full object-cover object-top"
+                  aria-label="Profile introduction video"
+                />
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className="absolute right-3 bottom-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-[#c5f82a] hover:bg-black/80 hover:text-[#c5f82a]"
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+                  aria-pressed={isMuted}
+                >
+                  {isMuted ? <VolumeX size={18} strokeWidth={2.5} /> : <Volume2 size={18} strokeWidth={2.5} />}
+                </button>
               </div>
               <div className="absolute -bottom-2 -left-3 z-20 grid grid-cols-4 gap-1.5">
                 {[...Array(8)].map((_, i) => (
