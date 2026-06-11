@@ -93,7 +93,7 @@ const Hero: React.FC = () => {
 
               <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5">
                 <a
-                  href="#about"
+                  href="#contact"
                   className="inline-flex w-fit items-center gap-2 rounded-full bg-[#c5f82a] py-2.5 pr-7 pl-2.5 text-[13px] font-semibold text-black transition-all hover:bg-[#d4ff4a] hover:scale-105"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/10">
