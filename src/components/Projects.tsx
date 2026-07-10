@@ -26,6 +26,8 @@ import eleveraImg from '../assets/elevera.png'
 import eleveraProduct from '../assets/elevera-product.png'
 import eleveraCart from '../assets/elevera-cart.png'
 import eleveraCheckout from '../assets/elevera-checkout.png'
+import DynoQueryImg from '../assets/Dynoqueryai.png'
+
 
 interface Project {
   title: string
@@ -99,6 +101,29 @@ const mainProject: Project = {
 }
 
 const otherWebProjects: Project[] = [
+  // Dyno Query
+
+  {
+    title: 'Dyno Query AI',
+    description:
+      'An AI-powered SaaS platform that enables businesses to create custom AI chatbots trained on their own company knowledge, featuring seamless document ingestion and Retrieval-Augmented Generation (RAG).',
+    tech: ['Next.js', 'Node.js', 'Express.js', 'Python', 'FastAPI', 'PostgreSQL Vector', 'Gemini API', 'RAG'],
+    image: DynoQueryImg,
+    featured: true,
+    hero: true,
+    gallery: [],
+    highlights: [
+      'No-code customizable chatbot builder with embeddable widget.',
+      'Document ingestion pipeline with Gemini API for PDFs and websites.',
+      'Accurate semantic search using pgvector and embeddings.',
+      'Scalable backend API with secure multi-tenant data isolation.',
+      'Easy one-click deployment to integrate into external websites.',
+    ],
+    link: 'https://dynoqueryai.vercel.app/intro',
+  },
+
+
+
   {
     title: 'Elevera | Luxury E-Commerce Platform',
     description:
@@ -137,7 +162,7 @@ const otherWebProjects: Project[] = [
     description:
       'A full-stack real-time chat application with WebSocket messaging, contact management, online/offline status, and a clean responsive UI with secure authentication.',
     tech: ['Next.js', 'MongoDB', 'Socket.io', 'shadcn/ui', 'TypeScript'],
-    link: 'https://webchatapphuzaifa.vercel.app/',
+
     image: webchatImg,
     featured: true,
     hero: true,
@@ -186,11 +211,10 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
     <button
       type="button"
       onClick={() => onOpen(project)}
-      className={`group relative w-full overflow-hidden rounded-2xl border bg-[#0d1117] text-left outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[#c5f82a]/50 ${
-        isFeatured
-          ? 'border-[#c5f82a]/25 shadow-[0_0_60px_-12px_rgba(197,248,42,0.35)] hover:border-[#c5f82a]/50 hover:shadow-[0_0_80px_-8px_rgba(197,248,42,0.45)]'
-          : 'border-white/[0.06] hover:border-[#c5f82a]/35 hover:shadow-[0_0_40px_-8px_rgba(197,248,42,0.25)]'
-      } ${className}`}
+      className={`group relative w-full overflow-hidden rounded-2xl border bg-[#0d1117] text-left outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[#c5f82a]/50 ${isFeatured
+        ? 'border-[#c5f82a]/25 shadow-[0_0_60px_-12px_rgba(197,248,42,0.35)] hover:border-[#c5f82a]/50 hover:shadow-[0_0_80px_-8px_rgba(197,248,42,0.45)]'
+        : 'border-white/[0.06] hover:border-[#c5f82a]/35 hover:shadow-[0_0_40px_-8px_rgba(197,248,42,0.25)]'
+        } ${className}`}
     >
       {isFeatured && (
         <div className="pointer-events-none absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
@@ -208,26 +232,23 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
 
       {/* Image — web/small images: box height follows image, no forced aspect or fill bg */}
       <div
-        className={`relative w-full overflow-hidden ${
-          fitsImageSize
-            ? ''
-            : isFeatured
-              ? 'min-h-[220px] bg-[#080c14] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[520px] xl:min-h-[580px]'
-              : isMobile
-                ? 'min-h-[520px] bg-[#080c14] lg:min-h-full lg:h-full'
-                : ''
-        }`}
+        className={`relative w-full overflow-hidden ${fitsImageSize
+          ? ''
+          : isFeatured
+            ? 'min-h-[220px] bg-[#080c14] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[520px] xl:min-h-[580px]'
+            : isMobile
+              ? 'min-h-[520px] bg-[#080c14] lg:min-h-full lg:h-full'
+              : ''
+          }`}
       >
         <img
           src={project.image}
           alt={project.title}
-          className={`transition-transform duration-700 ease-out group-hover:scale-[1.03] ${
-            fitsImageSize
-              ? 'block h-auto w-full'
-              : `h-full w-full group-hover:scale-[1.06] ${
-                  isFeatured ? 'object-cover object-center' : 'object-cover object-top'
-                }`
-          }`}
+          className={`transition-transform duration-700 ease-out group-hover:scale-[1.03] ${fitsImageSize
+            ? 'block h-auto w-full'
+            : `h-full w-full group-hover:scale-[1.06] ${isFeatured ? 'object-cover object-center' : 'object-cover object-top'
+            }`
+            }`}
         />
 
         {/* Gradient overlay */}
@@ -236,9 +257,8 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
         {/* Hover overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/0 transition-all duration-500 group-hover:bg-black/55">
           <span
-            className={`translate-y-4 scale-90 rounded-full border border-[#c5f82a]/40 bg-[#c5f82a] font-bold tracking-wide text-black opacity-0 shadow-lg shadow-[#c5f82a]/20 transition-all duration-500 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 ${
-              isFeatured ? 'px-8 py-3.5 text-base md:text-lg' : 'px-6 py-2.5 text-[13px]'
-            }`}
+            className={`translate-y-4 scale-90 rounded-full border border-[#c5f82a]/40 bg-[#c5f82a] font-bold tracking-wide text-black opacity-0 shadow-lg shadow-[#c5f82a]/20 transition-all duration-500 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 ${isFeatured ? 'px-8 py-3.5 text-base md:text-lg' : 'px-6 py-2.5 text-[13px]'
+              }`}
           >
             Learn More
           </span>
@@ -246,15 +266,13 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
 
         {/* Bottom label */}
         <div
-          className={`absolute right-0 bottom-0 left-0 flex items-end justify-between gap-3 ${
-            isFeatured ? 'p-6 md:p-8' : 'p-4'
-          }`}
+          className={`absolute right-0 bottom-0 left-0 flex items-end justify-between gap-3 ${isFeatured ? 'p-6 md:p-8' : 'p-4'
+            }`}
         >
           <div className={isFeatured ? 'opacity-100' : 'opacity-0 transition-opacity duration-500 group-hover:opacity-100'}>
             <p
-              className={`font-bold text-white ${
-                isFeatured ? 'text-xl md:text-3xl lg:text-4xl' : 'max-w-[85%] truncate text-[13px] md:text-sm'
-              }`}
+              className={`font-bold text-white ${isFeatured ? 'text-xl md:text-3xl lg:text-4xl' : 'max-w-[85%] truncate text-[13px] md:text-sm'
+                }`}
             >
               {project.title.split('|')[0]?.trim() ?? project.title}
             </p>
@@ -421,18 +439,16 @@ const Projects: React.FC = () => {
                 {/* Gallery */}
                 <div className="relative">
                   <div
-                    className={`relative h-56 overflow-hidden md:h-72 ${
-                      selected.imageMode === 'contain' ? 'bg-[#090f1a]' : ''
-                    }`}
+                    className={`relative h-56 overflow-hidden md:h-72 ${selected.imageMode === 'contain' ? 'bg-[#090f1a]' : ''
+                      }`}
                   >
                     <img
                       src={allGalleryImages[galleryIndex]}
                       alt={selected.title}
-                      className={`h-full w-full ${
-                        selected.imageMode === 'contain'
-                          ? 'object-contain p-3'
-                          : 'object-cover object-top'
-                      }`}
+                      className={`h-full w-full ${selected.imageMode === 'contain'
+                        ? 'object-contain p-3'
+                        : 'object-cover object-top'
+                        }`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
                   </div>
@@ -471,9 +487,8 @@ const Projects: React.FC = () => {
                             key={i}
                             type="button"
                             onClick={() => setGalleryIndex(i)}
-                            className={`h-2 rounded-full transition-all ${
-                              i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'w-2 bg-white/40 hover:bg-white/70'
-                            }`}
+                            className={`h-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'w-2 bg-white/40 hover:bg-white/70'
+                              }`}
                           />
                         ))}
                       </div>
@@ -487,20 +502,18 @@ const Projects: React.FC = () => {
                           key={i}
                           type="button"
                           onClick={() => setGalleryIndex(i)}
-                          className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
-                            i === galleryIndex
-                              ? 'border-[#c5f82a]'
-                              : 'border-transparent opacity-50 hover:opacity-90'
-                          }`}
+                          className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex
+                            ? 'border-[#c5f82a]'
+                            : 'border-transparent opacity-50 hover:opacity-90'
+                            }`}
                         >
                           <img
                             src={img}
                             alt=""
-                            className={`h-full w-full ${
-                              selected.imageMode === 'contain'
-                                ? 'object-contain bg-[#090f1a]'
-                                : 'object-cover object-top'
-                            }`}
+                            className={`h-full w-full ${selected.imageMode === 'contain'
+                              ? 'object-contain bg-[#090f1a]'
+                              : 'object-cover object-top'
+                              }`}
                           />
                         </button>
                       ))}
