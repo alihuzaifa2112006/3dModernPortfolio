@@ -1,7 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { LampContainer } from './ui/lamp'
 import { ScrollReveal, StaggerReveal, StaggerItem } from './ui/scroll-reveal'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const devicon = (name: string) =>
   `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${name}`
@@ -47,11 +51,15 @@ const skillCategories = [
     ],
   },
   {
-    title: 'Deployment',
+    title: 'Deployment & DevOps',
     icon: '🚀',
     accent: '#46E3B7',
     skills: [
+      { name: 'Vercel', icon: devicon('vercel/vercel-original.svg'), color: '#000000', level: 85 },
       { name: 'Render', icon: 'https://cdn.simpleicons.org/render/46E3B7', color: '#46E3B7', level: 75 },
+      { name: 'Linux', icon: devicon('linux/linux-original.svg'), color: '#FCC624', level: 78 },
+      { name: 'Docker', icon: devicon('docker/docker-original.svg'), color: '#2496ED', level: 72 },
+      { name: 'Git', icon: devicon('git/git-original.svg'), color: '#F1502F', level: 88 },
     ],
   },
 ]
@@ -119,6 +127,19 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category, index }) => {
   const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], [fromSide * -16, 0, fromSide * 10])
   const x = useTransform(scrollYProgress, [0, 0.5, 1], [fromSide * -50, 0, fromSide * 30])
   const opacity = useTransform(scrollYProgress, [0, 0.25, 0.85, 1], [0.15, 1, 1, 0.4])
+
+  useEffect(() => {
+    if (!ref.current) return
+    gsap.to(ref.current, {
+      scrollTrigger: {
+        trigger: ref.current,
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+      opacity: 1,
+      duration: 0.8,
+    })
+  }, [])
 
   return (
     <div ref={ref} className="relative">

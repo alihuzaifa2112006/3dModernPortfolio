@@ -1,23 +1,27 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BackgroundRippleEffect } from './ui/background-ripple-effect'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const ease = [0.16, 1, 0.3, 1] as const
 
 const experiences = [
   {
     company: 'ITG UAE',
-    role: 'Frontend Developer',
+    role: 'Software Developer (Full Stack)',
     duration: 'Jun 2025 – Present',
     location: 'Karachi, Pakistan',
     current: true,
     points: [
-      'Developed and maintained ERP modules using React.js and Next.js for enterprise sourcing systems.',
-      'Migrated legacy ASP.NET (VB.NET) ERP architecture into a modern React-based frontend system.',
-      'Optimized frontend performance and improved responsiveness across enterprise dashboards.',
+      'Developed and maintained full-stack ERP modules using React.js, Next.js, Node.js, and Express for enterprise sourcing systems.',
+      'Migrated legacy ASP.NET (VB.NET) ERP architecture into a modern React-based frontend with Node.js backend.',
+      'Built scalable REST APIs using Node.js and Express for seamless frontend-backend integration.',
+      'Optimized performance across enterprise dashboards and improved responsiveness across all platforms.',
       'Integrated RESTful APIs with backend systems for smooth data flow and business operations.',
-      'Worked directly with clients for requirements gathering, troubleshooting, and deployment support.',
-      'Built reusable components and scalable frontend architecture across multiple concurrent projects.',
+      'Built reusable components and scalable full-stack architecture across multiple concurrent projects.',
     ],
   },
   {
@@ -96,30 +100,7 @@ const Experience: React.FC = () => {
           </motion.p>
 
           <h2 className="text-4xl font-black uppercase sm:text-5xl md:text-6xl">
-            {'MY WORK '.split('').map((char, i) => (
-              <motion.span
-                key={`a-${i}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15 + i * 0.02, ease }}
-                viewport={{ once: true }}
-                className="inline-block"
-              >
-                {char === ' ' ? '\u00A0' : char}
-              </motion.span>
-            ))}
-            {'JOURNEY'.split('').map((char, i) => (
-              <motion.span
-                key={`b-${i}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.45 + i * 0.03, ease }}
-                viewport={{ once: true }}
-                className="inline-block text-[#c5f82a]"
-              >
-                {char}
-              </motion.span>
-            ))}
+            My Work <span className="text-[#c5f82a]">Journey</span>
           </h2>
 
           <motion.p
@@ -184,6 +165,20 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ exp, index }) => {
   const rotateX = useSpring(rotateXRaw, { stiffness: 220, damping: 20 })
   const rotateY = useSpring(rotateYRaw, { stiffness: 220, damping: 20 })
   const [glowPos, setGlowPos] = useState({ x: 50, y: 0 })
+
+  useEffect(() => {
+    if (!cardRef.current) return
+    gsap.to(cardRef.current, {
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: 'top 70%',
+        toggleActions: 'play none none reverse',
+      },
+      duration: 0.8,
+      opacity: 1,
+      y: 0,
+    })
+  }, [])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = cardRef.current?.getBoundingClientRect()
@@ -317,7 +312,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ exp, index }) => {
             </motion.ul>
           </div>
 
-          {/* Bottom Accent */}
+
           <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-gradient-to-r from-[#c5f82a] to-[#7c5cfc] transition-all duration-500 group-hover:w-full" />
         </motion.div>
       </div>

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import React, { useEffect, useRef } from 'react'
+import { motion } from 'motion/react'
+import { useNavigate } from 'react-router-dom'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { LampContainer } from './ui/lamp'
-import { useOutsideClick } from '../hooks/useOutsideClick'
 import { ScrollReveal } from './ui/scroll-reveal'
 import codeMatricsImg from '../assets/codematrics.png'
 import codeMatricsGal1 from '../assets/codematrics-1.png'
@@ -26,10 +28,15 @@ import eleveraImg from '../assets/elevera.png'
 import eleveraProduct from '../assets/elevera-product.png'
 import eleveraCart from '../assets/elevera-cart.png'
 import eleveraCheckout from '../assets/elevera-checkout.png'
-import DynoQueryImg from '../assets/Dynoqueryai.png'
+import agrioPicMain from '../assets/agrio-main.png'
+import agrioPicDashboard from '../assets/agrio-dashboard.jpg'
+import agrioPicFinance from '../assets/agrio-finance.png'
+import agrioPicChatbot from '../assets/agrio-chatbot.jpeg'
 
+gsap.registerPlugin(ScrollTrigger)
 
 interface Project {
+  id: string
   title: string
   description: string
   tech: string[]
@@ -45,6 +52,7 @@ interface Project {
 }
 
 const mobileProject: Project = {
+  id: 'pathify',
   title: 'Pathify AI | CareerPath Mobile App',
   description:
     'Pathify AI (CareerPath AI) is a React Native app that helps users find the best career path from an 8-step assessment. It uses Google Gemini for top 3 role suggestions, Firebase Auth for login/signup, Firestore for history, and a clean mobile-first UI built with Expo.',
@@ -65,6 +73,7 @@ const mobileProject: Project = {
 }
 
 const mainProject: Project = {
+  id: 'wealthpulse',
   title: 'WealthPulse | AI Finance App',
   description:
     'WealthPulse is a modern, AI-powered expense tracking & financial management platform for individuals and small businesses. Track income, expenses, and savings in real-time, set financial goals, and get personalized plans — with Automated Data Capture: upload or enter any receipt and AI scans it to add transactions automatically. Built with Next.js, Python (Pandas), PostgreSQL, Claude API, and deployed on Render.',
@@ -100,31 +109,35 @@ const mainProject: Project = {
   ],
 }
 
+const agrioProject: Project = {
+  id: 'agrio',
+  title: 'Agrio | Farm Management ERP',
+  description:
+    'Agrio is a comprehensive farm management ERP system designed to help farmers and agricultural businesses streamline their operations. Features include crop tracking, resource management, financial analytics powered by Gemini AI, and a built-in chatbot for farming guidance.',
+  tech: ['React', 'Node.js', 'Express.js', 'Gemini API', 'MongoDB', 'Tailwind CSS'],
+  link: 'https://agrio-farmmanagements-alihasan.vercel.app/auth/jwt/login',
+  image: agrioPicMain,
+  featured: true,
+  hero: true,
+  gallery: [agrioPicDashboard, agrioPicFinance, agrioPicChatbot],
+  highlights: [
+    'Comprehensive crop tracking and resource management system',
+    'Financial analytics dashboard with real-time insights',
+    'AI-powered farming chatbot using Gemini API for crop guidance',
+    'Secure authentication and role-based access control',
+    'Responsive design optimized for mobile and desktop',
+    'Scalable backend with Express.js and MongoDB',
+  ],
+  tagline: 'Smart ERP for modern farm management',
+}
+
 const otherWebProjects: Project[] = [
-  // Dyno Query
-
-  {
-    title: 'Dyno Query AI',
-    description:
-      'An AI-powered SaaS platform that enables businesses to create custom AI chatbots trained on their own company knowledge, featuring seamless document ingestion and Retrieval-Augmented Generation (RAG).',
-    tech: ['Next.js', 'Node.js', 'Express.js', 'Python', 'FastAPI', 'PostgreSQL Vector', 'Gemini API', 'RAG'],
-    image: DynoQueryImg,
-    featured: true,
-    hero: true,
-    gallery: [],
-    highlights: [
-      'No-code customizable chatbot builder with embeddable widget.',
-      'Document ingestion pipeline with Gemini API for PDFs and websites.',
-      'Accurate semantic search using pgvector and embeddings.',
-      'Scalable backend API with secure multi-tenant data isolation.',
-      'Easy one-click deployment to integrate into external websites.',
-    ],
-    link: 'https://dynoqueryai.vercel.app/intro',
-  },
+  agrioProject,
 
 
 
   {
+    id: 'elevera',
     title: 'Elevera | Luxury E-Commerce Platform',
     description:
       'Elevera is a production-grade full-stack luxury fashion e-commerce platform. Next.js frontend with Redux Toolkit, NestJS backend with MongoDB, complete shopping flow with Stripe payments, and automated CI/CD pipelines.',
@@ -142,6 +155,7 @@ const otherWebProjects: Project[] = [
     ],
   },
   {
+    id: 'gatherly',
     title: 'Gatherly | Event Management Platform',
     description:
       'Gatherly is a full-stack event management platform for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, with real-time notifications via WebSockets.',
@@ -158,6 +172,7 @@ const otherWebProjects: Project[] = [
     ],
   },
   {
+    id: 'webchat',
     title: 'WebChat | Real-Time Chat App',
     description:
       'A full-stack real-time chat application with WebSocket messaging, contact management, online/offline status, and a clean responsive UI with secure authentication.',
@@ -174,6 +189,7 @@ const otherWebProjects: Project[] = [
     ],
   },
   {
+    id: 'codematrics',
     title: 'CodeMatrics | Developer Productivity',
     description:
       'A Next.js platform where developers track coding hours, manage tasks, and get AI-driven insights to analyze and improve their coding performance.',
@@ -185,19 +201,16 @@ const otherWebProjects: Project[] = [
   },
 ]
 
-const getGalleryImages = (project: Project) =>
-  project.gallery ? [project.image, ...project.gallery] : [project.image]
-
 interface ProjectImageTileProps {
   project: Project
-  onOpen: (p: Project) => void
+  navigate: (path: string) => void
   variant: 'featured' | 'mobile' | 'web'
   className?: string
 }
 
 const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
   project,
-  onOpen,
+  navigate,
   variant,
   className = '',
 }) => {
@@ -210,7 +223,8 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
   return (
     <button
       type="button"
-      onClick={() => onOpen(project)}
+      data-scroll-animate="true"
+      onClick={() => navigate(`/project/${project.id}`)}
       className={`group relative w-full overflow-hidden rounded-2xl border bg-[#0d1117] text-left outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[#c5f82a]/50 ${isFeatured
         ? 'border-[#c5f82a]/25 shadow-[0_0_60px_-12px_rgba(197,248,42,0.35)] hover:border-[#c5f82a]/50 hover:shadow-[0_0_80px_-8px_rgba(197,248,42,0.45)]'
         : 'border-white/[0.06] hover:border-[#c5f82a]/35 hover:shadow-[0_0_40px_-8px_rgba(197,248,42,0.25)]'
@@ -303,39 +317,36 @@ const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
 }
 
 const Projects: React.FC = () => {
-  const [selected, setSelected] = useState<Project | null>(null)
-  const [galleryIndex, setGalleryIndex] = useState(0)
-  const expandedRef = useRef<HTMLDivElement>(null)
-
-  useOutsideClick(expandedRef, () => setSelected(null))
-
-  const openModal = (project: Project) => {
-    setSelected(project)
-    setGalleryIndex(0)
-  }
+  const navigate = useNavigate()
+  const projectsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const overflow = selected ? 'hidden' : ''
-    document.documentElement.style.overflow = overflow
-    document.body.style.overflow = overflow
+    if (!projectsRef.current) return
+    const projectCards = projectsRef.current.querySelectorAll('[data-scroll-animate]')
+    projectCards.forEach((card) => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          scrollTrigger: {
+            trigger: card as HTMLElement,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    })
     return () => {
-      document.documentElement.style.overflow = ''
-      document.body.style.overflow = ''
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
     }
-  }, [selected])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelected(null)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const allGalleryImages = selected ? getGalleryImages(selected) : []
 
   return (
-    <section id="projects" className="overflow-x-clip bg-[#0a0a0a]">
+    <section id="projects" ref={projectsRef} className="overflow-x-clip bg-[#0a0a0a]">
       <LampContainer className="pt-10 pb-0">
         <ScrollReveal variant="blur" className="mb-6 text-center">
           <h2 className="text-3xl font-black italic text-white sm:text-4xl md:text-5xl">
@@ -355,7 +366,7 @@ const Projects: React.FC = () => {
             <p className="text-[10px] font-bold tracking-[0.22em] text-[#c5f82a] uppercase sm:text-[11px]">Featured Project</p>
             <span className="h-px flex-1 bg-gradient-to-l from-[#c5f82a]/40 to-transparent" />
           </div>
-          <ProjectImageTile project={mainProject} onOpen={openModal} variant="featured" />
+          <ProjectImageTile project={mainProject} navigate={navigate} variant="featured" />
         </ScrollReveal>
 
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[2fr_3fr] lg:gap-6">
@@ -372,7 +383,7 @@ const Projects: React.FC = () => {
               </div>
             </div>
             <ScrollReveal variant="right" delay={0.1}>
-              <ProjectImageTile project={mobileProject} onOpen={openModal} variant="mobile" />
+              <ProjectImageTile project={mobileProject} navigate={navigate} variant="mobile" />
             </ScrollReveal>
           </div>
 
@@ -392,7 +403,7 @@ const Projects: React.FC = () => {
               {otherWebProjects.map((project, index) => (
                 <div key={project.title} className="mb-4 break-inside-avoid">
                   <ScrollReveal variant={index % 2 === 0 ? 'up' : 'scale'} delay={index * 0.08}>
-                    <ProjectImageTile project={project} onOpen={openModal} variant="web" />
+                    <ProjectImageTile project={project} navigate={navigate} variant="web" />
                   </ScrollReveal>
                 </div>
               ))}
@@ -400,185 +411,6 @@ const Projects: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Detail Modal */}
-      <AnimatePresence>
-        {selected && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
-              onClick={() => setSelected(null)}
-            />
-
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 py-8 md:p-6">
-              <motion.div
-                ref={expandedRef}
-                initial={{ opacity: 0, y: 32, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 24, scale: 0.96 }}
-                transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#1a2035] bg-[#0d1117] shadow-2xl shadow-black/70"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  onClick={() => setSelected(null)}
-                  className="absolute top-4 right-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white/80 backdrop-blur-sm transition-colors hover:bg-black hover:text-white"
-                  aria-label="Close"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                </button>
-
-                {/* Gallery */}
-                <div className="relative">
-                  <div
-                    className={`relative h-56 overflow-hidden md:h-72 ${selected.imageMode === 'contain' ? 'bg-[#090f1a]' : ''
-                      }`}
-                  >
-                    <img
-                      src={allGalleryImages[galleryIndex]}
-                      alt={selected.title}
-                      className={`h-full w-full ${selected.imageMode === 'contain'
-                        ? 'object-contain p-3'
-                        : 'object-cover object-top'
-                        }`}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
-                  </div>
-
-                  {allGalleryImages.length > 1 && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setGalleryIndex((p) =>
-                            p === 0 ? allGalleryImages.length - 1 : p - 1
-                          )
-                        }
-                        className="absolute top-1/2 left-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/85"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M15 18l-6-6 6-6" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setGalleryIndex((p) =>
-                            p === allGalleryImages.length - 1 ? 0 : p + 1
-                          )
-                        }
-                        className="absolute top-1/2 right-3 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/85"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </button>
-                      <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-                        {allGalleryImages.map((_, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => setGalleryIndex(i)}
-                            className={`h-2 rounded-full transition-all ${i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'w-2 bg-white/40 hover:bg-white/70'
-                              }`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-
-                  {allGalleryImages.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto border-t border-[#1a2035] px-4 py-3">
-                      {allGalleryImages.map((img, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => setGalleryIndex(i)}
-                          className={`h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === galleryIndex
-                            ? 'border-[#c5f82a]'
-                            : 'border-transparent opacity-50 hover:opacity-90'
-                            }`}
-                        >
-                          <img
-                            src={img}
-                            alt=""
-                            className={`h-full w-full ${selected.imageMode === 'contain'
-                              ? 'object-contain bg-[#090f1a]'
-                              : 'object-cover object-top'
-                              }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="px-6 pt-4 pb-8 md:px-8">
-                  <h3 className="text-xl font-bold text-white md:text-2xl">{selected.title}</h3>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {selected.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-3 py-1 text-[11px] font-medium text-[#7eb8da]"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="mt-4 text-sm leading-relaxed text-[#8892a4]">{selected.description}</p>
-
-                  {selected.highlights && (
-                    <ul className="mt-4 space-y-2">
-                      {selected.highlights.map((h) => (
-                        <li key={h} className="flex items-start gap-2 text-[13px] text-[#7eb8da]">
-                          <span className="mt-0.5 text-[#c5f82a]">✓</span>
-                          {h}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    {selected.link && (
-                      <a
-                        href={selected.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-[#d4ff4a]"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                        </svg>
-                        {selected === mobileProject ? 'Download / View App' : 'Live Demo'}
-                      </a>
-                    )}
-                    {selected.github && (
-                      <a
-                        href={selected.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-5 py-2.5 text-sm font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
-                      >
-                        GitHub
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </>
-        )}
-      </AnimatePresence>
     </section>
   )
 }
