@@ -1,95 +1,187 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import { motion, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { MapPin } from 'lucide-react'
 import profileImg from '../assets/profile-new.png'
-import { ScrollReveal, StaggerReveal, StaggerItem } from './ui/scroll-reveal'
+import { SectionHeading } from './ui/section-heading'
+import { Tilt } from './ui/tilt'
+import { CountUp } from './ui/count-up'
+
+const ease = [0.16, 1, 0.3, 1] as const
+
+const STATEMENT =
+  'I craft high-performance web applications where pixel-perfect precision meets scalable backend architecture.'
+
+const STACK = ['Next Js', 'React', 'Node.js', 'Express', 'MongoDB', 'SQL', 'Python']
+
+const STATS = [
+  { value: '8+', label: 'Projects shipped' },
+  { value: '2+', label: 'Years experience' },
+  { value: '5+', label: 'Happy clients' },
+]
+
+const Word: React.FC<{ children: string; progress: MotionValue<number>; range: [number, number] }> = ({
+  children,
+  progress,
+  range,
+}) => {
+  const opacity = useTransform(progress, range, [0.12, 1])
+  const y = useTransform(progress, range, [6, 0])
+  return (
+    <motion.span style={{ opacity, y }} className="mr-[0.24em] inline-block">
+      {children}
+    </motion.span>
+  )
+}
+
+/** Words light up one by one as the paragraph scrolls through the viewport. */
+const ScrollLitText: React.FC<{ text: string; className?: string }> = ({ text, className }) => {
+  const ref = useRef<HTMLParagraphElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.5'] })
+  const words = text.split(' ')
+
+  return (
+    <p ref={ref} className={className}>
+      {words.map((w, i) => (
+        <Word key={i} progress={scrollYProgress} range={[i / words.length, (i + 1) / words.length]}>
+          {w}
+        </Word>
+      ))}
+    </p>
+  )
+}
+
+const ProfileCard: React.FC = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 60, rotateX: 18 }}
+    whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+    viewport={{ once: true, amount: 0.3 }}
+    transition={{ duration: 1.2, ease }}
+    style={{ transformPerspective: 1200 }}
+    className="mx-auto w-full max-w-[440px]"
+  >
+    <Tilt max={9} glare className="aspect-[4/5] rounded-[32px]">
+      {/* Rotating conic edge */}
+      <div aria-hidden className="absolute -inset-px overflow-hidden rounded-[33px]">
+        <div className="absolute inset-[-60%] animate-spin-slow bg-[conic-gradient(from_0deg,transparent_0deg,#c5f82a_50deg,transparent_110deg,transparent_220deg,#8b5cf6_290deg,transparent_350deg)]" />
+      </div>
+
+      <div className="absolute inset-0 overflow-hidden rounded-[32px] bg-gradient-to-b from-[#f5f5f1] via-[#e9e9e3] to-[#cfcfc8]">
+        <span
+          aria-hidden
+          className="absolute top-6 left-1/2 -translate-x-1/2 font-display text-[11rem] leading-none font-extrabold tracking-[-0.08em] text-black/[0.06] select-none"
+        >
+          AH
+        </span>
+        <img
+          src={profileImg}
+          alt="Portrait of Ali Huzaifa"
+          className="absolute inset-x-0 bottom-0 mx-auto h-[94%] w-auto max-w-none object-contain object-bottom mix-blend-multiply"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      </div>
+
+      {/* Floating layers */}
+      <div className="absolute inset-x-5 bottom-5 [transform:translateZ(50px)]">
+        <div className="glass flex items-end justify-between rounded-2xl bg-black/30 px-5 py-4">
+          <div>
+            <p className="font-display text-xl font-semibold tracking-tight text-white">Ali Huzaifa</p>
+            <p className="mt-0.5 text-[12px] text-white/60">Full / MERN Stack Engineer</p>
+          </div>
+          <p className="flex items-center gap-1 font-mono text-[10px] tracking-[0.15em] text-white/60 uppercase">
+            <MapPin size={11} /> Karachi
+          </p>
+        </div>
+      </div>
+
+      <div className="absolute top-8 -right-4 [transform:translateZ(80px)] sm:-right-8">
+        <div className="animate-float rounded-2xl bg-brand px-4 py-3 text-ink shadow-[0_20px_50px_-10px_rgba(197,248,42,0.6)]">
+          <p className="font-display text-3xl leading-none font-bold tracking-tight">2+</p>
+          <p className="mt-1 text-[10px] font-semibold tracking-wider uppercase">Years Exp.</p>
+        </div>
+      </div>
+
+      <div className="absolute top-1/3 -left-4 [transform:translateZ(65px)] sm:-left-8">
+        <div className="flex animate-float items-center gap-2 rounded-full border border-white/10 bg-ink py-2 pr-4 pl-2 text-[12px] font-medium text-white shadow-[0_20px_40px_-12px_rgba(0,0,0,0.7)] [animation-delay:-2s]">
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-brand font-mono text-[10px] font-bold text-ink">
+            {'</>'}
+          </span>
+          Frontend Specialist
+        </div>
+      </div>
+    </Tilt>
+  </motion.div>
+)
 
 const About: React.FC = () => {
   return (
-    <section id="about" className="relative overflow-x-hidden bg-white px-4 pt-10 pb-16 text-black sm:px-6 md:px-12 md:pb-20 lg:px-16">
-      <div className="mx-auto max-w-[1300px]">
-        <ScrollReveal variant="up" className="mb-10 md:mb-16">
-          <div className="flex flex-col items-start gap-3 sm:gap-4 md:flex-row md:items-center">
-            <h2 className="text-2xl font-black leading-tight sm:text-3xl md:text-4xl lg:text-[2.8rem]">
-              I'm <span className="text-[#7c5cfc]">Ali Huzaifa</span>
-            </h2>
-            <div className="hidden h-px flex-1 bg-[#ddd] md:block" />
-            <p className="text-base font-medium text-[#555] sm:text-lg md:text-xl">
-              specializing in React, Next.js & MERN stack
-            </p>
+    <section id="about" className="relative py-28 lg:py-40">
+      <div aria-hidden className="pointer-events-none absolute top-1/3 left-0 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12),transparent_65%)]" />
+
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <SectionHeading index="01" label="About me" title="Engineer with a" accent="designer's eye." />
+
+        <div className="mt-16 grid items-center gap-16 lg:mt-24 lg:grid-cols-12 lg:gap-20">
+          <div className="lg:col-span-5">
+            <ProfileCard />
           </div>
-        </ScrollReveal>
 
-        <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
-          <ScrollReveal variant="right" delay={0.1} className="flex w-full shrink-0 justify-center lg:w-2/5">
-            <div className="relative">
-              <div
-                className="absolute rounded-[20px]"
-                style={{ inset: '-3px', zIndex: 0, borderRadius: '20px', overflow: 'hidden', padding: '3px' }}
-              >
-                <div
-                  className="animate-spin-border absolute"
-                  style={{
-                    inset: '-100%',
-                    background:
-                      'conic-gradient(#c5f82a 0deg, #c5f82a 60deg, transparent 120deg, transparent 240deg, #c5f82a 300deg, #c5f82a 360deg)',
-                  }}
-                />
-                <div className="absolute inset-[3px] rounded-[18px] bg-white" />
-              </div>
-              <div
-                className="animate-pulse-glow absolute rounded-[22px]"
-                style={{
-                  inset: '-8px',
-                  zIndex: -1,
-                  background: 'radial-gradient(ellipse at center, #c5f82a40, transparent 70%)',
-                  filter: 'blur(8px)',
-                }}
-              />
-              <div className="relative z-10 h-72 w-64 overflow-hidden rounded-[18px] sm:h-80 sm:w-72 md:h-96 md:w-80">
-                <img src={profileImg} alt="About" className="h-full w-full object-cover object-top" />
-              </div>
-              <div className="absolute -right-2 -bottom-3 z-20 rounded-2xl bg-[#c5f82a] px-4 py-2 shadow-lg sm:-right-4 sm:-bottom-4 sm:px-5 sm:py-3">
-                <span className="text-xl font-black sm:text-2xl">2+</span>
-                <span className="block text-[10px] font-semibold sm:text-xs">Years Exp.</span>
-              </div>
+          <div className="lg:col-span-7">
+            <ScrollLitText
+              text={STATEMENT}
+              className="font-display text-[clamp(1.75rem,3.4vw,3.1rem)] leading-[1.12] font-medium tracking-[-0.03em] text-white"
+            />
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.9, ease }}
+              className="mt-8 max-w-2xl text-[15px] leading-[1.85] text-mute sm:text-base"
+            >
+              Ali Huzaifa is a MERN-stack focused engineer specializing in modern frontend development using React and
+              Next.js. With 2 years of experience in digital product engineering, he builds responsive, scalable web
+              interfaces supported by Node.js and Express.js backends and MongoDB-driven data layers.
+            </motion.p>
+
+            <div className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-3xl border border-line bg-line">
+              {STATS.map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.8, ease, delay: i * 0.1 }}
+                  className="bg-ink-2 px-4 py-6 sm:px-7 sm:py-8"
+                >
+                  <CountUp
+                    value={stat.value}
+                    className="block font-display text-[clamp(2.2rem,4.5vw,3.6rem)] leading-none font-semibold tracking-[-0.05em] text-white"
+                  />
+                  <p className="mt-3 font-mono text-[10px] tracking-[0.18em] text-mute uppercase sm:text-[11px]">
+                    {stat.label}
+                  </p>
+                </motion.div>
+              ))}
             </div>
-          </ScrollReveal>
 
-          <div className="w-full lg:w-3/5">
-            <ScrollReveal variant="left" delay={0.15}>
-              <p className="mb-2 text-[11px] font-semibold tracking-[0.15em] text-[#999] uppercase sm:mb-3 sm:text-[12px]">
-                About Me
-              </p>
-              <h3 className="text-xl font-black leading-tight sm:text-2xl md:text-3xl">
-                Full/MERN Stack Engineer | <span className="text-[#c5f82a]">Frontend Specialist</span>
-              </h3>
-              <p className="mt-4 max-w-xl text-[14px] leading-[1.8] text-[#666] sm:mt-5 sm:text-[15px]">
-                Ali Huzaifa is a MERN-stack focused engineer specializing in modern frontend development using React and Next.js. With 2 years of experience in digital product engineering, he builds responsive, scalable web interfaces supported by Node.js and Express.js backends and MongoDB-driven data layers.
-              </p>
-            </ScrollReveal>
-
-            <StaggerReveal className="mt-8 flex flex-wrap gap-6 sm:mt-10 sm:gap-10" stagger={0.15}>
-              {[
-                { num: '8+', label: 'Projects Done' },
-                { num: '2+', label: 'Years Experience' },
-              ].map((stat) => (
-                <StaggerItem key={stat.label} variant="scale">
-                  <div>
-                    <span className="text-2xl font-black sm:text-3xl">{stat.num}</span>
-                    <p className="mt-1 text-[12px] text-[#888] sm:text-[13px]">{stat.label}</p>
-                  </div>
-                </StaggerItem>
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.5 }}
+              variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+              className="mt-10 flex flex-wrap gap-2"
+            >
+              {STACK.map((skill) => (
+                <motion.span
+                  key={skill}
+                  variants={{ hidden: { opacity: 0, y: 12, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1 } }}
+                  transition={{ duration: 0.5, ease }}
+                  className="rounded-full border border-line bg-white/[0.03] px-4 py-2 text-[13px] text-white/80 transition-colors duration-300 hover:border-brand/50 hover:text-brand"
+                >
+                  {skill}
+                </motion.span>
               ))}
-            </StaggerReveal>
-
-            <StaggerReveal className="mt-6 flex flex-wrap gap-2 sm:mt-8" stagger={0.06}>
-              {['Next Js', 'React', 'Node.js', 'Express', 'MongoDB', 'SQL', 'Python'].map((skill) => (
-                <StaggerItem key={skill} variant="zoom">
-                  <span className="inline-block cursor-default rounded-full border border-[#e5e5e5] bg-[#f5f5f5] px-3 py-1.5 text-[12px] font-medium text-[#333] transition-all duration-300 hover:scale-105 hover:border-[#c5f82a] hover:bg-[#c5f82a]/10 hover:shadow-md hover:shadow-[#c5f82a]/20 sm:px-4 sm:py-2 sm:text-[13px]">
-                    {skill}
-                  </span>
-                </StaggerItem>
-              ))}
-            </StaggerReveal>
+            </motion.div>
           </div>
         </div>
       </div>

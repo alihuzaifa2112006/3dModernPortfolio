@@ -1,414 +1,344 @@
-import React, { useEffect, useRef } from 'react'
-import { motion } from 'motion/react'
-import { useNavigate } from 'react-router-dom'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { LampContainer } from './ui/lamp'
-import { ScrollReveal } from './ui/scroll-reveal'
-import codeMatricsImg from '../assets/codematrics.png'
-import codeMatricsGal1 from '../assets/codematrics-1.png'
-import codeMatricsGal2 from '../assets/codematrics-2.png'
-import codeMatricsGal3 from '../assets/codematrics-3.png'
-import webchatImg from '../assets/webchat.png'
-import webchatGal1 from '../assets/webchat-1.png'
-import wealthpulseHero from '../assets/wealthpulse-hero.png'
-import wealthpulseImg from '../assets/wealthpulse.png'
-import wealthpulseDashboard from '../assets/wealthpulse-dashboard.png'
-import wealthpulseGoals from '../assets/wealthpulse-goals.png'
-import wealthpulseAI from '../assets/wealthpulse-ai.png'
-import gatherlyImg from '../assets/gatherly.png'
-import gatherlyDashboard from '../assets/gatherly-dashboard.png'
-import gatherlyCreate from '../assets/gatherly-create.png'
-import gatherlyNotifications from '../assets/gatherly-notifications.png'
-import pathify2Img from '../assets/pathify-2.png'
-import pathify3Img from '../assets/pathify-3.png'
-import pathify4Img from '../assets/pathify-4.png'
-import pathify5Img from '../assets/pathify-5.png'
-import eleveraImg from '../assets/elevera.png'
-import eleveraProduct from '../assets/elevera-product.png'
-import eleveraCart from '../assets/elevera-cart.png'
-import eleveraCheckout from '../assets/elevera-checkout.png'
-import agrioPicMain from '../assets/agrio-main.png'
-import agrioPicDashboard from '../assets/agrio-dashboard.jpg'
-import agrioPicFinance from '../assets/agrio-finance.png'
-import agrioPicChatbot from '../assets/agrio-chatbot.jpeg'
+import React, { useRef } from 'react'
+import { motion, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { Link } from 'react-router-dom'
+import { ArrowUpRight, MonitorSmartphone, Smartphone } from 'lucide-react'
+import { SectionHeading } from './ui/section-heading'
+import { projects, type Project } from '../data/projects'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+import { cn } from '../lib/utils'
 
-gsap.registerPlugin(ScrollTrigger)
+const ease = [0.16, 1, 0.3, 1] as const
+const pad = (n: number) => String(n).padStart(2, '0')
 
-interface Project {
-  id: string
-  title: string
-  description: string
-  tech: string[]
-  link?: string
-  github?: string
-  image: string
-  featured: boolean
-  hero?: boolean
-  gallery?: string[]
-  highlights?: string[]
-  imageMode?: 'cover' | 'contain'
-  tagline?: string
+const hexToRgb = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16)
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`
 }
 
-const mobileProject: Project = {
-  id: 'pathify',
-  title: 'Pathify AI | CareerPath Mobile App',
-  description:
-    'Pathify AI (CareerPath AI) is a React Native app that helps users find the best career path from an 8-step assessment. It uses Google Gemini for top 3 role suggestions, Firebase Auth for login/signup, Firestore for history, and a clean mobile-first UI built with Expo.',
-  tech: ['React Native (Expo)', 'Firebase Auth', 'Firestore', 'Google Gemini API', 'AsyncStorage'],
-  link: 'https://expo.dev/accounts/alihuzaifa/projects/pathify-ai/builds/aa6fcb5b-9ac7-41c9-9481-3ebd21481f2a',
-  image: pathify2Img,
-  featured: true,
-  hero: true,
-  imageMode: 'contain',
-  gallery: [pathify3Img, pathify4Img, pathify5Img],
-  highlights: [
-    '8-step smart assessment for interests and skills',
-    'Top 3 AI career suggestions using Gemini',
-    'Secure login/signup with Firebase Authentication',
-    'Result and history saving with Firestore',
-    'Clean mobile UI and scalable Expo architecture',
-  ],
-}
+const urlLabel = (link?: string) => (link ? new URL(link).hostname.replace(/^www\./, '') : 'private build')
 
-const mainProject: Project = {
-  id: 'wealthpulse',
-  title: 'WealthPulse | AI Finance App',
-  description:
-    'WealthPulse is a modern, AI-powered expense tracking & financial management platform for individuals and small businesses. Track income, expenses, and savings in real-time, set financial goals, and get personalized plans — with Automated Data Capture: upload or enter any receipt and AI scans it to add transactions automatically. Built with Next.js, Python (Pandas), PostgreSQL, Claude API, and deployed on Render.',
-  tech: [
-    'Next.js 15',
-    'React 19',
-    'Python',
-    'Pandas',
-    'PostgreSQL',
-    'MongoDB',
-    'Claude API',
-    'MUI',
-    'Tailwind CSS',
-    'Render',
-    'Framer Motion',
-  ],
-  tagline: 'AI finance app with receipt scan & automated data capture',
-  link: 'https://wealth-pulse-ai-beta.vercel.app/',
-  image: wealthpulseHero,
-  featured: true,
-  hero: true,
-  gallery: [wealthpulseImg, wealthpulseDashboard, wealthpulseGoals, wealthpulseAI],
-  highlights: [
-    'Automated Data Capture — enter or upload any receipt; AI scans & adds it to your ledger',
-    'Real-time income, expense & savings tracking',
-    'AI-powered financial insights & personalized plans (Claude API)',
-    'Built-in AI chat for smart financial guidance',
-    'Python + Pandas for data processing & analytics',
-    'PostgreSQL database with scalable schema design',
-    'Multi-currency support (PKR, USD, INR, AED & more)',
-    'Deployed on Render for production hosting',
-    'Export financial plans as PDF',
-  ],
-}
+const LiveBadge = () => (
+  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 font-mono text-[10px] tracking-wider text-emerald-300 uppercase">
+    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+    Live
+  </span>
+)
 
-const agrioProject: Project = {
-  id: 'agrio',
-  title: 'Agrio | Farm Management ERP',
-  description:
-    'Agrio is a comprehensive farm management ERP system designed to help farmers and agricultural businesses streamline their operations. Features include crop tracking, resource management, financial analytics powered by Gemini AI, and a built-in chatbot for farming guidance.',
-  tech: ['React', 'Node.js', 'Express.js', 'Gemini API', 'MongoDB', 'Tailwind CSS'],
-  link: 'https://agrio-farmmanagements-alihasan.vercel.app/auth/jwt/login',
-  image: agrioPicMain,
-  featured: true,
-  hero: true,
-  gallery: [agrioPicDashboard, agrioPicFinance, agrioPicChatbot],
-  highlights: [
-    'Comprehensive crop tracking and resource management system',
-    'Financial analytics dashboard with real-time insights',
-    'AI-powered farming chatbot using Gemini API for crop guidance',
-    'Secure authentication and role-based access control',
-    'Responsive design optimized for mobile and desktop',
-    'Scalable backend with Express.js and MongoDB',
-  ],
-  tagline: 'Smart ERP for modern farm management',
-}
-
-const otherWebProjects: Project[] = [
-  agrioProject,
-
-
-
-  {
-    id: 'elevera',
-    title: 'Elevera | Luxury E-Commerce Platform',
-    description:
-      'Elevera is a production-grade full-stack luxury fashion e-commerce platform. Next.js frontend with Redux Toolkit, NestJS backend with MongoDB, complete shopping flow with Stripe payments, and automated CI/CD pipelines.',
-    tech: ['Next.js', 'NestJS', 'MongoDB', 'Redux Toolkit', 'Stripe', 'CI/CD', 'TypeScript', 'Tailwind CSS'],
-    image: eleveraImg,
-    featured: true,
-    hero: true,
-    gallery: [eleveraProduct, eleveraCart, eleveraCheckout],
-    highlights: [
-      'Full-stack e-commerce with Next.js + NestJS',
-      'Stripe payment integration with full checkout flow',
-      'Redux Toolkit for global state management',
-      'Automated CI/CD pipelines for deployment',
-      'Elegant minimalist luxury fashion UI',
-    ],
-  },
-  {
-    id: 'gatherly',
-    title: 'Gatherly | Event Management Platform',
-    description:
-      'Gatherly is a full-stack event management platform for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, with real-time notifications via WebSockets.',
-    tech: ['React', 'NestJS', 'PostgreSQL', 'Prisma', 'MUI', 'WebSockets'],
-    image: gatherlyImg,
-    featured: true,
-    hero: true,
-    gallery: [gatherlyDashboard, gatherlyCreate, gatherlyNotifications],
-    highlights: [
-      'Organizers publish & manage city events',
-      'QR-coded gate passes for volunteers',
-      'Real-time notifications via WebSockets',
-      'Role-based access control',
-    ],
-  },
-  {
-    id: 'webchat',
-    title: 'WebChat | Real-Time Chat App',
-    description:
-      'A full-stack real-time chat application with WebSocket messaging, contact management, online/offline status, and a clean responsive UI with secure authentication.',
-    tech: ['Next.js', 'MongoDB', 'Socket.io', 'shadcn/ui', 'TypeScript'],
-
-    image: webchatImg,
-    featured: true,
-    hero: true,
-    gallery: [webchatGal1],
-    highlights: [
-      'Real-time messaging with Socket.io',
-      'Online/offline status & contact list',
-      'Modern authentication flow',
-    ],
-  },
-  {
-    id: 'codematrics',
-    title: 'CodeMatrics | Developer Productivity',
-    description:
-      'A Next.js platform where developers track coding hours, manage tasks, and get AI-driven insights to analyze and improve their coding performance.',
-    tech: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'AI', 'MongoDB'],
-    link: 'https://codematrics-sable.vercel.app/',
-    image: codeMatricsImg,
-    featured: true,
-    gallery: [codeMatricsGal1, codeMatricsGal2, codeMatricsGal3],
-  },
-]
-
-interface ProjectImageTileProps {
-  project: Project
-  navigate: (path: string) => void
-  variant: 'featured' | 'mobile' | 'web'
-  className?: string
-}
-
-const ProjectImageTile: React.FC<ProjectImageTileProps> = ({
+const BrowserFrame: React.FC<{ project: Project; className?: string; imgClassName?: string }> = ({
   project,
-  navigate,
-  variant,
-  className = '',
-}) => {
-  const isMobile = variant === 'mobile'
-  const isFeatured = variant === 'featured'
-  const isWeb = variant === 'web'
-  const fitsImageSize = isWeb || project.imageMode === 'contain'
-  const hasLive = Boolean(project.link)
+  className,
+  imgClassName,
+}) => (
+  <div className={cn('min-w-0 overflow-hidden rounded-2xl border border-line-strong bg-ink-3', className)}>
+    <div className="flex items-center gap-1.5 border-b border-line px-4 py-2.5">
+      <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+      <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+      <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+      <span className="mx-auto max-w-[60%] truncate rounded-full bg-white/5 px-4 py-1 font-mono text-[10px] text-white/40">
+        {urlLabel(project.link)}
+      </span>
+    </div>
+    {/* Fixed ratio (most screenshots are ~2.2:1) so lazy images can't shift layout as they load */}
+    <div className="relative aspect-[11/5] overflow-hidden">
+      <img
+        src={project.image}
+        alt={`${project.name} screenshot`}
+        loading="lazy"
+        className={cn(
+          'h-full w-full object-cover object-top transition-transform duration-[1.2s] ease-[var(--ease-premium)] group-hover:scale-[1.04]',
+          imgClassName,
+        )}
+      />
+    </div>
+  </div>
+)
+
+const PhoneFrames: React.FC<{ project: Project }> = ({ project }) => {
+  const screens = [project.image, ...project.gallery].slice(0, 3)
+  return (
+    <div className="flex h-full items-center justify-center gap-3 py-6 [perspective:1400px] sm:gap-5">
+      {screens.map((src, i) => {
+        const offset = i - 1
+        return (
+          <div
+            key={src}
+            className="relative w-[28%] max-w-[190px] shrink-0 rounded-[2rem] border border-line-strong bg-ink p-1.5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] transition-transform duration-700 ease-[var(--ease-premium)]"
+            style={{
+              transform: `rotateY(${offset * -18}deg) translateY(${offset === 0 ? -16 : 12}px) translateZ(${offset === 0 ? 40 : 0}px)`,
+            }}
+          >
+            <div className="absolute top-3 left-1/2 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-black/60" />
+            <img
+              src={src}
+              alt={`${project.name} screen ${i + 1}`}
+              loading="lazy"
+              className="aspect-[9/19] w-full rounded-[1.6rem] object-cover object-top"
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+const TechChips: React.FC<{ tech: string[]; max?: number }> = ({ tech, max = 6 }) => (
+  <div className="flex flex-wrap gap-2">
+    {tech.slice(0, max).map((t) => (
+      <span key={t} className="rounded-full border border-line bg-white/[0.03] px-3 py-1 text-[12px] text-white/70">
+        {t}
+      </span>
+    ))}
+    {tech.length > max && (
+      <span className="rounded-full border border-line px-3 py-1 text-[12px] text-mute">+{tech.length - max}</span>
+    )}
+  </div>
+)
+
+const FeaturedProject: React.FC<{ project: Project }> = ({ project }) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] })
+  const rotateX = useTransform(scrollYProgress, [0, 1], [32, 0])
+  const scale = useTransform(scrollYProgress, [0, 1], [0.86, 1])
+  const y = useTransform(scrollYProgress, [0, 1], [60, 0])
 
   return (
-    <button
-      type="button"
-      data-scroll-animate="true"
-      onClick={() => navigate(`/project/${project.id}`)}
-      className={`group relative w-full overflow-hidden rounded-2xl border bg-[#0d1117] text-left outline-none transition-all duration-500 focus-visible:ring-2 focus-visible:ring-[#c5f82a]/50 ${isFeatured
-        ? 'border-[#c5f82a]/25 shadow-[0_0_60px_-12px_rgba(197,248,42,0.35)] hover:border-[#c5f82a]/50 hover:shadow-[0_0_80px_-8px_rgba(197,248,42,0.45)]'
-        : 'border-white/[0.06] hover:border-[#c5f82a]/35 hover:shadow-[0_0_40px_-8px_rgba(197,248,42,0.25)]'
-        } ${className}`}
-    >
-      {isFeatured && (
-        <div className="pointer-events-none absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
-          <span className="rounded-full border border-[#c5f82a]/50 bg-[#c5f82a] px-3 py-1 text-[11px] font-bold tracking-wide text-black">
-            ★ Main Project
-          </span>
-          {hasLive && (
-            <span className="flex items-center gap-1.5 rounded-full border border-[#22c55e]/40 bg-black/60 px-2.5 py-1 text-[10px] font-semibold text-[#22c55e] backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-              Live Demo
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Image — web/small images: box height follows image, no forced aspect or fill bg */}
-      <div
-        className={`relative w-full overflow-hidden ${fitsImageSize
-          ? ''
-          : isFeatured
-            ? 'min-h-[220px] bg-[#080c14] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[520px] xl:min-h-[580px]'
-            : isMobile
-              ? 'min-h-[520px] bg-[#080c14] lg:min-h-full lg:h-full'
-              : ''
-          }`}
-      >
-        <img
-          src={project.image}
-          alt={project.title}
-          className={`transition-transform duration-700 ease-out group-hover:scale-[1.03] ${fitsImageSize
-            ? 'block h-auto w-full'
-            : `h-full w-full group-hover:scale-[1.06] ${isFeatured ? 'object-cover object-center' : 'object-cover object-top'
-            }`
-            }`}
-        />
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" />
-
-        {/* Hover overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/0 transition-all duration-500 group-hover:bg-black/55">
-          <span
-            className={`translate-y-4 scale-90 rounded-full border border-[#c5f82a]/40 bg-[#c5f82a] font-bold tracking-wide text-black opacity-0 shadow-lg shadow-[#c5f82a]/20 transition-all duration-500 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 ${isFeatured ? 'px-8 py-3.5 text-base md:text-lg' : 'px-6 py-2.5 text-[13px]'
-              }`}
-          >
-            Learn More
-          </span>
-        </div>
-
-        {/* Bottom label */}
-        <div
-          className={`absolute right-0 bottom-0 left-0 flex items-end justify-between gap-3 ${isFeatured ? 'p-6 md:p-8' : 'p-4'
-            }`}
+    <div ref={ref} className="mt-16 lg:mt-24" style={{ perspective: 1600 }}>
+      <motion.div style={{ rotateX, scale, y, transformOrigin: 'center top' }}>
+        <Link
+          to={`/project/${project.id}`}
+          data-cursor="View"
+          className="group relative block rounded-[30px] border border-line-strong bg-ink-3/80 p-2 shadow-[0_50px_140px_-30px_rgba(197,248,42,0.28)] sm:p-3"
         >
-          <div className={isFeatured ? 'opacity-100' : 'opacity-0 transition-opacity duration-500 group-hover:opacity-100'}>
-            <p
-              className={`font-bold text-white ${isFeatured ? 'text-xl md:text-3xl lg:text-4xl' : 'max-w-[85%] truncate text-[13px] md:text-sm'
-                }`}
-            >
-              {project.title.split('|')[0]?.trim() ?? project.title}
-            </p>
-            {isFeatured && project.tagline && (
-              <p className="mt-1 max-w-xl text-sm text-[#8892a4] md:text-base">
-                {project.tagline}
-              </p>
-            )}
-          </div>
-          {hasLive && !isFeatured && (
-            <span className="flex shrink-0 items-center gap-1 rounded-full border border-[#22c55e]/30 bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-[#22c55e] backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-              Live
+          <div className="flex items-center gap-1.5 px-3 pt-1.5 pb-3 sm:px-4">
+            <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+            <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+            <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+            <span className="mx-auto hidden truncate rounded-full bg-white/5 px-5 py-1 font-mono text-[11px] text-white/45 sm:block">
+              {urlLabel(project.link)}
             </span>
-          )}
-        </div>
-      </div>
+            <span className="ml-auto sm:ml-0">
+              <LiveBadge />
+            </span>
+          </div>
 
-      {/* Mobile frame accent */}
-      {isMobile && (
-        <>
-          <div className="pointer-events-none absolute inset-3 rounded-[1.25rem] border border-white/[0.08]" />
-          <div className="pointer-events-none absolute top-4 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-white/20" />
-        </>
-      )}
-    </button>
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] sm:aspect-[16/9]">
+            <img
+              src={project.image}
+              alt={`${project.name} — ${project.subtitle}`}
+              className="h-full w-full object-cover transition-transform duration-[1.4s] ease-[var(--ease-premium)] group-hover:scale-[1.04]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink/60 via-transparent to-transparent" />
+
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-6 p-6 sm:p-10 lg:flex-row lg:items-end lg:justify-between lg:p-14">
+              <div className="max-w-2xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-brand px-3 py-1 font-mono text-[10px] font-medium tracking-[0.15em] text-ink uppercase">
+                  ★ Featured project
+                </span>
+                <h3 className="mt-5 font-display text-[clamp(2.8rem,7vw,6.5rem)] leading-[0.9] font-semibold tracking-[-0.055em] text-white">
+                  {project.name}
+                </h3>
+                <p className="mt-2 font-serif text-[clamp(1.4rem,2.6vw,2.2rem)] text-brand italic">{project.subtitle}</p>
+                <p className="mt-4 max-w-lg text-[14px] leading-relaxed text-white/65 sm:text-[15px]">{project.tagline}</p>
+              </div>
+
+              <span className="inline-flex h-14 w-fit shrink-0 items-center gap-3 rounded-full bg-white pr-2 pl-6 text-[14px] font-semibold text-ink transition-colors duration-300 group-hover:bg-brand">
+                View case study
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover:rotate-45">
+                  <ArrowUpRight size={18} />
+                </span>
+              </span>
+            </div>
+          </div>
+        </Link>
+      </motion.div>
+
+      <div className="mt-10 grid gap-8 lg:grid-cols-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease }}
+          className="lg:col-span-7"
+        >
+          <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+            {project.highlights.slice(0, 4).map((h) => (
+              <li key={h} className="flex gap-3 text-[14px] leading-relaxed text-white/70">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                {h}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease, delay: 0.1 }}
+          className="lg:col-span-5 lg:justify-self-end"
+        >
+          <TechChips tech={project.tech} max={8} />
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+interface StackCardProps {
+  project: Project
+  index: number
+  total: number
+  progress: MotionValue<number>
+  stacked: boolean
+}
+
+const StackCard: React.FC<StackCardProps> = ({ project, index, total, progress, stacked }) => {
+  const targetScale = 1 - (total - 1 - index) * 0.045
+  const scale = useTransform(progress, [index / total, 1], [1, targetScale])
+  const dim = useTransform(progress, [index / total, 1], [0, (total - 1 - index) * 0.12])
+  const rgb = hexToRgb(project.accent)
+  const isMobileApp = project.type === 'mobile'
+
+  return (
+    <div className={cn(stacked ? 'sticky top-0 flex h-screen items-center' : 'mb-6')}>
+      <motion.article
+        style={stacked ? { scale, top: `calc(-4vh + ${index * 26}px)` } : undefined}
+        initial={stacked ? undefined : { opacity: 0, y: 50 }}
+        whileInView={stacked ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.9, ease }}
+        className="group relative w-full origin-top overflow-hidden rounded-[30px] border border-line-strong bg-ink-3"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 -right-40 h-[32rem] w-[32rem] rounded-full opacity-60 transition-opacity duration-700 group-hover:opacity-100"
+          style={{ background: `radial-gradient(circle, rgba(${rgb},0.22), transparent 65%)` }}
+        />
+        {stacked && <motion.div aria-hidden className="pointer-events-none absolute inset-0 z-20 bg-black" style={{ opacity: dim }} />}
+
+        <div className="relative grid lg:min-h-[min(640px,78vh)] lg:grid-cols-12">
+          <div className="order-2 flex flex-col p-7 sm:p-10 lg:order-1 lg:col-span-5 lg:p-12">
+            <div className="flex items-center justify-between gap-4">
+              <span className="font-mono text-xs text-mute">
+                {pad(index + 2)} <span className="text-dim">/ {pad(total + 1)}</span>
+              </span>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] tracking-wider uppercase"
+                style={{ borderColor: `rgba(${rgb},0.35)`, color: project.accent, background: `rgba(${rgb},0.08)` }}
+              >
+                {isMobileApp ? <Smartphone size={12} /> : <MonitorSmartphone size={12} />}
+                {isMobileApp ? 'Mobile app' : 'Web app'}
+              </span>
+            </div>
+
+            <div className="mt-10 lg:mt-auto">
+              <h3 className="font-display text-[clamp(2.4rem,4.6vw,4.2rem)] leading-[0.92] font-semibold tracking-[-0.05em] text-white">
+                {project.name}
+              </h3>
+              <p className="mt-2 font-serif text-[clamp(1.25rem,2vw,1.75rem)] italic" style={{ color: project.accent }}>
+                {project.subtitle}
+              </p>
+              <p className="mt-5 line-clamp-4 text-[14px] leading-[1.75] text-mute sm:text-[15px]">{project.description}</p>
+              <div className="mt-6">
+                <TechChips tech={project.tech} max={5} />
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link
+                  to={`/project/${project.id}`}
+                  className="group/btn inline-flex h-12 items-center gap-2 rounded-full bg-white pr-1.5 pl-5 text-[13px] font-semibold text-ink transition-colors hover:bg-brand"
+                >
+                  Case study
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-white transition-transform duration-500 group-hover/btn:rotate-45">
+                    <ArrowUpRight size={16} />
+                  </span>
+                </Link>
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-12 items-center gap-2 rounded-full border border-line-strong px-5 text-[13px] font-medium text-white transition-colors hover:border-white/40"
+                  >
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                    Live demo
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Link
+            to={`/project/${project.id}`}
+            data-cursor="View"
+            aria-label={`Open ${project.name} case study`}
+            className="relative order-1 block overflow-hidden p-4 sm:p-6 lg:order-2 lg:col-span-7 lg:p-8"
+          >
+            <div
+              className="relative h-full overflow-hidden rounded-[22px] border border-line"
+              style={{ background: `linear-gradient(140deg, rgba(${rgb},0.16), rgba(255,255,255,0.02) 55%)` }}
+            >
+              {isMobileApp ? (
+                <PhoneFrames project={project} />
+              ) : (
+                <div className="flex h-full items-center p-3 sm:p-8 lg:p-10">
+                  <BrowserFrame
+                    project={project}
+                    className="w-full shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)] transition-transform duration-700 ease-[var(--ease-premium)] lg:[transform:perspective(1400px)_rotateY(-8deg)_rotateX(4deg)] lg:group-hover:[transform:perspective(1400px)_rotateY(0deg)_rotateX(0deg)]"
+                  />
+                </div>
+              )}
+            </div>
+          </Link>
+        </div>
+      </motion.article>
+    </div>
   )
 }
 
 const Projects: React.FC = () => {
-  const navigate = useNavigate()
-  const projectsRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!projectsRef.current) return
-    const projectCards = projectsRef.current.querySelectorAll('[data-scroll-animate]')
-    projectCards.forEach((card) => {
-      gsap.fromTo(
-        card,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          scrollTrigger: {
-            trigger: card as HTMLElement,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
-    })
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-    }
-  }, [])
-
+  const [featured, ...rest] = projects
+  const stackRef = useRef<HTMLDivElement>(null)
+  const stacked = useMediaQuery('(min-width: 1024px)')
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ['start start', 'end end'] })
 
   return (
-    <section id="projects" ref={projectsRef} className="overflow-x-clip bg-[#0a0a0a]">
-      <LampContainer className="pt-10 pb-0">
-        <ScrollReveal variant="blur" className="mb-6 text-center">
-          <h2 className="text-3xl font-black italic text-white sm:text-4xl md:text-5xl">
-            My <span className="text-[#c5f82a]">Projects</span>
-          </h2>
-          <div className="mx-auto mt-2 h-[2px] w-48 bg-gradient-to-r from-transparent via-[#c5f82a] to-transparent" />
-          <p className="mt-4 px-2 text-xs italic text-[#666] sm:text-sm">
-            Hover to explore — click Learn More for full details
-          </p>
-        </ScrollReveal>
-      </LampContainer>
+    <section id="projects" className="relative py-28 lg:py-40">
+      <div aria-hidden className="pointer-events-none absolute top-40 left-1/2 h-[50rem] w-[80rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(197,248,42,0.07),transparent_60%)]" />
 
-      <div className="mx-auto max-w-[1400px] px-4 pb-20 sm:px-6 md:px-12 md:pb-24 lg:px-16">
-        <ScrollReveal variant="zoom" className="mb-6 md:mb-10">
-          <div className="mb-4 flex items-center gap-2">
-            <span className="h-px flex-1 max-w-[60px] bg-gradient-to-r from-[#c5f82a] to-transparent" />
-            <p className="text-[10px] font-bold tracking-[0.22em] text-[#c5f82a] uppercase sm:text-[11px]">Featured Project</p>
-            <span className="h-px flex-1 bg-gradient-to-l from-[#c5f82a]/40 to-transparent" />
-          </div>
-          <ProjectImageTile project={mainProject} navigate={navigate} variant="featured" />
-        </ScrollReveal>
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading index="03" label="Selected work" title="Projects that" accent="ship." />
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.8, ease }}
+            className="max-w-md text-[15px] leading-relaxed text-mute lg:pb-3"
+          >
+            {pad(projects.length)} products engineered end-to-end — AI-powered SaaS, ERP systems, e-commerce, real-time
+            apps and mobile.
+          </motion.p>
+        </div>
 
-        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[2fr_3fr] lg:gap-6">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#31d0c6]/30 bg-[#31d0c6]/10 text-[#31d0c6]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="5" y="2" width="14" height="20" rx="2" />
-                  <path d="M12 18h.01" />
-                </svg>
-              </span>
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] text-[#31d0c6] uppercase">Mobile App</p>
-              </div>
-            </div>
-            <ScrollReveal variant="right" delay={0.1}>
-              <ProjectImageTile project={mobileProject} navigate={navigate} variant="mobile" />
-            </ScrollReveal>
-          </div>
+        <FeaturedProject project={featured} />
 
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#c5f82a]/30 bg-[#c5f82a]/10 text-[#c5f82a]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="3" width="20" height="14" rx="2" />
-                  <path d="M8 21h8M12 17v4" />
-                </svg>
-              </span>
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.2em] text-[#c5f82a] uppercase">Web Applications</p>
-              </div>
-            </div>
-            <div className="columns-1 gap-x-4 sm:columns-2 [column-gap:1rem]">
-              {otherWebProjects.map((project, index) => (
-                <div key={project.title} className="mb-4 break-inside-avoid">
-                  <ScrollReveal variant={index % 2 === 0 ? 'up' : 'scale'} delay={index * 0.08}>
-                    <ProjectImageTile project={project} navigate={navigate} variant="web" />
-                  </ScrollReveal>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="mt-28 mb-10 flex items-center gap-4 font-mono text-[11px] tracking-[0.25em] text-mute uppercase lg:mt-40">
+          <span>More work</span>
+          <span className="h-px flex-1 bg-line" />
+          <span>{pad(rest.length)} projects</span>
+        </div>
+
+        <div ref={stackRef} className="relative">
+          {rest.map((project, i) => (
+            <StackCard
+              key={project.id}
+              project={project}
+              index={i}
+              total={rest.length}
+              progress={scrollYProgress}
+              stacked={stacked}
+            />
+          ))}
         </div>
       </div>
     </section>

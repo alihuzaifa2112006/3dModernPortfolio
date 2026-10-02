@@ -1,165 +1,204 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
-import { BackgroundRippleEffect } from './ui/background-ripple-effect'
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useInView, useScroll, useTransform } from 'motion/react'
+import { useLenis } from 'lenis/react'
+import { ArrowDown, ArrowUpRight, Download } from 'lucide-react'
+import { Magnetic } from './ui/magnetic'
+import { SceneBoundary, canUseWebGL } from './three/SceneBoundary'
+import { useIntro } from '../context/intro'
+import { SOCIALS } from '../data/site'
+
+const HeroScene = lazy(() => import('./three/HeroScene'))
 
 const ease = [0.16, 1, 0.3, 1] as const
-
-const WORDS = ['FULL STACK DEVELOPER', 'MERN STACK ENGINEER', 'SaaS BUILDER']
+const ROLES = ['Full Stack Developer', 'MERN Stack Engineer', 'SaaS Builder']
+const NAME = 'Ali Huzaifa'
 
 const Hero: React.FC = () => {
-  const headingRef = useRef<HTMLHeadingElement>(null)
-  const [wordIndex, setWordIndex] = useState(0)
+  const { ready } = useIntro()
+  const lenis = useLenis()
+  const sectionRef = useRef<HTMLElement>(null)
+  const inView = useInView(sectionRef)
+  const [webgl] = useState(canUseWebGL)
+  const [roleIndex, setRoleIndex] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % WORDS.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
+    if (!ready) return
+    const id = setInterval(() => setRoleIndex((i) => (i + 1) % ROLES.length), 2800)
+    return () => clearInterval(id)
+  }, [ready])
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!headingRef.current || window.matchMedia('(max-width: 1023px)').matches) return
-    const rect = headingRef.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left - rect.width / 2) / rect.width
-    const y = (e.clientY - rect.top - rect.height / 2) / rect.height
-    headingRef.current.style.transform = `perspective(1200px) rotateX(${y * -10}deg) rotateY(${x * 10}deg)` // Enhanced 3D angle depth
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 180])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0])
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.95], [1, 0.15])
+
+  const scrollTo = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (!el) return
+    if (lenis) lenis.scrollTo(el, { duration: 1.6 })
+    else el.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const handleMouseLeave = () => {
-    if (!headingRef.current) return
-    headingRef.current.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg)'
-  }
+  const enter = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+    transition: { duration: 1, ease, delay },
+  })
 
   return (
-    <section id="home" className="relative isolate min-h-[100svh] w-full overflow-hidden bg-[#0a0a0a] flex flex-col justify-center">
-      {/* Heavy Ambient Background Glows */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute top-[15%] left-1/2 h-[70%] w-[70%] -translate-x-1/2 rounded-full bg-[#c5f82a]/5 blur-[160px]" />
-        <div className="absolute bottom-[-10%] right-[5%] h-[50%] w-[50%] rounded-full bg-[#7c5cfc]/5 blur-[140px]" />
+    <section id="home" ref={sectionRef} className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+      {/* Atmosphere */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-20">
+        <div className="grid-fade absolute inset-0" />
+        <div className="absolute top-[5%] right-[-15%] h-[70vmax] w-[70vmax] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.16),transparent_62%)]" />
+        <div className="absolute bottom-[-25%] left-[-20%] h-[60vmax] w-[60vmax] rounded-full bg-[radial-gradient(circle,rgba(197,248,42,0.09),transparent_60%)]" />
       </div>
 
-      <BackgroundRippleEffect rows={18} cols={32} cellSize={54} fill />
+      {/* 3D layer */}
+      {webgl && (
+        <motion.div aria-hidden style={{ opacity: sceneOpacity }} className="pointer-events-none absolute inset-0 -z-10">
+          <SceneBoundary>
+            <Suspense fallback={null}>
+              <HeroScene active={inView} ready={ready} />
+            </Suspense>
+          </SceneBoundary>
+        </motion.div>
+      )}
 
-      {/* Content Container (Max width extended for larger frame grid) */}
-      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-4 pt-28 pb-32 sm:px-8 md:px-12 lg:px-16 lg:pt-36 lg:pb-40">
-        <div className="flex flex-col items-start gap-16 lg:gap-24">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative mx-auto flex w-full max-w-[1440px] flex-1 flex-col justify-end px-5 pt-[44svh] pb-28 sm:px-8 lg:justify-center lg:px-12 lg:pt-32 lg:pb-36"
+      >
+        <motion.div
+          {...enter(0.15)}
+          className="glass mb-8 inline-flex w-fit items-center gap-2.5 rounded-full py-1.5 pr-4 pl-2 text-[12px] text-white/80"
+        >
+          <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/15">
+            <span className="absolute h-2 w-2 animate-ping rounded-full bg-emerald-400/70" />
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          </span>
+          Open to new opportunities
+        </motion.div>
 
-          {/* Main Massive Hero Typography */}
-          <div className="w-full min-w-0" onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-            <motion.h1
-              ref={headingRef}
-              initial={{ opacity: 0, y: 80 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, ease }}
-              className="font-black italic leading-[0.82] tracking-[-0.05em] text-white uppercase will-change-transform select-none"
-              style={{
-                fontSize: 'clamp(2.5rem, 11vw, 10.5rem)', // Scaled up massive size
-                WebkitTextStroke: '1.5px rgba(0,0,0,0.6)',
-                paintOrder: 'stroke fill',
-                transition: 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)',
-                transformStyle: 'preserve-3d',
-              }}
+        <h1 className="font-display font-semibold text-white">
+          <span className="sr-only">
+            {NAME} — {ROLES.join(', ')}
+          </span>
+          <span aria-hidden className="block overflow-hidden pb-[0.06em]">
+            <span className="flex text-[clamp(3.2rem,10.5vw,9.2rem)] leading-[0.9] tracking-[-0.06em]">
+              {NAME.split('').map((ch, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: '105%' }}
+                  animate={{ y: ready ? '0%' : '105%' }}
+                  transition={{ duration: 1.1, ease, delay: 0.05 + i * 0.035 }}
+                  className="inline-block whitespace-pre"
+                >
+                  {ch}
+                </motion.span>
+              ))}
+            </span>
+          </span>
+
+          <span
+            aria-hidden
+            className="relative mt-1 block h-[1.1em] overflow-hidden text-[clamp(2rem,5.6vw,5.2rem)] leading-[1.1]"
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
+              {ready && (
+                <motion.span
+                  key={roleIndex}
+                  initial={{ y: '100%', opacity: 0, filter: 'blur(8px)' }}
+                  animate={{ y: '0%', opacity: 1, filter: 'blur(0px)' }}
+                  exit={{ y: '-100%', opacity: 0, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.8, ease }}
+                  className="absolute inset-x-0 top-0 block font-serif font-normal tracking-[-0.02em] whitespace-nowrap text-brand italic"
+                >
+                  {ROLES[roleIndex]}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </span>
+        </h1>
+
+        <motion.p
+          {...enter(0.55)}
+          className="mt-8 max-w-[480px] text-[15px] leading-[1.75] text-white/60 sm:text-[17px]"
+        >
+          I craft high-performance web applications where pixel-perfect precision meets scalable backend
+          architecture — clean digital experiences that scale.
+        </motion.p>
+
+        <motion.div {...enter(0.7)} className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+          <Magnetic>
+            <a
+              href="#contact"
+              onClick={scrollTo('contact')}
+              className="group inline-flex h-14 items-center gap-3 rounded-full bg-brand pr-2 pl-7 text-[15px] font-semibold text-ink shadow-[0_0_40px_-8px_rgba(197,248,42,0.6)] transition-shadow duration-500 hover:shadow-[0_0_60px_-6px_rgba(197,248,42,0.8)]"
             >
-              <span className="block opacity-60 not-italic text-xs sm:text-sm font-bold tracking-[0.3em] mb-6 text-[#c5f82a]">
-                // CREATIVE ENGINEER
+              Let&apos;s collaborate
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-brand transition-transform duration-500 group-hover:rotate-45">
+                <ArrowUpRight size={18} />
               </span>
-
-              <span className="block opacity-95">HI, I'M ALI HUZAIFA</span>
-
-              {/* Continuous Animated Words Wrapper */}
-              <span className="mt-4 block sm:mt-6 min-h-[1.1em] relative overflow-hidden">
-                <span className="text-neutral-500 not-italic font-light tracking-tight">A </span>
-                <span className="inline-block relative">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={wordIndex}
-                      initial={{ y: 70, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -70, opacity: 0 }}
-                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className="inline-block text-[#c5f82a] not-italic font-black text-glow whitespace-nowrap"
-                    >
-                      {WORDS[wordIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              </span>
-            </motion.h1>
-          </div>
-
-          {/* Bottom Row: Description & CTA Buttons */}
-          <div className="grid w-full grid-cols-1 gap-12 border-t border-white/10 pt-10 md:grid-cols-2 md:items-end md:gap-16 lg:pt-14">
-
-            {/* Description */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8, ease }}
-              className="max-w-2xl"
+            </a>
+          </Magnetic>
+          <Magnetic>
+            <a
+              href="/Ali-Huzaifa-CV.pdf"
+              download="Ali Huzaifa CV.pdf"
+              className="glass group inline-flex h-14 items-center gap-2.5 rounded-full px-7 text-[15px] font-medium text-white transition-colors duration-300 hover:border-white/25"
             >
-              <p className="text-[16px] leading-[1.75] text-neutral-400 sm:text-[18px] font-medium tracking-wide">
-                I craft high-performance web applications where pixel-perfect precision meets scalable backend architecture. Focused on building clean digital experiences that scale.
-              </p>
-            </motion.div>
+              <Download size={17} className="transition-transform duration-300 group-hover:translate-y-0.5" />
+              Download CV
+            </a>
+          </Magnetic>
+        </motion.div>
+      </motion.div>
 
-            {/* Actions & Socials */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8, ease }}
-              className="flex flex-col gap-8 sm:flex-row sm:items-center md:justify-end"
+      {/* Footer rail */}
+      <motion.div
+        {...enter(0.95)}
+        className="absolute inset-x-0 bottom-0 mx-auto flex w-full max-w-[1440px] items-end justify-between gap-6 px-5 pb-7 sm:px-8 lg:px-12"
+      >
+        <a
+          href="#about"
+          onClick={scrollTo('about')}
+          className="group flex items-center gap-3 font-mono text-[11px] tracking-[0.25em] text-mute uppercase hover:text-white"
+        >
+          <span className="relative grid h-10 w-6 place-items-start justify-center rounded-full border border-white/20 pt-2">
+            <motion.span
+              animate={{ y: [0, 12, 0], opacity: [1, 0.2, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              className="h-1.5 w-1 rounded-full bg-brand"
+            />
+          </span>
+          <span className="hidden sm:inline">Scroll to explore</span>
+          <ArrowDown size={14} className="sm:hidden" />
+        </a>
+
+        <p className="hidden font-mono text-[11px] tracking-[0.25em] text-mute uppercase md:block">
+          Karachi, PK — Working worldwide
+        </p>
+
+        <div className="flex items-center gap-5 font-mono text-[11px] tracking-[0.2em] uppercase">
+          {[
+            { label: 'LinkedIn', href: SOCIALS.linkedin },
+            { label: 'Instagram', href: SOCIALS.instagram },
+          ].map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-1 text-mute transition-colors hover:text-brand"
             >
-              <div className="flex flex-wrap items-center gap-5">
-                <a
-                  href="#contact"
-                  className="group inline-flex items-center gap-3.5 rounded-full bg-[#c5f82a] py-4 px-8 text-[15px] font-extrabold text-black transition-all hover:bg-[#d4ff4a] hover:scale-[1.04]"
-                >
-                  Let's Collaborate
-                  <ArrowUpRight size={20} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
-
-                <a
-                  href="/Ali-Huzaifa-CV.pdf"
-                  download="Ali Huzaifa CV.pdf"
-                  className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 py-4 px-8 text-[15px] font-bold text-white transition-all hover:bg-white/10 hover:border-white/20"
-                >
-                  Download CV
-                </a>
-              </div>
-
-              {/* Minimal Social Links */}
-              <div className="flex items-center gap-5 border-t border-white/5 pt-5 sm:border-t-0 sm:pt-0 sm:pl-6 sm:border-l sm:border-white/10">
-                <a
-                  href="https://www.linkedin.com/in/ali-huzaifa-92137a292"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[14px] font-black tracking-widest text-neutral-400 uppercase transition-all hover:text-[#c5f82a]"
-                >
-                  LinkedIn
-                </a>
-                <span className="text-white/20 text-xs">•</span>
-                <a
-                  href="https://www.instagram.com/alihuzaifa2112006/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[14px] font-black tracking-widest text-neutral-400 uppercase transition-all hover:text-[#c5f82a]"
-                >
-                  Instagram
-                </a>
-              </div>
-            </motion.div>
-
-          </div>
+              {s.label}
+              <ArrowUpRight size={12} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          ))}
         </div>
-      </div>
-
-      {/* Modern Edge Cut Bottom SVG Section */}
-      <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-[2] h-[10vh] overflow-hidden">
-        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="block h-full w-full">
-          <path d="M0 100L1440 30V100H0Z" fill="#0a0a0a" />
-        </svg>
-      </div>
+      </motion.div>
     </section>
   )
 }

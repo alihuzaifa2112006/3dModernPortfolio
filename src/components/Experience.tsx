@@ -1,134 +1,143 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { BackgroundRippleEffect } from './ui/background-ripple-effect'
-
-gsap.registerPlugin(ScrollTrigger)
+import React, { useRef } from 'react'
+import { motion, useScroll, useSpring } from 'motion/react'
+import { MapPin } from 'lucide-react'
+import { SectionHeading } from './ui/section-heading'
+import { Tilt } from './ui/tilt'
+import { experiences } from '../data/site'
+import { cn } from '../lib/utils'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
-const experiences = [
-  {
-    company: 'ITG UAE',
-    role: 'Software Developer (Full Stack)',
-    duration: 'Jun 2025 – Present',
-    location: 'Karachi, Pakistan',
-    current: true,
-    points: [
-      'Developed and maintained full-stack ERP modules using React.js, Next.js, Node.js, and Express for enterprise sourcing systems.',
-      'Migrated legacy ASP.NET (VB.NET) ERP architecture into a modern React-based frontend with Node.js backend.',
-      'Built scalable REST APIs using Node.js and Express for seamless frontend-backend integration.',
-      'Optimized performance across enterprise dashboards and improved responsiveness across all platforms.',
-      'Integrated RESTful APIs with backend systems for smooth data flow and business operations.',
-      'Built reusable components and scalable full-stack architecture across multiple concurrent projects.',
-    ],
-  },
-  {
-    company: 'Data Tronex',
-    role: 'Frontend Developer Intern',
-    duration: 'Jan 2025 – May 2025',
-    location: 'Karachi, Pakistan',
-    current: false,
-    points: [
-      'Worked on real-world client projects using WordPress, HTML, CSS, and JavaScript.',
-      'Developed and customized responsive UI components for business websites.',
-      'Handled website maintenance, bug fixing, and frontend improvements.',
-      'Collaborated with team members and clients to implement feature requests and UI changes.',
-      'Gained practical experience in frontend workflows, client communication, and project delivery.',
-    ],
-  },
-]
+const TimelineCard: React.FC<{ exp: (typeof experiences)[number]; index: number }> = ({ exp, index }) => (
+  <div className="relative pl-12 sm:pl-16">
+    {/* Node */}
+    <motion.span
+      initial={{ scale: 0 }}
+      whileInView={{ scale: 1 }}
+      viewport={{ once: true, amount: 1 }}
+      transition={{ duration: 0.6, ease: 'backOut' }}
+      className="absolute top-9 left-[11px] z-10 grid h-[18px] w-[18px] place-items-center rounded-full border-[3px] border-ink bg-brand sm:left-[19px]"
+    >
+      {exp.current && <span className="absolute inset-0 animate-ping rounded-full bg-brand/60" />}
+    </motion.span>
+
+    <motion.div
+      initial={{ opacity: 0, y: 70, rotateX: 22 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 1.1, ease }}
+      style={{ transformPerspective: 1200, transformOrigin: 'center top' }}
+    >
+      <Tilt max={4} className="rounded-[28px]">
+        <div
+          className={cn(
+            'relative overflow-hidden rounded-[28px] border bg-ink-2 p-7 sm:p-10',
+            exp.current ? 'border-brand/25' : 'border-line',
+          )}
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -top-6 right-4 font-display text-[9rem] leading-none font-bold tracking-[-0.06em] text-white/[0.025] select-none"
+          >
+            0{index + 1}
+          </span>
+          {exp.current && (
+            <div aria-hidden className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(197,248,42,0.14),transparent_65%)]" />
+          )}
+
+          <div className="relative flex flex-wrap items-center gap-3 [transform:translateZ(30px)]">
+            <span className="rounded-full border border-line-strong bg-white/[0.03] px-3.5 py-1 font-mono text-[11px] tracking-wider text-white/80">
+              {exp.duration}
+            </span>
+            {exp.current && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 font-mono text-[10px] font-medium tracking-wider text-ink uppercase">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />
+                Current
+              </span>
+            )}
+          </div>
+
+          <h3 className="relative mt-6 font-display text-[clamp(2rem,3.4vw,2.8rem)] leading-none font-semibold tracking-[-0.045em] text-white">
+            {exp.company}
+          </h3>
+          <p className="relative mt-2 font-serif text-xl text-brand italic sm:text-2xl">{exp.role}</p>
+          <p className="relative mt-3 flex items-center gap-1.5 font-mono text-[11px] tracking-wider text-mute uppercase">
+            <MapPin size={12} /> {exp.location}
+          </p>
+
+          <motion.ul
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={{ show: { transition: { staggerChildren: 0.07, delayChildren: 0.2 } } }}
+            className="relative mt-8 grid gap-4 border-t border-line pt-8"
+          >
+            {exp.points.map((point) => (
+              <motion.li
+                key={point}
+                variants={{ hidden: { opacity: 0, x: -16 }, show: { opacity: 1, x: 0 } }}
+                transition={{ duration: 0.6, ease }}
+                className="flex gap-4 text-[14px] leading-[1.75] text-white/65 sm:text-[15px]"
+              >
+                <span className="mt-[9px] h-px w-4 shrink-0 bg-brand" />
+                {point}
+              </motion.li>
+            ))}
+          </motion.ul>
+        </div>
+      </Tilt>
+    </motion.div>
+  </div>
+)
 
 const Experience: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
-
-  const { scrollYProgress: sectionProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  })
-  const orbOneY = useTransform(sectionProgress, [0, 1], [-100, 140])
-  const orbTwoY = useTransform(sectionProgress, [0, 1], [120, -160])
-  const orbRotate = useTransform(sectionProgress, [0, 1], [0, 60])
-  const headingY = useTransform(sectionProgress, [0, 0.3], [0, -20])
-
-  const { scrollYProgress: lineProgress } = useScroll({
-    target: timelineRef,
-    offset: ['start 0.75', 'end 0.35'],
-  })
-  const lineScale = useSpring(lineProgress, { stiffness: 90, damping: 24, mass: 0.4 })
+  const { scrollYProgress } = useScroll({ target: timelineRef, offset: ['start 0.7', 'end 0.5'] })
+  const lineScale = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.4 })
+  const current = experiences.find((e) => e.current)
 
   return (
-    <section
-      id="Experience"
-      ref={sectionRef}
-      className="relative isolate overflow-hidden bg-[#0a0a0a] py-24 text-white"
-    >
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <motion.div
-          className="absolute top-0 left-0 h-[50%] w-[50%] -translate-x-1/4 rounded-full bg-[#c5f82a]/5 blur-[100px]"
-          style={{ y: orbOneY, rotate: orbRotate }}
-        />
-        <motion.div
-          className="absolute top-[10%] right-0 h-[45%] w-[45%] translate-x-1/4 rounded-full bg-[#7c5cfc]/6 blur-[90px]"
-          style={{ y: orbTwoY }}
-        />
-      </div>
+    <section id="experience" className="relative py-28 lg:py-40">
+      <div className="mx-auto grid max-w-[1440px] gap-16 px-5 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-12">
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-32">
+            <SectionHeading
+              index="05"
+              label="Experience"
+              title="My work"
+              accent="journey."
+              description="Building scalable enterprise applications, modern frontend systems, and responsive user experiences across real-world business projects."
+            />
+            {current && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.8 }}
+                transition={{ duration: 0.8, ease, delay: 0.2 }}
+                className="glass mt-10 inline-flex items-center gap-4 rounded-2xl px-5 py-4"
+              >
+                <span className="relative flex h-3 w-3">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/60" />
+                  <span className="relative h-3 w-3 rounded-full bg-emerald-400" />
+                </span>
+                <div>
+                  <p className="font-mono text-[10px] tracking-[0.2em] text-mute uppercase">Currently at</p>
+                  <p className="mt-0.5 text-[15px] font-medium text-white">
+                    {current.company} · <span className="text-white/60">{current.role}</span>
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
 
-      <BackgroundRippleEffect rows={12} cols={22} cellSize={42} fill />
-
-      <div className="relative z-10 mx-auto max-w-[1300px] px-4 sm:px-6 md:px-12 lg:px-16">
-        {/* Heading */}
-        <motion.div
-          style={{ y: headingY }}
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease }}
-          viewport={{ once: true }}
-          className="mb-16 text-center"
-        >
-          <motion.p
-            initial={{ opacity: 0, letterSpacing: '0.5em' }}
-            whileInView={{ opacity: 1, letterSpacing: '0.25em' }}
-            transition={{ duration: 0.9, ease }}
-            viewport={{ once: true }}
-            className="mb-3 text-[12px] font-bold text-[#c5f82a] uppercase"
-          >
-            Experience
-          </motion.p>
-
-          <h2 className="text-4xl font-black uppercase sm:text-5xl md:text-6xl">
-            My Work <span className="text-[#c5f82a]">Journey</span>
-          </h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            viewport={{ once: true }}
-            className="mx-auto mt-5 max-w-2xl text-[13px] leading-[1.9] text-[#888] sm:text-[14px]"
-          >
-            Building scalable enterprise applications, modern frontend systems,
-            and responsive user experiences across real-world business projects.
-          </motion.p>
-        </motion.div>
-
-        {/* Timeline */}
-        <div ref={timelineRef} className="relative mx-auto max-w-5xl">
-          {/* Base line */}
-          <div className="absolute top-0 left-[18px] h-full w-[2px] bg-[#1a1a1a] md:left-1/2 md:-translate-x-1/2" />
-          {/* Animated glowing draw-on-scroll line */}
+        <div ref={timelineRef} className="relative lg:col-span-7">
+          <div className="absolute top-0 bottom-0 left-[19px] w-px bg-line sm:left-[27px]" />
           <motion.div
-            className="absolute top-0 left-[18px] h-full w-[2px] origin-top bg-gradient-to-b from-[#c5f82a] via-[#c5f82a] to-[#7c5cfc] md:left-1/2 md:-translate-x-1/2"
-            style={{
-              scaleY: lineScale,
-              boxShadow: '0 0 12px 1px rgba(197,248,42,0.5)',
-            }}
+            className="absolute top-0 bottom-0 left-[19px] w-px origin-top bg-gradient-to-b from-brand via-brand to-violet sm:left-[27px]"
+            style={{ scaleY: lineScale, boxShadow: '0 0 14px 1px rgba(197,248,42,0.5)' }}
           />
-
-          <div className="space-y-12">
+          <div className="space-y-10">
             {experiences.map((exp, index) => (
               <TimelineCard key={exp.company} exp={exp} index={index} />
             ))}
@@ -136,187 +145,6 @@ const Experience: React.FC = () => {
         </div>
       </div>
     </section>
-  )
-}
-
-interface TimelineCardProps {
-  exp: (typeof experiences)[number]
-  index: number
-}
-
-const bulletContainerVariants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.09, delayChildren: 0.25 },
-  },
-}
-
-const bulletVariants = {
-  hidden: { opacity: 0, x: -14 },
-  show: { opacity: 1, x: 0, transition: { duration: 0.45, ease } },
-}
-
-const TimelineCard: React.FC<TimelineCardProps> = ({ exp, index }) => {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const fromLeft = index % 2 === 0
-
-  const rotateXRaw = useMotionValue(0)
-  const rotateYRaw = useMotionValue(0)
-  const rotateX = useSpring(rotateXRaw, { stiffness: 220, damping: 20 })
-  const rotateY = useSpring(rotateYRaw, { stiffness: 220, damping: 20 })
-  const [glowPos, setGlowPos] = useState({ x: 50, y: 0 })
-
-  useEffect(() => {
-    if (!cardRef.current) return
-    gsap.to(cardRef.current, {
-      scrollTrigger: {
-        trigger: cardRef.current,
-        start: 'top 70%',
-        toggleActions: 'play none none reverse',
-      },
-      duration: 0.8,
-      opacity: 1,
-      y: 0,
-    })
-  }, [])
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = cardRef.current?.getBoundingClientRect()
-    if (!rect) return
-    const px = (e.clientX - rect.left) / rect.width - 0.5
-    const py = (e.clientY - rect.top) / rect.height - 0.5
-    rotateYRaw.set(px * 10)
-    rotateXRaw.set(-py * 10)
-    setGlowPos({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 })
-  }
-
-  const handleLeave = () => {
-    rotateXRaw.set(0)
-    rotateYRaw.set(0)
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 60, rotateY: fromLeft ? -35 : 35, scale: 0.92 }}
-      whileInView={{ opacity: 1, y: 0, rotateY: 0, scale: 1 }}
-      transition={{ duration: 0.85, delay: index * 0.12, ease }}
-      viewport={{ once: true, amount: 0.35 }}
-      style={{ perspective: 1200, transformStyle: 'preserve-3d' }}
-      className={`relative flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''
-        }`}
-    >
-      {/* Dot */}
-      <motion.div
-        initial={{ scale: 0 }}
-        whileInView={{ scale: 1 }}
-        transition={{ duration: 0.5, delay: index * 0.12 + 0.2, ease: 'backOut' }}
-        viewport={{ once: true }}
-        className="absolute top-6 left-[10px] z-20 flex h-5 w-5 items-center justify-center rounded-full border-4 border-[#0a0a0a] bg-[#c5f82a] md:left-1/2 md:-translate-x-1/2"
-      >
-        <div className="h-2 w-2 rounded-full bg-black" />
-        {exp.current && (
-          <motion.div
-            className="absolute inset-0 rounded-full bg-[#c5f82a]"
-            animate={{ scale: [1, 2.2, 1], opacity: [0.6, 0, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        )}
-      </motion.div>
-
-      {/* Spacer */}
-      <div className="hidden md:block md:w-1/2" />
-
-      {/* Card */}
-      <div className="ml-12 md:ml-0 md:w-1/2 md:px-10">
-        <motion.div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleLeave}
-          style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-          whileHover={{ y: -6 }}
-          className="group relative overflow-hidden rounded-[28px] border border-[#1f1f1f] bg-[#111] p-7 transition-colors duration-500 hover:border-[#c5f82a]/40"
-        >
-          {/* Cursor-follow glow */}
-          <div
-            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            style={{
-              background: `radial-gradient(300px circle at ${glowPos.x}% ${glowPos.y}%, rgba(197,248,42,0.12), transparent 70%)`,
-            }}
-          />
-          {/* Corner glow */}
-          <div className="absolute -top-20 -right-20 h-44 w-44 rounded-full bg-[#c5f82a]/10 blur-3xl transition-all duration-500 group-hover:bg-[#7c5cfc]/20" />
-
-          <div style={{ transform: 'translateZ(30px)' }}>
-            {/* Duration */}
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.12 + 0.15, ease }}
-              viewport={{ once: true }}
-              className="inline-block rounded-full border border-[#2a2a2a] bg-[#181818] px-4 py-1 text-[11px] font-semibold tracking-[0.08em] text-[#c5f82a] uppercase"
-            >
-              {exp.duration}
-            </motion.span>
-
-            {/* Company */}
-            <motion.h3
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.12 + 0.22, ease }}
-              viewport={{ once: true }}
-              className="mt-5 text-2xl font-black text-white"
-            >
-              {exp.company}
-            </motion.h3>
-
-            {/* Role */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.12 + 0.28, ease }}
-              viewport={{ once: true }}
-              className="mt-1 text-[14px] font-semibold text-[#c5f82a]"
-            >
-              {exp.role}
-            </motion.p>
-
-            {/* Location */}
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.12 + 0.34, ease }}
-              viewport={{ once: true }}
-              className="mt-1 text-[12px] text-[#777]"
-            >
-              {exp.location}
-            </motion.p>
-
-            {/* Points */}
-            <motion.ul
-              variants={bulletContainerVariants}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.4 }}
-              className="mt-6 space-y-4"
-            >
-              {exp.points.map((point, i) => (
-                <motion.li
-                  key={i}
-                  variants={bulletVariants}
-                  className="flex items-start gap-3 text-[13px] leading-[1.8] text-[#9b9b9b]"
-                >
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#c5f82a]" />
-                  {point}
-                </motion.li>
-              ))}
-            </motion.ul>
-          </div>
-
-
-          <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-gradient-to-r from-[#c5f82a] to-[#7c5cfc] transition-all duration-500 group-hover:w-full" />
-        </motion.div>
-      </div>
-    </motion.div>
   )
 }
 

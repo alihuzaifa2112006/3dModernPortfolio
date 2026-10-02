@@ -1,354 +1,390 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { motion } from 'motion/react'
-import { useParams, useNavigate } from 'react-router-dom'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useLenis } from 'lenis/react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { RevealText } from './ui/reveal-text'
+import { Magnetic } from './ui/magnetic'
+import { getProject, projects, type Project } from '../data/projects'
+import { cn } from '../lib/utils'
 
-gsap.registerPlugin(ScrollTrigger)
+const ease = [0.16, 1, 0.3, 1] as const
+const pad = (n: number) => String(n).padStart(2, '0')
 
-// Import all project images
-import wealthpulseHero from '../assets/wealthpulse-hero.png'
-import wealthpulseImg from '../assets/wealthpulse.png'
-import wealthpulseDashboard from '../assets/wealthpulse-dashboard.png'
-import wealthpulseGoals from '../assets/wealthpulse-goals.png'
-import wealthpulseAI from '../assets/wealthpulse-ai.png'
-import pathify2Img from '../assets/pathify-2.png'
-import pathify3Img from '../assets/pathify-3.png'
-import pathify4Img from '../assets/pathify-4.png'
-import pathify5Img from '../assets/pathify-5.png'
-import eleveraImg from '../assets/elevera.png'
-import eleveraProduct from '../assets/elevera-product.png'
-import eleveraCart from '../assets/elevera-cart.png'
-import eleveraCheckout from '../assets/elevera-checkout.png'
-import gatherlyImg from '../assets/gatherly.png'
-import gatherlyDashboard from '../assets/gatherly-dashboard.png'
-import gatherlyCreate from '../assets/gatherly-create.png'
-import gatherlyNotifications from '../assets/gatherly-notifications.png'
-import webchatImg from '../assets/webchat.png'
-import webchatGal1 from '../assets/webchat-1.png'
-import codeMatricsImg from '../assets/codematrics.png'
-import codeMatricsGal1 from '../assets/codematrics-1.png'
-import codeMatricsGal2 from '../assets/codematrics-2.png'
-import codeMatricsGal3 from '../assets/codematrics-3.png'
-import agrioPicMain from '../assets/agrio-main.png'
-import agrioPicDashboard from '../assets/agrio-dashboard.jpg'
-import agrioPicFinance from '../assets/agrio-finance.png'
-import agrioPicChatbot from '../assets/agrio-chatbot.jpeg'
-
-interface Project {
-  id: string
-  title: string
-  description: string
-  tech: string[]
-  link?: string
-  github?: string
-  image: string
-  gallery?: string[]
-  highlights?: string[]
-  tagline?: string
+const hexToRgb = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16)
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`
 }
 
-const projectsData: Record<string, Project> = {
-  wealthpulse: {
-    id: 'wealthpulse',
-    title: 'WealthPulse | AI Finance App',
-    description:
-      'WealthPulse is a modern, AI-powered expense tracking & financial management platform for individuals and small businesses. Track income, expenses, and savings in real-time, set financial goals, and get personalized plans — with Automated Data Capture: upload or enter any receipt and AI scans it to add transactions automatically.',
-    tech: ['Next.js 15', 'React 19', 'Python', 'Pandas', 'PostgreSQL', 'MongoDB', 'Claude API', 'MUI', 'Tailwind CSS', 'Render', 'Framer Motion'],
-    link: 'https://wealth-pulse-ai-beta.vercel.app/',
-    image: wealthpulseHero,
-    gallery: [wealthpulseImg, wealthpulseDashboard, wealthpulseGoals, wealthpulseAI],
-    tagline: 'AI finance app with receipt scan & automated data capture',
-    highlights: [
-      'Automated Data Capture — enter or upload any receipt; AI scans & adds it to your ledger',
-      'Real-time income, expense & savings tracking',
-      'AI-powered financial insights & personalized plans (Claude API)',
-      'Built-in AI chat for smart financial guidance',
-      'Python + Pandas for data processing & analytics',
-      'PostgreSQL database with scalable schema design',
-      'Multi-currency support (PKR, USD, INR, AED & more)',
-      'Deployed on Render for production hosting',
-      'Export financial plans as PDF',
-    ],
-  },
-  pathify: {
-    id: 'pathify',
-    title: 'Pathify AI | CareerPath Mobile App',
-    description:
-      'Pathify AI (CareerPath AI) is a React Native app that helps users find the best career path from an 8-step assessment. It uses Google Gemini for top 3 role suggestions, Firebase Auth for login/signup, Firestore for history, and a clean mobile-first UI built with Expo.',
-    tech: ['React Native (Expo)', 'Firebase Auth', 'Firestore', 'Google Gemini API', 'AsyncStorage'],
-    link: 'https://expo.dev/accounts/alihuzaifa/projects/pathify-ai/builds/aa6fcb5b-9ac7-41c9-9481-3ebd21481f2a',
-    image: pathify2Img,
-    gallery: [pathify3Img, pathify4Img, pathify5Img],
-    highlights: [
-      '8-step smart assessment for interests and skills',
-      'Top 3 AI career suggestions using Gemini',
-      'Secure login/signup with Firebase Authentication',
-      'Result and history saving with Firestore',
-      'Clean mobile UI and scalable Expo architecture',
-    ],
-  },
-  agrio: {
-    id: 'agrio',
-    title: 'Agrio | Farm Management ERP',
-    description:
-      'Agrio is a comprehensive farm management ERP system designed to help farmers and agricultural businesses streamline their operations. Features include crop tracking, resource management, financial analytics powered by Gemini AI, and a built-in chatbot for farming guidance.',
-    tech: ['React', 'Node.js', 'Express.js', 'Gemini API', 'MongoDB', 'Tailwind CSS'],
-    link: 'https://agrio-farmmanagements-alihasan.vercel.app/auth/jwt/login',
-    image: agrioPicMain,
-    gallery: [agrioPicDashboard, agrioPicFinance, agrioPicChatbot],
-    tagline: 'Smart ERP for modern farm management',
-    highlights: [
-      'Comprehensive crop tracking and resource management system',
-      'Financial analytics dashboard with real-time insights',
-      'AI-powered farming chatbot using Gemini API for crop guidance',
-      'Secure authentication and role-based access control',
-      'Responsive design optimized for mobile and desktop',
-      'Scalable backend with Express.js and MongoDB',
-    ],
-  },
-  elevera: {
-    id: 'elevera',
-    title: 'Elevera | Luxury E-Commerce Platform',
-    description:
-      'Elevera is a production-grade full-stack luxury fashion e-commerce platform. Next.js frontend with Redux Toolkit, NestJS backend with MongoDB, complete shopping flow with Stripe payments, and automated CI/CD pipelines.',
-    tech: ['Next.js', 'NestJS', 'MongoDB', 'Redux Toolkit', 'Stripe', 'CI/CD', 'TypeScript', 'Tailwind CSS'],
-    image: eleveraImg,
-    gallery: [eleveraProduct, eleveraCart, eleveraCheckout],
-    highlights: [
-      'Full-stack e-commerce with Next.js + NestJS',
-      'Stripe payment integration with full checkout flow',
-      'Redux Toolkit for global state management',
-      'Automated CI/CD pipelines for deployment',
-      'Elegant minimalist luxury fashion UI',
-    ],
-  },
-  gatherly: {
-    id: 'gatherly',
-    title: 'Gatherly | Event Management Platform',
-    description:
-      'Gatherly is a full-stack event management platform for organizers and volunteers. Organizers publish city events, volunteers register and get QR-coded passes, with real-time notifications via WebSockets.',
-    tech: ['React', 'NestJS', 'PostgreSQL', 'Prisma', 'MUI', 'WebSockets'],
-    image: gatherlyImg,
-    gallery: [gatherlyDashboard, gatherlyCreate, gatherlyNotifications],
-    highlights: [
-      'Organizers publish & manage city events',
-      'QR-coded gate passes for volunteers',
-      'Real-time notifications via WebSockets',
-      'Role-based access control',
-    ],
-  },
-  webchat: {
-    id: 'webchat',
-    title: 'WebChat | Real-Time Chat App',
-    description:
-      'A full-stack real-time chat application with WebSocket messaging, contact management, online/offline status, and a clean responsive UI with secure authentication.',
-    tech: ['Next.js', 'MongoDB', 'Socket.io', 'shadcn/ui', 'TypeScript'],
-    image: webchatImg,
-    gallery: [webchatGal1],
-    highlights: [
-      'Real-time messaging with Socket.io',
-      'Online/offline status & contact list',
-      'Modern authentication flow',
-    ],
-  },
-  codematrics: {
-    id: 'codematrics',
-    title: 'CodeMatrics | Developer Productivity',
-    description:
-      'A Next.js platform where developers track coding hours, manage tasks, and get AI-driven insights to analyze and improve their coding performance.',
-    tech: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'AI', 'MongoDB'],
-    link: 'https://codematrics-sable.vercel.app/',
-    image: codeMatricsImg,
-    gallery: [codeMatricsGal1, codeMatricsGal2, codeMatricsGal3],
-    highlights: [],
-  },
+const WebGallery: React.FC<{ project: Project; images: string[] }> = ({ project, images }) => {
+  const [index, setIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.3'] })
+  const rotateX = useTransform(scrollYProgress, [0, 1], [26, 0])
+  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1])
+
+  const go = useCallback(
+    (step: number) => {
+      setDirection(step)
+      setIndex((i) => (i + step + images.length) % images.length)
+    },
+    [images.length],
+  )
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') go(1)
+      if (e.key === 'ArrowLeft') go(-1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [go])
+
+  return (
+    <div ref={ref} style={{ perspective: 1600 }}>
+      <motion.div
+        style={{ rotateX, scale, transformOrigin: 'center top' }}
+        className="rounded-[30px] border border-line-strong bg-ink-3/80 p-2 sm:p-3"
+      >
+        <div className="flex items-center gap-1.5 px-3 pt-1.5 pb-3">
+          <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+          <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+          <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+          <span className="ml-auto font-mono text-[11px] text-white/40">
+            {pad(index + 1)} / {pad(images.length)}
+          </span>
+        </div>
+
+        <div className="relative aspect-[16/10] overflow-hidden rounded-[22px] bg-ink">
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <motion.img
+              key={images[index]}
+              src={images[index]}
+              alt={`${project.name} screenshot ${index + 1}`}
+              custom={direction}
+              initial={{ opacity: 0, x: `${direction * 8}%`, scale: 1.04 }}
+              animate={{ opacity: 1, x: '0%', scale: 1 }}
+              exit={{ opacity: 0, x: `${direction * -8}%`, scale: 0.98 }}
+              transition={{ duration: 0.8, ease }}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+          </AnimatePresence>
+
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => go(-1)}
+                aria-label="Previous image"
+                className="glass absolute top-1/2 left-4 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full text-white transition-colors hover:text-brand"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                type="button"
+                onClick={() => go(1)}
+                aria-label="Next image"
+                className="glass absolute top-1/2 right-4 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full text-white transition-colors hover:text-brand"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </>
+          )}
+        </div>
+      </motion.div>
+
+      {images.length > 1 && (
+        <div className="mt-5 flex gap-3 overflow-x-auto pb-2" data-lenis-prevent>
+          {images.map((img, i) => (
+            <button
+              key={img}
+              type="button"
+              onClick={() => {
+                setDirection(i > index ? 1 : -1)
+                setIndex(i)
+              }}
+              aria-label={`Show screenshot ${i + 1}`}
+              className={cn(
+                'relative h-20 w-32 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-300 sm:h-24 sm:w-40',
+                i === index ? 'border-brand' : 'border-transparent opacity-45 hover:opacity-90',
+              )}
+            >
+              <img src={img} alt="" className="h-full w-full object-cover object-top" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
+
+const MobileGallery: React.FC<{ project: Project; images: string[] }> = ({ project, images }) => (
+  <div className="-mx-5 overflow-x-auto px-5 pb-6 sm:mx-0 sm:px-0" data-lenis-prevent>
+    <div className="flex w-max gap-5 [perspective:1600px] sm:w-full sm:justify-center">
+      {images.map((src, i) => (
+        <motion.div
+          key={src}
+          initial={{ opacity: 0, y: 80, rotateY: -30 }}
+          whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1.1, ease, delay: i * 0.1 }}
+          whileHover={{ y: -12, rotateY: 6 }}
+          className="w-[62vw] max-w-[250px] shrink-0 rounded-[2.4rem] border border-line-strong bg-ink p-2 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)]"
+          style={{ marginTop: i % 2 === 1 ? 48 : 0 }}
+        >
+          <img
+            src={src}
+            alt={`${project.name} screen ${i + 1}`}
+            className="aspect-[9/19] w-full rounded-[2rem] object-cover object-top"
+          />
+        </motion.div>
+      ))}
+    </div>
+  </div>
+)
 
 const ProjectDetail: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const navigate = useNavigate()
-  const [galleryIndex, setGalleryIndex] = useState(0)
-  const contentRef = useRef<HTMLDivElement>(null)
+  const lenis = useLenis()
+  const project = getProject(projectId)
 
-  const project = projectId ? projectsData[projectId] : null
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    lenis?.scrollTo(0, { immediate: true, force: true })
+  }, [projectId, lenis])
 
   if (!project) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
-        <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-white">Project Not Found</h1>
-          <button
-            onClick={() => navigate('/#projects')}
-            className="rounded-lg bg-[#c5f82a] px-6 py-2 font-semibold text-black hover:bg-[#d4ff4a]"
-          >
-            Back to Projects
-          </button>
-        </div>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-5 text-center">
+        <p className="font-mono text-xs tracking-[0.25em] text-mute uppercase">404</p>
+        <h1 className="font-display text-5xl font-semibold tracking-[-0.04em]">Project not found</h1>
+        <Link to="/#projects" className="rounded-full bg-brand px-6 py-3 text-sm font-semibold text-ink">
+          Back to projects
+        </Link>
       </div>
     )
   }
 
-  const allImages = project.gallery ? [project.image, ...project.gallery] : [project.image]
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [projectId])
+  const index = projects.findIndex((p) => p.id === project.id)
+  const nextProject = projects[(index + 1) % projects.length]
+  const images = [project.image, ...project.gallery]
+  const rgb = hexToRgb(project.accent)
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Header */}
-      <motion.button
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        onClick={() => navigate('/#projects')}
-        className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20"
+    <div className="relative min-h-screen overflow-x-clip">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-[-20rem] left-1/2 h-[50rem] w-[90rem] -translate-x-1/2 rounded-full"
+        style={{ background: `radial-gradient(ellipse, rgba(${rgb},0.16), transparent 60%)` }}
+      />
+      <div aria-hidden className="grid-fade pointer-events-none absolute inset-x-0 top-0 h-[60rem]" />
+
+      {/* Top bar */}
+      <motion.header
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease }}
+        className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </motion.button>
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between">
+          <Magnetic>
+            <button
+              type="button"
+              onClick={() => navigate('/#projects')}
+              className="glass group inline-flex h-11 items-center gap-2 rounded-full pr-5 pl-2 text-[13px] font-medium text-white"
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10 transition-transform duration-500 group-hover:-translate-x-0.5">
+                <ArrowLeft size={15} />
+              </span>
+              All projects
+            </button>
+          </Magnetic>
+          <Link to="/" className="grid h-11 w-11 place-items-center rounded-xl bg-brand font-display text-sm font-extrabold text-ink">
+            AH
+          </Link>
+        </div>
+      </motion.header>
 
-      <div ref={contentRef} className="mx-auto max-w-5xl px-4 py-12 sm:px-6 md:px-12">
-        {/* Hero Image Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="mb-12 overflow-hidden rounded-3xl border border-[#1a2035] bg-[#0d1117] shadow-2xl"
-        >
-          <div className="relative h-96 overflow-hidden md:h-[500px]">
-            <motion.img
-              key={allImages[galleryIndex]}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              src={allImages[galleryIndex]}
-              alt={project.title}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
-          </div>
-
-          {/* Gallery Navigation */}
-          {allImages.length > 1 && (
-            <>
-              <button
-                onClick={() => setGalleryIndex((p) => (p === 0 ? allImages.length - 1 : p - 1))}
-                className="absolute top-1/2 left-4 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/85"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-              <button
-                onClick={() => setGalleryIndex((p) => (p === allImages.length - 1 ? 0 : p + 1))}
-                className="absolute top-1/2 right-4 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm hover:bg-black/85"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
-
-              {/* Dots */}
-              <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-                {allImages.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setGalleryIndex(i)}
-                    className={`h-2 rounded-full transition-all ${
-                      i === galleryIndex ? 'w-5 bg-[#c5f82a]' : 'w-2 bg-white/40 hover:bg-white/70'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Thumbnail Gallery */}
-              <div className="flex gap-2 overflow-x-auto border-t border-[#1a2035] bg-[#0a0a0a] px-4 py-3">
-                {allImages.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setGalleryIndex(i)}
-                    className={`h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
-                      i === galleryIndex ? 'border-[#c5f82a]' : 'border-transparent opacity-50 hover:opacity-90'
-                    }`}
-                  >
-                    <img src={img} alt="" className="h-full w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </>
+      <main className="relative mx-auto max-w-[1440px] px-5 pt-36 pb-24 sm:px-8 lg:px-12 lg:pt-44">
+        {/* Hero */}
+        <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute uppercase">
+          <span style={{ color: project.accent }}>({pad(index + 1)})</span>
+          <span className="h-px w-10 bg-line-strong" />
+          <span>{project.type === 'mobile' ? 'Mobile app' : 'Web app'}</span>
+          {project.link && (
+            <span className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] text-emerald-300">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              Live
+            </span>
           )}
+        </div>
+
+        <h1 className="mt-6 font-display text-[clamp(3.4rem,11vw,10rem)] leading-[0.88] font-semibold tracking-[-0.06em] text-white">
+          <RevealText key={project.id} segments={[{ text: project.name }]} play />
+        </h1>
+        <motion.p
+          key={`${project.id}-sub`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease, delay: 0.25 }}
+          className="mt-3 font-serif text-[clamp(1.8rem,4vw,3.4rem)] leading-tight italic"
+          style={{ color: project.accent }}
+        >
+          {project.subtitle}
+        </motion.p>
+
+        <motion.div
+          key={`${project.id}-meta`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease, delay: 0.4 }}
+          className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-4"
+        >
+          {[
+            { label: 'Category', value: project.subtitle },
+            { label: 'Platform', value: project.type === 'mobile' ? 'Mobile · React Native' : 'Web' },
+            { label: 'Tech stack', value: `${project.tech.length} technologies` },
+            { label: 'Status', value: project.link ? 'Live' : 'Case study' },
+          ].map((m) => (
+            <div key={m.label} className="bg-ink-2/90 px-5 py-5 sm:px-7 sm:py-6">
+              <p className="font-mono text-[10px] tracking-[0.2em] text-dim uppercase">{m.label}</p>
+              <p className="mt-2 text-[14px] font-medium text-white sm:text-[15px]">{m.value}</p>
+            </div>
+          ))}
         </motion.div>
 
-        {/* Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="space-y-8"
-        >
-          {/* Title & Tagline */}
-          <div>
-            <h1 className="mb-3 text-4xl font-black md:text-5xl">{project.title}</h1>
-            {project.tagline && <p className="text-lg text-[#c5f82a]">{project.tagline}</p>}
-          </div>
-
-          {/* Tech Stack */}
-          <div className="flex flex-wrap gap-2">
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-[#1e2d3d] bg-[#0a1929] px-4 py-2 text-sm font-medium text-[#7eb8da]"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          {/* Description */}
-          <p className="text-lg leading-relaxed text-[#8892a4]">{project.description}</p>
-
-          {/* Highlights */}
-          {project.highlights && project.highlights.length > 0 && (
-            <div>
-              <h2 className="mb-4 text-2xl font-bold text-white">Key Features</h2>
-              <ul className="space-y-3">
-                {project.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-3 text-[#8892a4]">
-                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#c5f82a]" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Gallery */}
+        <div className="mt-16 lg:mt-20">
+          {project.type === 'mobile' ? (
+            <MobileGallery key={project.id} project={project} images={images} />
+          ) : (
+            <WebGallery key={project.id} project={project} images={images} />
           )}
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-4 pt-4">
-            {project.link && (
+        {/* Overview */}
+        <section className="mt-24 grid gap-12 lg:mt-32 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-[11px] tracking-[0.25em] text-mute uppercase">Overview</p>
+          </div>
+          <div className="lg:col-span-8">
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.9, ease }}
+              className="font-display text-[clamp(1.4rem,2.4vw,2.1rem)] leading-[1.35] font-medium tracking-[-0.025em] text-white/90"
+            >
+              {project.description}
+            </motion.p>
+            {project.tagline && <p className="mt-6 text-[15px] text-mute">{project.tagline}</p>}
+
+            <div className="mt-10 flex flex-wrap gap-2">
+              {project.tech.map((t, i) => (
+                <motion.span
+                  key={t}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: i * 0.04 }}
+                  className="rounded-full border px-4 py-2 text-[13px]"
+                  style={{ borderColor: `rgba(${rgb},0.3)`, background: `rgba(${rgb},0.06)`, color: 'rgba(255,255,255,0.85)' }}
+                >
+                  {t}
+                </motion.span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        {project.highlights.length > 0 && (
+          <section className="mt-24 grid gap-12 lg:mt-32 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <p className="font-mono text-[11px] tracking-[0.25em] text-mute uppercase">Key features</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+              {project.highlights.map((h, i) => (
+                <motion.div
+                  key={h}
+                  initial={{ opacity: 0, y: 30, rotateX: 15 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.8, ease, delay: (i % 2) * 0.08 }}
+                  style={{ transformPerspective: 1000 }}
+                  className="rounded-3xl border border-line bg-ink-2 p-6 transition-colors duration-500 hover:border-line-strong"
+                >
+                  <span className="font-mono text-xs" style={{ color: project.accent }}>
+                    {pad(i + 1)}
+                  </span>
+                  <p className="mt-4 text-[15px] leading-relaxed text-white/80">{h}</p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* CTA */}
+        <div className="mt-20 flex flex-wrap gap-3 lg:ml-[33.333%] lg:pl-12">
+          {project.link && (
+            <Magnetic>
               <a
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#c5f82a] px-6 py-3 font-semibold text-black transition-all hover:bg-[#d4ff4a]"
+                className="group inline-flex h-14 items-center gap-3 rounded-full bg-brand pr-2 pl-7 text-[15px] font-semibold text-ink"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                </svg>
-                Visit Live Demo
+                Visit live demo
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-brand transition-transform duration-500 group-hover:rotate-45">
+                  <ArrowUpRight size={18} />
+                </span>
               </a>
-            )}
+            </Magnetic>
+          )}
+          <Magnetic>
             <button
+              type="button"
               onClick={() => navigate('/#projects')}
-              className="inline-flex items-center gap-2 rounded-lg border border-[#1e2d3d] bg-[#0a1929] px-6 py-3 font-semibold text-[#c5f82a] transition-all hover:border-[#c5f82a]/50 hover:bg-[#c5f82a]/10"
+              className="glass inline-flex h-14 items-center gap-2 rounded-full px-7 text-[15px] font-medium text-white"
             >
-              Back to Projects
+              Back to projects
             </button>
+          </Magnetic>
+        </div>
+
+        {/* Next */}
+        <Link
+          to={`/project/${nextProject.id}`}
+          data-cursor="Next"
+          className="group relative mt-32 block overflow-hidden rounded-[32px] border border-line bg-ink-2"
+        >
+          <div className="grid items-center gap-8 p-8 sm:p-12 lg:grid-cols-2">
+            <div>
+              <p className="font-mono text-[11px] tracking-[0.25em] text-mute uppercase">Next project</p>
+              <p className="mt-4 font-display text-[clamp(2.8rem,7vw,6rem)] leading-[0.9] font-semibold tracking-[-0.055em] text-white transition-colors duration-500 group-hover:text-brand">
+                {nextProject.name}
+              </p>
+              <p className="mt-2 font-serif text-2xl text-white/50 italic">{nextProject.subtitle}</p>
+              <span className="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-white">
+                View case study
+                <ArrowRight size={16} className="transition-transform duration-500 group-hover:translate-x-1.5" />
+              </span>
+            </div>
+            <div className="overflow-hidden rounded-2xl border border-line [transform:perspective(1200px)_rotateY(-10deg)] transition-transform duration-700 ease-[var(--ease-premium)] group-hover:[transform:perspective(1200px)_rotateY(0deg)]">
+              <img
+                src={nextProject.image}
+                alt=""
+                className={cn(
+                  'w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-premium)] group-hover:scale-105',
+                  nextProject.type === 'mobile' ? 'aspect-[16/10] object-top' : 'aspect-[16/10]',
+                )}
+              />
+            </div>
           </div>
-        </motion.div>
-      </div>
+        </Link>
+      </main>
     </div>
   )
 }

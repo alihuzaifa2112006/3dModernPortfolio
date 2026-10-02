@@ -1,167 +1,169 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { BackgroundRippleEffect } from './ui/background-ripple-effect'
+import { ArrowLeft, ArrowRight, Star } from 'lucide-react'
+import { SectionHeading } from './ui/section-heading'
+import { CountUp } from './ui/count-up'
+import { testimonials } from '../data/site'
+import { cn } from '../lib/utils'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
-const testimonials = [
-  {
-    company: 'Tricons Studios',
-    role: 'Lead Frontend Developer',
-    project: 'Restaurant Management System',
-    review:
-      'Ali Huzaifa delivered an exceptional frontend experience for our restaurant management platform. His React expertise and modern UI approach helped us launch a scalable and professional product.',
-  },
-  {
-    company: 'Aykays Agency',
-    role: 'Full Stack Developer',
-    project: 'AI Productivity App',
-    review:
-      'Ali worked on both frontend and backend development for our AI-powered productivity application. Communication, delivery speed, and code quality were excellent throughout the project.',
-  },
-  {
-    company: 'NovaTech Solutions',
-    role: 'Frontend Engineer',
-    project: 'Business Dashboard',
-    review:
-      'Working with Ali was smooth and professional. He created responsive dashboards with beautiful UI interactions and optimized the overall user experience significantly.',
-  },
+const STATS = [
+  { value: '8+', label: 'Projects completed' },
+  { value: '5+', label: 'Happy clients' },
+  { value: '2+', label: 'Years experience' },
+  { value: '100%', label: 'Responsive UI' },
 ]
 
+const GRADIENTS = ['from-brand to-emerald-400', 'from-violet to-fuchsia-400', 'from-cyan-300 to-sky-500']
+
 const Testimonials: React.FC = () => {
+  const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const n = testimonials.length
+
+  const next = useCallback(() => setActive((a) => (a + 1) % n), [n])
+  const prev = useCallback(() => setActive((a) => (a - 1 + n) % n), [n])
+
+  useEffect(() => {
+    if (paused) return
+    const id = setInterval(next, 6000)
+    return () => clearInterval(id)
+  }, [paused, next, active])
+
   return (
-    <section
-      id="Testimonials"
-      className="relative isolate overflow-hidden bg-[#0a0a0a] py-24 text-white"
-    >
-      {/* Background */}
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute top-0 left-0 h-[50%] w-[50%] -translate-x-1/4 rounded-full bg-[#c5f82a]/5 blur-[100px]" />
-        <div className="absolute top-[10%] right-0 h-[45%] w-[45%] translate-x-1/4 rounded-full bg-[#7c5cfc]/6 blur-[90px]" />
-      </div>
+    <section id="testimonials" className="relative overflow-hidden py-28 lg:py-40">
+      <div aria-hidden className="pointer-events-none absolute top-1/3 left-1/2 h-[36rem] w-[60rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(139,92,246,0.12),transparent_65%)]" />
 
-      <BackgroundRippleEffect rows={12} cols={22} cellSize={42} fill />
+      <div className="relative mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        <SectionHeading
+          index="06"
+          label="Testimonials"
+          title="Kind words from"
+          accent="clients."
+          align="center"
+          description="Building modern web experiences with clean UI, scalable architecture, and powerful frontend engineering for startups and agencies."
+        />
 
-      <div className="relative z-10 mx-auto max-w-[1300px] px-4 sm:px-6 md:px-12 lg:px-16">
-        {/* Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease }}
-          viewport={{ once: true }}
-          className="mb-16 text-center"
+          className="relative mt-16 h-[480px] touch-pan-y sm:h-[440px] lg:mt-20"
+          style={{ perspective: 1600 }}
+          onPointerEnter={() => setPaused(true)}
+          onPointerLeave={() => setPaused(false)}
+          onPanEnd={(_, info) => {
+            if (info.offset.x < -50) next()
+            else if (info.offset.x > 50) prev()
+          }}
         >
-          <p className="mb-3 text-[12px] font-bold tracking-[0.25em] text-[#c5f82a] uppercase">
-            Testimonials
-          </p>
+          {testimonials.map((item, i) => {
+            let d = i - active
+            if (d > n / 2) d -= n
+            if (d < -n / 2) d += n
+            const isActive = d === 0
 
-          <h2 className="text-4xl font-black uppercase sm:text-5xl md:text-6xl">
-            Testimonials <span className="text-[#c5f82a]">from Clients</span>
-          </h2>
+            return (
+              <motion.figure
+                key={item.company}
+                onClick={() => !isActive && setActive(i)}
+                initial={false}
+                animate={{
+                  x: `${d * 68}%`,
+                  rotateY: d * -32,
+                  z: Math.abs(d) * -260,
+                  scale: isActive ? 1 : 0.88,
+                  opacity: Math.abs(d) > 1 ? 0 : isActive ? 1 : 0.4,
+                }}
+                transition={{ duration: 0.9, ease }}
+                style={{ zIndex: 10 - Math.abs(d), transformStyle: 'preserve-3d' }}
+                className={cn(
+                  'absolute inset-x-0 top-0 mx-auto flex h-full w-[min(600px,88vw)] flex-col rounded-[30px] border bg-ink-2 p-7 sm:p-10',
+                  isActive
+                    ? 'border-line-strong shadow-[0_40px_100px_-30px_rgba(139,92,246,0.4)]'
+                    : 'cursor-pointer border-line',
+                )}
+              >
+                <div className="flex items-start justify-between">
+                  <span className="font-serif text-7xl leading-[0.6] text-brand">“</span>
+                  <div className="flex gap-0.5 text-brand">
+                    {Array.from({ length: 5 }).map((_, s) => (
+                      <Star key={s} size={14} fill="currentColor" strokeWidth={0} />
+                    ))}
+                  </div>
+                </div>
 
-          <p className="mx-auto mt-5 max-w-2xl text-[13px] leading-[1.9] text-[#888] sm:text-[14px]">
-            Building modern web experiences with clean UI, scalable architecture,
-            and powerful frontend engineering for startups and agencies.
-          </p>
+                <blockquote className="mt-6 flex-1 font-display text-[clamp(1.1rem,2vw,1.45rem)] leading-[1.5] font-medium tracking-[-0.015em] text-white/90">
+                  {item.review}
+                </blockquote>
+
+                <figcaption className="mt-8 flex items-center gap-4 border-t border-line pt-6">
+                  <span
+                    className={cn(
+                      'grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gradient-to-br font-display text-lg font-bold text-ink',
+                      GRADIENTS[i % GRADIENTS.length],
+                    )}
+                  >
+                    {item.company.charAt(0)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-semibold text-white">{item.company}</p>
+                    <p className="truncate text-[13px] text-mute">
+                      {item.role} · <span className="text-white/50">{item.project}</span>
+                    </p>
+                  </div>
+                </figcaption>
+              </motion.figure>
+            )
+          })}
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {testimonials.map((item, index) => (
+        <div className="mt-10 flex items-center justify-center gap-6">
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous testimonial"
+            className="glass grid h-12 w-12 place-items-center rounded-full text-white transition-colors hover:border-brand/50 hover:text-brand"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div className="flex gap-2">
+            {testimonials.map((t, i) => (
+              <button
+                key={t.company}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-label={`Show testimonial from ${t.company}`}
+                className={cn('h-1.5 rounded-full transition-all duration-500', i === active ? 'w-8 bg-brand' : 'w-1.5 bg-white/25 hover:bg-white/50')}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next testimonial"
+            className="glass grid h-12 w-12 place-items-center rounded-full text-white transition-colors hover:border-brand/50 hover:text-brand"
+          >
+            <ArrowRight size={18} />
+          </button>
+        </div>
+
+        <div className="mt-24 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line lg:grid-cols-4">
+          {STATS.map((stat, i) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 45 }}
+              key={stat.label}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.7,
-                delay: index * 0.15,
-                ease,
-              }}
-              viewport={{ once: true }}
-              whileHover={{
-                y: -10,
-              }}
-              className="group relative overflow-hidden rounded-[28px] border border-[#222] bg-[#111] p-7 transition-all duration-500 hover:border-[#c5f82a]/40"
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease, delay: i * 0.08 }}
+              className="bg-ink-2 px-6 py-8 sm:px-10 sm:py-10"
             >
-              {/* Glow */}
-              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[#c5f82a]/10 blur-3xl transition-all duration-500 group-hover:bg-[#7c5cfc]/20" />
-
-              {/* Quote */}
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#2a2a2a] bg-[#181818] text-3xl font-black text-[#c5f82a]">
-                ❝
-              </div>
-
-              {/* Review */}
-              <p className="relative z-10 text-[14px] leading-[1.95] text-[#a1a1a1]">
-                {item.review}
-              </p>
-
-              {/* Divider */}
-              <div className="my-7 h-px w-full bg-[#222]" />
-
-              {/* Footer */}
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#c5f82a] text-lg font-black text-black">
-                  {item.company.charAt(0)}
-                </div>
-
-                <div>
-                  <h3 className="text-[15px] font-bold text-white">
-                    {item.company}
-                  </h3>
-
-                  <p className="mt-1 text-[12px] text-[#c5f82a]">
-                    {item.role}
-                  </p>
-
-                  <span className="mt-1 block text-[11px] text-[#777]">
-                    {item.project}
-                  </span>
-                </div>
-              </div>
-
-              {/* Bottom Accent */}
-              <div className="absolute bottom-0 left-0 h-[3px] w-0 bg-[#c5f82a] transition-all duration-500 group-hover:w-full" />
+              <CountUp
+                value={stat.value}
+                className="block font-display text-[clamp(2.6rem,5vw,4.5rem)] leading-none font-semibold tracking-[-0.05em] text-white"
+              />
+              <p className="mt-3 font-mono text-[10px] tracking-[0.2em] text-mute uppercase sm:text-[11px]">{stat.label}</p>
             </motion.div>
           ))}
         </div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease }}
-          viewport={{ once: true }}
-          className="mt-20 grid grid-cols-2 gap-6 border-t border-[#1f1f1f] pt-10 md:grid-cols-4"
-        >
-          {[
-            { number: '8+', label: 'Projects Completed' },
-            { number: '5+', label: 'Happy Clients' },
-            { number: '2+', label: 'Years Experience' },
-            { number: '100%', label: 'Responsive UI' },
-          ].map((item) => (
-            <div key={item.label}>
-              <h3 className="text-3xl font-black text-[#c5f82a] sm:text-4xl">
-                {item.number}
-              </h3>
-
-              <p className="mt-2 text-[12px] tracking-[0.08em] text-[#777] uppercase">
-                {item.label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* White diagonal */}
-      <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-[2] h-[clamp(100px,22vw,280px)] overflow-hidden">
-        <svg
-          viewBox="0 0 1440 400"
-          preserveAspectRatio="none"
-          className="block h-full w-full"
-        >
-          <path d="M0 400L0 400L1440 80V400H0Z" fill="white" />
-        </svg>
       </div>
     </section>
   )
