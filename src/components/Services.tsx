@@ -3,6 +3,8 @@ import { motion } from 'motion/react'
 import { Bot, CodeXml, Layers, PenTool, Server, Smartphone, type LucideIcon } from 'lucide-react'
 import { SectionHeading } from './ui/section-heading'
 import { SpotlightCard } from './ui/spotlight-card'
+import CodeEditorVisual from './visuals/CodeEditorVisual'
+import ScanAppVisual from './visuals/ScanAppVisual'
 import { cn } from '../lib/utils'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -63,37 +65,6 @@ const services: Service[] = [
   },
 ]
 
-const BrowserVisual = () => (
-  <div className="relative h-full w-full [transform:rotateY(-14deg)_rotateX(8deg)] transition-transform duration-700 group-hover/spot:[transform:rotateY(-6deg)_rotateX(4deg)]">
-    <div className="absolute inset-0 overflow-hidden rounded-2xl border border-line-strong bg-ink-3 shadow-2xl">
-      <div className="flex items-center gap-1.5 border-b border-line px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-        <span className="ml-3 h-4 flex-1 rounded-full bg-white/5" />
-      </div>
-      <div className="space-y-2.5 p-5 font-mono text-[11px]">
-        {[
-          ['w-1/3', 'bg-violet/60'],
-          ['w-2/3', 'bg-white/15'],
-          ['w-1/2', 'bg-brand/60'],
-          ['w-3/4', 'bg-white/10'],
-          ['w-2/5', 'bg-cyan-400/50'],
-          ['w-3/5', 'bg-white/15'],
-        ].map(([w, c], i) => (
-          <div key={i} className="flex items-center gap-3" style={{ paddingLeft: `${(i % 3) * 14}px` }}>
-            <span className="w-4 text-right text-white/20">{i + 1}</span>
-            <span className={cn('h-2 rounded-full', w, c)} />
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="absolute -right-3 -bottom-4 rounded-xl border border-brand/40 bg-ink/90 px-3 py-2 font-mono text-[10px] text-brand shadow-[0_10px_30px_-5px_rgba(197,248,42,0.4)] backdrop-blur">
-      ✓ build passed · 98 perf
-    </div>
-  </div>
-)
-
 const ChatVisual = () => (
   <div className="flex h-full w-full flex-col justify-center gap-3">
     {[
@@ -128,35 +99,7 @@ const ChatVisual = () => (
   </div>
 )
 
-const PhoneVisual = () => (
-  <div className="flex h-full w-full items-center justify-center gap-4 [perspective:900px]">
-    {[-1, 1].map((side) => (
-      <div
-        key={side}
-        className={cn(
-          'relative h-[220px] w-[112px] rounded-[26px] border border-line-strong bg-ink-3 p-2 shadow-2xl transition-transform duration-700',
-          side < 0
-            ? '[transform:rotateY(22deg)_translateY(14px)] group-hover/spot:[transform:rotateY(10deg)_translateY(6px)]'
-            : '[transform:rotateY(-22deg)_translateY(-14px)] group-hover/spot:[transform:rotateY(-10deg)_translateY(-6px)]',
-        )}
-      >
-        <div className="mx-auto mb-2 h-1 w-8 rounded-full bg-white/15" />
-        <div className="space-y-1.5 rounded-[18px] bg-ink-4 p-2">
-          <div className={cn('h-16 rounded-xl', side < 0 ? 'bg-gradient-to-br from-brand/70 to-emerald-500/40' : 'bg-gradient-to-br from-violet/70 to-cyan-400/40')} />
-          <div className="h-2 w-3/4 rounded-full bg-white/15" />
-          <div className="h-2 w-1/2 rounded-full bg-white/10" />
-          <div className="grid grid-cols-2 gap-1.5 pt-1">
-            <div className="h-10 rounded-lg bg-white/5" />
-            <div className="h-10 rounded-lg bg-white/5" />
-          </div>
-          <div className="h-6 rounded-full bg-white/10" />
-        </div>
-      </div>
-    ))}
-  </div>
-)
-
-const VISUALS: Record<Visual, React.FC> = { browser: BrowserVisual, chat: ChatVisual, phone: PhoneVisual }
+const VISUALS: Record<Visual, React.FC> = { browser: CodeEditorVisual, chat: ChatVisual, phone: ScanAppVisual }
 
 const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
   const Icon = service.icon
@@ -196,7 +139,7 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
         </div>
 
         {VisualComp && (
-          <div className="relative z-10 mt-10 hidden h-[260px] lg:mt-0 lg:block lg:h-auto">
+          <div className="relative z-10 mt-10 hidden lg:mt-0 lg:flex lg:min-h-[300px] lg:items-center">
             <VisualComp />
           </div>
         )}
